@@ -55,15 +55,15 @@ const ServerBox = ({server, className}: {server: TSideBardServer; className?: st
     <Tooltip>
       <TooltipTrigger onClick={onClick} delay={50} render={<div className={cn('relative group cursor-pointer', 'not-last-of-type:mb-2', className)} />}>
         {server.image ? (
-          <div className='size-11 flex justify-center items-center rounded-lg text-xs bg-indigo-400 overflow-hidden'>
+          <div className='size-10 flex justify-center items-center rounded-lg text-xs bg-indigo-400 overflow-hidden'>
             <img src={server.image} alt={server.name} className='size-full object-cover' />
           </div>
         ) : Icon ? (
-          <div className='size-11 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
+          <div className='size-10 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
             <Icon />
           </div>
         ) : (
-          <div className='size-11 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
+          <div className='size-10 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
             {formatText(server.name, {
               numOfLetter: 4,
               mode: 'first-letter-of-words'

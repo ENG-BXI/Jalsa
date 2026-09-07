@@ -20,7 +20,7 @@ const Routers = createBrowserRouter([
             path: ':channelName',
             lazy: async () => {
               // TODO Add Channel Page Here
-              const {default: Component} = await import('@/feature/server');
+              const {default: Component} = await import('@/feature/server/text-channel');
               return {Component};
             }
           }
