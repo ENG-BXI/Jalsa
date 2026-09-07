@@ -1,10 +1,10 @@
 import {cn, formatText} from '@/lib/utils';
 import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 
-import type {TServerBoxType, TSideBardServer} from './type';
+import type {TServerBoxType, TSideBardServer} from '../type';
 import {useNavigate, useParams} from 'react-router';
 import {useAppDialog} from '@/store/dialog-store';
-import CreateServerForm from '../server/create-server-form';
+import CreateServerForm from '../../server/create-server-form';
 
 function getPath(id: string, type: TServerBoxType = 'server') {
   if (type == 'direct') return 'direct-message';

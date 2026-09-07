@@ -1,10 +1,12 @@
-import AllServersSidebar from './all-server-sidebar';
+import AllServersSidebar from './AllServerSidebar/all-server-sidebar';
+import ChannelSidebar from './ChannelSidebar.tsx/channel-sidebar';
 import {servers} from './helper';
 
 const SideBar = () => {
   return (
-    <div>
+    <div className='flex'>
       <AllServersSidebar servers={servers} />
+      <ChannelSidebar />
     </div>
   );
 };
