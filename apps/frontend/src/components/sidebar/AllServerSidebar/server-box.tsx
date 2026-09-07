@@ -15,8 +15,8 @@ function getPath(id: string, type: TServerBoxType = 'server') {
 const ServerBox = ({server, className}: {server: TSideBardServer; className?: string}) => {
   const navigate = useNavigate();
   const setDialog = useAppDialog(state => state.setDialog);
-  const pathName = useParams<{id: string}>();
-  const isActive = server.id == pathName.id || (server.type == 'direct' && !pathName.id);
+  const pathName = useParams<{serverId: string}>();
+  const isActive = server.id == pathName.serverId || (server.type == 'direct' && !pathName.serverId);
   const path = getPath(server.id, server.type);
   const Icon = server.icon;
   function onClick() {
@@ -74,7 +74,7 @@ const ServerBox = ({server, className}: {server: TSideBardServer; className?: st
         <div className={cn('absolute duration-300 top-1/2 -translate-y-1/2 -left-5', 'group-hover:h-4 bg-white h-2 w-3 rounded-full', isActive && 'h-full duration-100 group-hover:h-full')} />
       </TooltipTrigger>
 
-      <TooltipContent side='right' className={'bg-[#242429] text-sm text-foreground'}>
+      <TooltipContent side='right' className={'bg-dialog-primary text-sm text-foreground'}>
         {server.name}
       </TooltipContent>
     </Tooltip>

@@ -1,5 +1,5 @@
 import AllServersSidebar from './AllServerSidebar/all-server-sidebar';
-import ChannelSidebar from './ChannelSidebar.tsx/channel-sidebar';
+import ChannelSidebar from './ChannelSidebar.tsx';
 import {servers} from './helper';
 
 const SideBar = () => {

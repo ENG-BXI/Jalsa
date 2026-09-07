@@ -9,7 +9,7 @@ import {Separator} from '@/components/ui/separator';
 
 const ServerNameAndAction = () => {
   return (
-    <div className='flex justify-between items-center'>
+    <div className='py-2 px-3 flex justify-between items-center'>
       <ServerNamePopover name={serverName} />
       <InviteFriend />
     </div>
