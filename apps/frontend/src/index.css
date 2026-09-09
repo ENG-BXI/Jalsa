@@ -135,7 +135,9 @@
 @theme {
   --color-primary-1: #1A1A1E;
   --color-primary-2: #121214;
+  --color-primary-3: #242428;
   --color-dialog-primary: #242429;
+  --color-border-1: #2E2F34;
   --color-text-1: #7F8088;
 }
 

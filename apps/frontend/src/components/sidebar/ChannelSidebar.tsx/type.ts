@@ -8,3 +8,5 @@ export type TChannel = {
   id: string;
   title: string;
 };
+
+export type TChannelType = 'text' | 'voice';

@@ -1,13 +1,16 @@
-import type {TBreadcrumb} from '@/components/header';
+import type {TChannelType} from '@/components/sidebar/ChannelSidebar.tsx/type';
 import {create} from 'zustand';
-
+export type THeader = {
+  title: string;
+  type: TChannelType;
+};
 type HeaderStore = {
-  breadcrumb: TBreadcrumb[];
-  setBreadcrumb: (breadcrumb: TBreadcrumb[]) => void;
+  header: THeader;
+  setHeader: (header: THeader) => void;
 };
 export const useHeader = create<HeaderStore>(set => ({
-  breadcrumb: [],
-  setBreadcrumb: (breadcrumb: TBreadcrumb[]) => {
-    set({breadcrumb: breadcrumb});
+  header: {title: '', type: 'text'},
+  setHeader: (header: THeader) => {
+    set({header: header});
   }
 }));
