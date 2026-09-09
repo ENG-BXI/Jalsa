@@ -15,7 +15,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <div className='bg-primary-2 h-screen flex overflow-hidden'>
             <SideBar />
-            <div className='flex flex-1 mt-2 rounded-tl-lg overflow-hidden border'>
+            <div className='flex flex-1 mt-2 rounded-tl-lg overflow-hidden border border-border-1'>
               <ChannelSidebar />
               <div className='bg-primary-1 flex flex-col flex-1'>
                 <Header />
