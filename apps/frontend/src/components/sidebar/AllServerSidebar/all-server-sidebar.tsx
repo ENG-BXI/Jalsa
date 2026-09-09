@@ -5,7 +5,7 @@ import {IconPlus} from '@tabler/icons-react';
 
 const AllServersSidebar = ({servers}: {servers: TSideBardServer[]}) => {
   return (
-    <div className='relative h-screen bg-primary-2  w-min border-e'>
+    <div className='relative h-full bg-primary-2 w-min'>
       <ScrollArea className='h-full'>
         <div className='h-full flex flex-col flex-1 p-3'>
           <ServerBox server={{type: 'direct', id: 'direct-message', name: 'Direct Message'}} />

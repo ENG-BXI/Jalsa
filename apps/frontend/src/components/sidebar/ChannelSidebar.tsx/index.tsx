@@ -1,18 +1,19 @@
 import {Separator} from '@/components/ui/separator';
 import ServerNameAndAction from './server-name-and-action';
-import TextChannel from './channel/text-channel';
 import {dummyTextChannels, dummyVoiceChannels} from './helper';
-import VoiceChannel from './channel/voice-channel';
+import {ScrollArea} from '@/components/ui/scroll-area';
+import Channel from './channel/channel';
 
 const ChannelSidebar = () => {
   return (
-    <div className='w-50 bg-primary-2'>
+    <div className='w-50 h-full flex flex-col bg-primary-2'>
       <ServerNameAndAction />
       <Separator />
-      <div className='p-3 flex flex-col gap-4'>
-        <TextChannel channels={dummyTextChannels} />
-        <VoiceChannel channels={dummyVoiceChannels} />
-      </div>
+      <ScrollArea className='p-3 h-full'>
+        <Channel type='text' channels={dummyTextChannels} />
+        <Channel type='voice' channels={dummyVoiceChannels} />
+        <div className='h-10 w-full' />
+      </ScrollArea>
     </div>
   );
 };

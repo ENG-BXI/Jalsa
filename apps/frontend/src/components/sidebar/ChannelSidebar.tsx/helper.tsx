@@ -1,5 +1,17 @@
-import {IconLogout, IconSettings2, IconUsersPlus} from '@tabler/icons-react';
-import type {TChannel, TServerPopoverOptions} from './type';
+import {IconHash, IconLogout, IconSettings2, IconUsersPlus, IconVolume} from '@tabler/icons-react';
+import type {TChannel, TChannelType, TServerPopoverOptions} from './type';
+import type {ElementType} from 'react';
+
+export const channelMapper: Record<TChannelType, {title: string; icon: ElementType}> = {
+  text: {
+    title: 'Text Channels',
+    icon: IconHash
+  },
+  voice: {
+    title: 'Voice Channels',
+    icon: IconVolume
+  }
+};
 
 export const serverPopoverOptions: TServerPopoverOptions[] = [
   {
