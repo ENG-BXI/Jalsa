@@ -6,6 +6,8 @@ import {IconChevronDown, IconUsersPlus} from '@tabler/icons-react';
 import {cn} from 'cn';
 import {serverPopoverOptions} from './helper';
 import {Separator} from '@/components/ui/separator';
+import {useAppDialog} from '@/store/dialog-store';
+import InviteFriendDialog from '@/components/server/invite-friend-dialog';
 
 const ServerNameAndAction = () => {
   return (
@@ -52,9 +54,28 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
 }
 
 function InviteFriend() {
+  const {setDialog} = useAppDialog();
+  const inviteLink = 'https://jalsa-domain/invite/abc123';
+
+  function onClick() {
+    setDialog({
+      title: {
+        title: 'Invite Friends',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Invite your friends to join your server and grow your community.',
+        className: 'text-center'
+      },
+
+      content: <InviteFriendDialog inviteLink={inviteLink} />
+    });
+  }
+
   return (
     //  Open Dialog Here
-    <Button variant={'ghost'} size={'icon-lg'}>
+    <Button variant={'ghost'} size={'icon-lg'} onClick={onClick}>
       <IconUsersPlus stroke={2} size={20} />
     </Button>
   );

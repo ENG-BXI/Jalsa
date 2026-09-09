@@ -8,6 +8,8 @@ import ChannelName from './components/channel-name';
 import {InviteChannelButton} from './components/invite-channel-button';
 import {useHeader} from '@/store/header-store';
 import {channelMapper} from '../helper';
+import {useAppDialog} from '@/store/dialog-store';
+import InviteFriendDialog from '@/components/server/invite-friend-dialog';
 
 interface TChannelProps {
   type: TChannelType;
@@ -16,6 +18,7 @@ interface TChannelProps {
 const Channel = ({type, channels}: TChannelProps) => {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
+  const {setDialog} = useAppDialog();
   const {setHeader} = useHeader();
   const {serverId, channelName} = useParams<{serverId: string; channelName: string}>();
   function onClick(title: string, type: TChannelType) {
@@ -23,6 +26,23 @@ const Channel = ({type, channels}: TChannelProps) => {
     navigate(`/server/${serverId}/${title}`);
   }
   const channelMap = channelMapper[type];
+  // TODO: Make A Solution to generate a Link
+  const BaseLink = 'https://jalsa-domain/invite';
+  function onClickInvite(link: string) {
+    setDialog({
+      title: {
+        title: 'Invite Friends',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Invite your friends to join your server and grow your community.',
+        className: 'text-center'
+      },
+
+      content: <InviteFriendDialog inviteLink={link} />
+    });
+  }
   return (
     <div className='mb-5'>
       <div onClick={() => setOpen(pre => !pre)} className='cursor-pointer px-2 text-text-1 hover:text-inherit select-none flex items-center'>
@@ -35,7 +55,7 @@ const Channel = ({type, channels}: TChannelProps) => {
             <Button onClick={() => onClick(channel.title, type)} variant={'ghost'} size={'lg'} className={cn('group select-none text-text-1 justify-start p-2 text-sm', channelName == channel.title && 'bg-muted text-foreground')}>
               <channelMap.icon className='min-w-5 min-h-5' />
               <ChannelName title={channel.title} isOpen={channel.title == channelName} />
-              <InviteChannelButton isOpen={channel.title == channelName} />
+              <InviteChannelButton onClick={() => onClickInvite(`${BaseLink}/${serverId}/${channelName}`)} isOpen={channel.title == channelName} />
             </Button>
           ))}
         </div>
