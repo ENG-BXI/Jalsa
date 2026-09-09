@@ -1,4 +1,4 @@
-import {IconHash, IconLogout, IconSettings2, IconUsersPlus, IconVolume} from '@tabler/icons-react';
+import {IconEdit, IconHash, IconLogout, IconSettings2, IconUsersPlus, IconVolume} from '@tabler/icons-react';
 import type {TChannel, TChannelType, TServerPopoverOptions} from './type';
 import type {ElementType} from 'react';
 
@@ -13,32 +13,39 @@ export const channelMapper: Record<TChannelType, {title: string; icon: ElementTy
   }
 };
 
-export const serverPopoverOptions: TServerPopoverOptions[] = [
-  {
-    group: [
-      {
-        icon: IconUsersPlus,
-        title: 'Invite to Server',
-        onClick: () => {}
-      },
-      {
-        title: 'Server Setting',
-        icon: IconSettings2,
-        onClick: () => {}
-      }
-    ]
-  },
-  {
-    group: [
-      {
-        title: 'Leave Server',
-        icon: IconLogout,
-        onClick: () => {},
-        color: 'text-red-400'
-      }
-    ]
-  }
-];
+export function GetServerPopoverOptions({onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer}: {onClickInvite: () => void; onClickEditServer: () => void; onClickViewServerSetting: () => void; onClickLeaveServer: () => void}): TServerPopoverOptions[] {
+  return [
+    {
+      group: [
+        {
+          icon: IconUsersPlus,
+          title: 'Invite to Server',
+          onClick: onClickInvite
+        },
+        {
+          title: 'Edit Server',
+          icon: IconEdit,
+          onClick: onClickEditServer
+        },
+        {
+          title: 'Server Setting',
+          icon: IconSettings2,
+          onClick: onClickViewServerSetting
+        }
+      ]
+    },
+    {
+      group: [
+        {
+          title: 'Leave Server',
+          icon: IconLogout,
+          onClick: onClickLeaveServer,
+          color: 'text-red-400'
+        }
+      ]
+    }
+  ];
+}
 
 export const dummyTextChannels: TChannel[] = [
   {id: '1', title: 'general'},
