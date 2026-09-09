@@ -1,10 +1,10 @@
 import {cn, formatText} from '@/lib/utils';
 import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 
-import type {TServerBoxType, TSideBardServer} from './type';
+import type {TServerBoxType, TSideBardServer} from '../type';
 import {useNavigate, useParams} from 'react-router';
 import {useAppDialog} from '@/store/dialog-store';
-import CreateServerForm from '../server/create-server-form';
+import CreateServerForm from '../../server/create-server-form';
 
 function getPath(id: string, type: TServerBoxType = 'server') {
   if (type == 'direct') return 'direct-message';
@@ -15,8 +15,8 @@ function getPath(id: string, type: TServerBoxType = 'server') {
 const ServerBox = ({server, className}: {server: TSideBardServer; className?: string}) => {
   const navigate = useNavigate();
   const setDialog = useAppDialog(state => state.setDialog);
-  const pathName = useParams<{id: string}>();
-  const isActive = server.id == pathName.id || (server.type == 'direct' && !pathName.id);
+  const pathName = useParams<{serverId: string}>();
+  const isActive = server.id == pathName.serverId || (server.type == 'direct' && !pathName.serverId);
   const path = getPath(server.id, server.type);
   const Icon = server.icon;
   function onClick() {
@@ -55,15 +55,15 @@ const ServerBox = ({server, className}: {server: TSideBardServer; className?: st
     <Tooltip>
       <TooltipTrigger onClick={onClick} delay={50} render={<div className={cn('relative group cursor-pointer', 'not-last-of-type:mb-2', className)} />}>
         {server.image ? (
-          <div className='size-11 flex justify-center items-center rounded-lg text-xs bg-indigo-400 overflow-hidden'>
+          <div className='size-10 flex justify-center items-center rounded-lg text-xs bg-indigo-400 overflow-hidden'>
             <img src={server.image} alt={server.name} className='size-full object-cover' />
           </div>
         ) : Icon ? (
-          <div className='size-11 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
+          <div className='size-10 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
             <Icon />
           </div>
         ) : (
-          <div className='size-11 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
+          <div className='size-10 flex justify-center items-center rounded-lg text-xs bg-indigo-400'>
             {formatText(server.name, {
               numOfLetter: 4,
               mode: 'first-letter-of-words'
@@ -74,7 +74,7 @@ const ServerBox = ({server, className}: {server: TSideBardServer; className?: st
         <div className={cn('absolute duration-300 top-1/2 -translate-y-1/2 -left-5', 'group-hover:h-4 bg-white h-2 w-3 rounded-full', isActive && 'h-full duration-100 group-hover:h-full')} />
       </TooltipTrigger>
 
-      <TooltipContent side='right' className={'bg-[#242429] text-sm text-foreground'}>
+      <TooltipContent side='right' className={'bg-dialog-primary text-sm text-foreground'}>
         {server.name}
       </TooltipContent>
     </Tooltip>

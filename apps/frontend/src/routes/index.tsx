@@ -7,11 +7,24 @@ const Routers = createBrowserRouter([
     Component: () => <App />,
     children: [
       {
-        path: '/server/:id',
-        lazy: async () => {
-          const {default: Component} = await import('@/feature/server');
-          return {Component};
-        }
+        path: '/server/:serverId',
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const {default: Component} = await import('@/feature/server');
+              return {Component};
+            }
+          },
+          {
+            path: ':channelName',
+            lazy: async () => {
+              // TODO Add Channel Page Here
+              const {default: Component} = await import('@/feature/server/text-channel');
+              return {Component};
+            }
+          }
+        ]
       },
       {
         path: 'direct-message',

@@ -136,6 +136,7 @@
   --color-primary-1: #1A1A1E;
   --color-primary-2: #121214;
   --color-dialog-primary: #242429;
+  --color-text-1: #7F8088;
 }
 
 @utility no-scrollbar {

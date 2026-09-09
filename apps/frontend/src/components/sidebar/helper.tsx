@@ -4,7 +4,7 @@ export const servers: TSideBardServer[] = [
   {
     id: 'jalsa',
     name: 'Jalsa',
-    image: 'https://api.dicebear.com/9.x/shapes/svg?seed=jalsa',
+    image: 'https://api.dicebear.com/9.x/shapes/svg?seed=jalsa'
   },
   {
     id: 'frontend-developers',
@@ -59,3 +59,5 @@ export const servers: TSideBardServer[] = [
     image: 'https://api.dicebear.com/9.x/shapes/svg?seed=nightowls'
   }
 ];
+
+export const serverName = 'BXI';
