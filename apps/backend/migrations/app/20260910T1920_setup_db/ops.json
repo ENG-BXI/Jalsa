@@ -1,0 +1,1069 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.channel",
+    "label": "Create table \"channel\"",
+    "summary": "Creates table \"channel\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "channel"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"channel\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channel\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"channel\"",
+        "sql": "CREATE TABLE \"public\".\"channel\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"serverId\" text NOT NULL,\n  \"type\" text DEFAULT 'TEXT' NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"channel_type_check_f9cf31de\" CHECK (\"type\" IN ('TEXT', 'VOICE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"channel\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channel\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.channelMassage",
+    "label": "Create table \"channelMassage\"",
+    "summary": "Creates table \"channelMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "channelMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"channelMassage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channelMassage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"channelMassage\"",
+        "sql": "CREATE TABLE \"public\".\"channelMassage\" (\n  \"channelId\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"from\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"imageUrl\" text,\n  \"softDelete\" bool DEFAULT false NOT NULL,\n  \"text\" text,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"channelMassage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channelMassage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.directMassage",
+    "label": "Create table \"directMassage\"",
+    "summary": "Creates table \"directMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "directMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"directMassage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"directMassage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"directMassage\"",
+        "sql": "CREATE TABLE \"public\".\"directMassage\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"from\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"imageUrl\" text,\n  \"softDelete\" bool DEFAULT false NOT NULL,\n  \"text\" text,\n  \"to\" text NOT NULL,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"directMassage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"directMassage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.server",
+    "label": "Create table \"server\"",
+    "summary": "Creates table \"server\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "server"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"server\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"server\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"server\"",
+        "sql": "CREATE TABLE \"public\".\"server\" (\n  \"admin_id\" text NOT NULL,\n  \"avatar_url\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"isPublic\" bool DEFAULT false NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"server\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"server\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user",
+    "label": "Create table \"user\"",
+    "summary": "Creates table \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user\"",
+        "sql": "CREATE TABLE \"public\".\"user\" (\n  \"email\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"jointAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"name\" text NOT NULL,\n  \"password\" text NOT NULL,\n  \"userName\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.userSever",
+    "label": "Create table \"userSever\"",
+    "summary": "Creates table \"userSever\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "userSever"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"userSever\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userSever\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"userSever\"",
+        "sql": "CREATE TABLE \"public\".\"userSever\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"role\" text DEFAULT 'MEMBER' NOT NULL,\n  \"serverId\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"userSever_role_check_50a44636\" CHECK (\"role\" IN ('OWNER', 'ADMIN', 'MEMBER'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"userSever\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userSever\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.server.server_name_key",
+    "label": "Add unique constraint on \"server\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "server_name_key",
+        "table": "server"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"server_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "server_name_key",
+          "public",
+          "\"public\".\"server\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"server_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"server\" ADD CONSTRAINT \"server_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"server_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "server_name_key",
+          "public",
+          "\"public\".\"server\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_userName_key",
+    "label": "Add unique constraint on \"user\" (userName)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_userName_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_userName_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_userName_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_userName_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_userName_key\" UNIQUE (\"userName\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_userName_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_userName_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_email_key",
+    "label": "Add unique constraint on \"user\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_email_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.userSever.userSever_userId_serverId_key",
+    "label": "Add unique constraint on \"userSever\" (userId, serverId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "userSever_userId_serverId_key",
+        "table": "userSever"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"userSever_userId_serverId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userSever_userId_serverId_key",
+          "public",
+          "\"public\".\"userSever\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"userSever_userId_serverId_key\"",
+        "sql": "ALTER TABLE \"public\".\"userSever\" ADD CONSTRAINT \"userSever_userId_serverId_key\" UNIQUE (\"userId\", \"serverId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"userSever_userId_serverId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userSever_userId_serverId_key",
+          "public",
+          "\"public\".\"userSever\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.channel.channel_serverId_idx_cfc44675",
+    "label": "Create index \"channel_serverId_idx_cfc44675\" on \"channel\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "channel_serverId_idx_cfc44675",
+        "table": "channel"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"channel_serverId_idx_cfc44675\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channel_serverId_idx_cfc44675\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"channel_serverId_idx_cfc44675\"",
+        "sql": "CREATE INDEX \"channel_serverId_idx_cfc44675\" ON \"public\".\"channel\" (\"serverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"channel_serverId_idx_cfc44675\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channel_serverId_idx_cfc44675\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.channelMassage.channelMassage_channelId_idx_166d3598",
+    "label": "Create index \"channelMassage_channelId_idx_166d3598\" on \"channelMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "channelMassage_channelId_idx_166d3598",
+        "table": "channelMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"channelMassage_channelId_idx_166d3598\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channelMassage_channelId_idx_166d3598\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"channelMassage_channelId_idx_166d3598\"",
+        "sql": "CREATE INDEX \"channelMassage_channelId_idx_166d3598\" ON \"public\".\"channelMassage\" (\"channelId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"channelMassage_channelId_idx_166d3598\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channelMassage_channelId_idx_166d3598\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.channelMassage.channelMassage_from_idx_1f0d0ec9",
+    "label": "Create index \"channelMassage_from_idx_1f0d0ec9\" on \"channelMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "channelMassage_from_idx_1f0d0ec9",
+        "table": "channelMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"channelMassage_from_idx_1f0d0ec9\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channelMassage_from_idx_1f0d0ec9\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"channelMassage_from_idx_1f0d0ec9\"",
+        "sql": "CREATE INDEX \"channelMassage_from_idx_1f0d0ec9\" ON \"public\".\"channelMassage\" (\"from\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"channelMassage_from_idx_1f0d0ec9\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"channelMassage_from_idx_1f0d0ec9\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.directMassage.directMassage_from_idx_1f0d0ec9",
+    "label": "Create index \"directMassage_from_idx_1f0d0ec9\" on \"directMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "directMassage_from_idx_1f0d0ec9",
+        "table": "directMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"directMassage_from_idx_1f0d0ec9\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"directMassage_from_idx_1f0d0ec9\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"directMassage_from_idx_1f0d0ec9\"",
+        "sql": "CREATE INDEX \"directMassage_from_idx_1f0d0ec9\" ON \"public\".\"directMassage\" (\"from\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"directMassage_from_idx_1f0d0ec9\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"directMassage_from_idx_1f0d0ec9\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.directMassage.directMassage_to_idx_7ceca86a",
+    "label": "Create index \"directMassage_to_idx_7ceca86a\" on \"directMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "directMassage_to_idx_7ceca86a",
+        "table": "directMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"directMassage_to_idx_7ceca86a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"directMassage_to_idx_7ceca86a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"directMassage_to_idx_7ceca86a\"",
+        "sql": "CREATE INDEX \"directMassage_to_idx_7ceca86a\" ON \"public\".\"directMassage\" (\"to\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"directMassage_to_idx_7ceca86a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"directMassage_to_idx_7ceca86a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.server.server_admin_id_idx_78cc3551",
+    "label": "Create index \"server_admin_id_idx_78cc3551\" on \"server\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "server_admin_id_idx_78cc3551",
+        "table": "server"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"server_admin_id_idx_78cc3551\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"server_admin_id_idx_78cc3551\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"server_admin_id_idx_78cc3551\"",
+        "sql": "CREATE INDEX \"server_admin_id_idx_78cc3551\" ON \"public\".\"server\" (\"admin_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"server_admin_id_idx_78cc3551\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"server_admin_id_idx_78cc3551\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userSever.userSever_serverId_idx_cfc44675",
+    "label": "Create index \"userSever_serverId_idx_cfc44675\" on \"userSever\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "userSever_serverId_idx_cfc44675",
+        "table": "userSever"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"userSever_serverId_idx_cfc44675\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userSever_serverId_idx_cfc44675\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"userSever_serverId_idx_cfc44675\"",
+        "sql": "CREATE INDEX \"userSever_serverId_idx_cfc44675\" ON \"public\".\"userSever\" (\"serverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"userSever_serverId_idx_cfc44675\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userSever_serverId_idx_cfc44675\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.userSever.userSever_userId_idx_a489d58a",
+    "label": "Create index \"userSever_userId_idx_a489d58a\" on \"userSever\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "userSever_userId_idx_a489d58a",
+        "table": "userSever"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"userSever_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userSever_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"userSever_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"userSever_userId_idx_a489d58a\" ON \"public\".\"userSever\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"userSever_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"userSever_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.channel.channel_serverId_fkey",
+    "label": "Add foreign key \"channel_serverId_fkey\" on \"channel\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "channel_serverId_fkey",
+        "table": "channel"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"channel_serverId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "channel_serverId_fkey",
+          "public",
+          "\"public\".\"channel\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"channel_serverId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"channel\"\nADD CONSTRAINT \"channel_serverId_fkey\"\nFOREIGN KEY (\"serverId\")\nREFERENCES \"public\".\"server\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"channel_serverId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "channel_serverId_fkey",
+          "public",
+          "\"public\".\"channel\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.channelMassage.channelMassage_channelId_fkey",
+    "label": "Add foreign key \"channelMassage_channelId_fkey\" on \"channelMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "channelMassage_channelId_fkey",
+        "table": "channelMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"channelMassage_channelId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "channelMassage_channelId_fkey",
+          "public",
+          "\"public\".\"channelMassage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"channelMassage_channelId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"channelMassage\"\nADD CONSTRAINT \"channelMassage_channelId_fkey\"\nFOREIGN KEY (\"channelId\")\nREFERENCES \"public\".\"channel\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"channelMassage_channelId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "channelMassage_channelId_fkey",
+          "public",
+          "\"public\".\"channelMassage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.channelMassage.channelMassage_from_fkey",
+    "label": "Add foreign key \"channelMassage_from_fkey\" on \"channelMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "channelMassage_from_fkey",
+        "table": "channelMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"channelMassage_from_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "channelMassage_from_fkey",
+          "public",
+          "\"public\".\"channelMassage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"channelMassage_from_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"channelMassage\"\nADD CONSTRAINT \"channelMassage_from_fkey\"\nFOREIGN KEY (\"from\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"channelMassage_from_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "channelMassage_from_fkey",
+          "public",
+          "\"public\".\"channelMassage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.directMassage.directMassage_from_fkey",
+    "label": "Add foreign key \"directMassage_from_fkey\" on \"directMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "directMassage_from_fkey",
+        "table": "directMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"directMassage_from_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "directMassage_from_fkey",
+          "public",
+          "\"public\".\"directMassage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"directMassage_from_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"directMassage\"\nADD CONSTRAINT \"directMassage_from_fkey\"\nFOREIGN KEY (\"from\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"directMassage_from_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "directMassage_from_fkey",
+          "public",
+          "\"public\".\"directMassage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.directMassage.directMassage_to_fkey",
+    "label": "Add foreign key \"directMassage_to_fkey\" on \"directMassage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "directMassage_to_fkey",
+        "table": "directMassage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"directMassage_to_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "directMassage_to_fkey",
+          "public",
+          "\"public\".\"directMassage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"directMassage_to_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"directMassage\"\nADD CONSTRAINT \"directMassage_to_fkey\"\nFOREIGN KEY (\"to\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"directMassage_to_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "directMassage_to_fkey",
+          "public",
+          "\"public\".\"directMassage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.server.server_admin_id_fkey",
+    "label": "Add foreign key \"server_admin_id_fkey\" on \"server\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "server_admin_id_fkey",
+        "table": "server"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"server_admin_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "server_admin_id_fkey",
+          "public",
+          "\"public\".\"server\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"server_admin_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"server\"\nADD CONSTRAINT \"server_admin_id_fkey\"\nFOREIGN KEY (\"admin_id\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"server_admin_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "server_admin_id_fkey",
+          "public",
+          "\"public\".\"server\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userSever.userSever_serverId_fkey",
+    "label": "Add foreign key \"userSever_serverId_fkey\" on \"userSever\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userSever_serverId_fkey",
+        "table": "userSever"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userSever_serverId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userSever_serverId_fkey",
+          "public",
+          "\"public\".\"userSever\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userSever_serverId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userSever\"\nADD CONSTRAINT \"userSever_serverId_fkey\"\nFOREIGN KEY (\"serverId\")\nREFERENCES \"public\".\"server\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userSever_serverId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userSever_serverId_fkey",
+          "public",
+          "\"public\".\"userSever\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.userSever.userSever_userId_fkey",
+    "label": "Add foreign key \"userSever_userId_fkey\" on \"userSever\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "userSever_userId_fkey",
+        "table": "userSever"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"userSever_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userSever_userId_fkey",
+          "public",
+          "\"public\".\"userSever\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"userSever_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"userSever\"\nADD CONSTRAINT \"userSever_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"userSever_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "userSever_userId_fkey",
+          "public",
+          "\"public\".\"userSever\""
+        ]
+      }
+    ]
+  }
+]
