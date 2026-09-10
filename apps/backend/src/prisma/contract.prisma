@@ -2,8 +2,87 @@
 // Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  salary Int
-  age Int @default(0)
+  id              String           @id @default(uuid())
+  name            String
+  userName        String           @unique
+  email           String           @unique
+  password        String
+  myServers       Server[]         @relation(name: "admin")
+  userSevers      UserSever[]
+  SenderMassages  DirectMassage[]  @relation(name: "sender")
+  receiverMessage DirectMassage[]  @relation(name: "receiver")
+  channelMassages ChannelMassage[] @relation(name: "ChannelMassageSender")
+  jointAt         DateTime         @default(now())
+}
+
+model Server {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String?
+  avatar_url  String?
+  admin_id    String
+  admin       User        @relation(references: [id], fields: [admin_id], name: "admin", onDelete: Cascade)
+  isPublic    Boolean     @default(false)
+  userSevers  UserSever[]
+  channels    Channel[]
+  createdAt   DateTime    @default(now())
+}
+
+enum enServerRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model UserSever {
+  id        String       @id @default(uuid())
+  serverId  String
+  server    Server       @relation(references: [id], fields: [serverId])
+  userId    String
+  user      User         @relation(references: [id], fields: [userId])
+  role      enServerRole @default(MEMBER)
+  createdAt DateTime     @default(now())
+
+  @@unique([userId, serverId])
+}
+
+enum enChannelType {
+  TEXT
+  VOICE
+}
+
+model Channel {
+  id              String           @id @default(uuid())
+  name            String
+  type            enChannelType    @default(TEXT)
+  serverId        String
+  server          Server           @relation(references: [id], fields: [serverId], onDelete: Cascade)
+  channelMassages ChannelMassage[]
+  createdAt       DateTime         @default(now())
+}
+
+model DirectMassage {
+  id         String   @id @default(uuid())
+  from       String
+  to         String
+  text       String?
+  imageUrl   String?
+  fromUser   User     @relation(references: [id], fields: [from], name: "sender")
+  toUser     User     @relation(references: [id], fields: [to], name: "receiver")
+  softDelete Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+}
+
+model ChannelMassage {
+  id         String   @id @default(uuid())
+  from       String
+  text       String?
+  imageUrl   String?
+  channelId  String
+  channel    Channel  @relation(fields: [channelId], references: [id])
+  fromUser   User     @relation(references: [id], fields: [from], name: "ChannelMassageSender")
+  softDelete Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
