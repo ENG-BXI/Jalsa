@@ -7,7 +7,7 @@ const Index = () => {
   const serverId = params.serverId;
   const navigate = useNavigate();
   useEffect(() => {
-    navigate(`server/${serverId}/general`);
+    navigate(`/server/${serverId}/general`);
   }, [navigate, serverId]);
   return null;
 };
