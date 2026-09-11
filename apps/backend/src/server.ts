@@ -4,7 +4,7 @@ import {env} from './config/env.js';
 import appRouter from './app.route.js';
 
 const app: Express = express();
-
+app.use(express.json());
 app.use('/api', appRouter);
 
 app.get('/', (req: Request, res: Response) => {

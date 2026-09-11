@@ -6,5 +6,11 @@ class UserRepository {
   constructor(db: PostgresClient<Contract>) {
     this.db = db;
   }
+  async getUserById(id: string) {
+    return await this.db.orm.public.User.where({id}).first()
+  }
+  async editUser() {
+    
+  }
 }
 export default UserRepository;
