@@ -7,6 +7,7 @@ export interface UserPayload {
   id: string;
   name: string;
   email: string;
+  userName: string;
 }
 
 export function generateToken(user: UserPayload): string {
