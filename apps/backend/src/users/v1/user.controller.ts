@@ -13,13 +13,28 @@ class UserController {
       const body = req.body as EditUserDto;
       const user = req.user;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const editedUser = await this.userService.editUser(user.id, body);
-      return res.status(HttpStatus.OK).json({message: 'Edit User Successful', data: editedUser});
+      const data = await this.userService.editUser(user.id, user, body);
+      return res.status(HttpStatus.OK).json({message: 'Edit User Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN EDIT USER ', error);
       console.log('====================================');
-      return res.status(HttpStatus.OK).json({message: 'Edit User Successful', data: null, error});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Edit User Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Edit User Failed', error: 'Unknown error'});
+    }
+  }
+  async deleteUser(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const deletedUser = await this.userService.deleteUser(user.id);
+      return res.status(HttpStatus.OK).json({message: 'Delete User Successful', deletedUser});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Delete USER ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Delete User Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Delete User Failed', error: 'Unknown error'});
     }
   }
 }
