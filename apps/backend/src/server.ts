@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import express, {type Express, type Request, type Response} from 'express';
+import 'temporal-polyfill/full/global';
+import express, { type Express, type Request, type Response } from 'express';
 import {env} from './config/env.js';
 import appRouter from './app.route.js';
 

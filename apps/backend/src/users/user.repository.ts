@@ -7,10 +7,14 @@ class UserRepository {
     this.db = db;
   }
   async getUserById(id: string) {
-    return await this.db.orm.public.User.where({id}).first()
+    return await this.db.orm.public.User.where({id}).first();
   }
-  async editUser() {
-    
+  async getUserByEmail(email: string) {
+    return await this.db.orm.public.User.where({email}).first();
   }
+  async getUserByUserName(userName: string) {
+    return await this.db.orm.public.User.where({userName}).first();
+  }
+  async editUser() {}
 }
 export default UserRepository;
