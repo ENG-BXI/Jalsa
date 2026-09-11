@@ -33,5 +33,11 @@ class UserService {
     }
     return {user: editedUser, token};
   }
+  async deleteUser(id: string) {
+    const findUser = await this.userRepository.getUserById(id);
+    if (!findUser) throw new Error('User Not Found');
+    const deletedUser = await this.userRepository.deleteUser(id);
+    return deletedUser
+  }
 }
 export default UserService;

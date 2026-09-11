@@ -20,5 +20,9 @@ class UserRepository {
     const editedUser = await this.db.orm.public.User.select('id', 'name', 'email', 'userName').where({id: userId}).update(body);
     return editedUser;
   }
+  async deleteUser(userId: string) {
+    const deletedUser = await this.db.orm.public.User.select('id', 'name', 'email', 'userName').where({id: userId}).delete();
+    return deletedUser;
+  }
 }
 export default UserRepository;
