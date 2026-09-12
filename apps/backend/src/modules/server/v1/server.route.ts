@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import {ServerController} from './server.controller.js';
-import {authMiddleWare} from '../../middlewares/auth.middleware.js';
-import {ValidationMiddleware} from '../../middlewares/validation.middleware.js';
+import {authMiddleWare} from '../../../middlewares/auth.middleware.js';
+import {ValidationMiddleware} from '../../../middlewares/validation.middleware.js';
 import {CreateServerDtoSchema} from '../dto/create-server.dto.js';
 import {EditServerDtoSchema} from '../dto/edit-server.dto.js';
 

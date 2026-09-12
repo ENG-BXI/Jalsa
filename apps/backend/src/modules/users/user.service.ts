@@ -1,4 +1,4 @@
-import {generateToken, UserPayload} from '../lib/jwt.js';
+import {generateToken, UserPayload} from '../../lib/jwt.js';
 import {EditUserDto} from './dto/edit-user.dto.js';
 import UserRepository from './user.repository.js';
 

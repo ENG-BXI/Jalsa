@@ -1,5 +1,5 @@
 import {generateToken} from '../../lib/jwt.js';
-import UserRepository from '../../users/user.repository.js';
+import UserRepository from '../users/user.repository.js';
 import {AuthRepository} from './auth.repository.js';
 import {LoginDto} from './dto/login.dto.js';
 import {RegisterDto} from './dto/register.dto.js';

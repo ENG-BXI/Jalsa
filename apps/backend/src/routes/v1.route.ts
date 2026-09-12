@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import {userRouteV1} from '../users/v1/index.js';
+import {userRouteV1} from '../modules/users/v1/index.js';
 import {authMiddleWare} from '../middlewares/auth.middleware.js';
 import authRoute from '../modules/auth/index.js';
-import serverRoute from '../server/v1/index.js';
+import serverRoute from '../modules/server/v1/index.js';
 
 const v1Route = Router();
 // All V1 Route Here For All Modules ....
