@@ -23,6 +23,14 @@ export class ServerRepository {
       })
       .all();
   }
+  async getAllMemberInMyServer(serverId: string) {
+    return await this.db.orm.public.UserSever.where({serverId})
+      .select('role')
+      .include('user', c => {
+        return c.select('id', 'name', 'userName', 'jointAt');
+      })
+      .all();
+  }
   async getAllPublicServer() {
     return await this.db.orm.public.Server.where({isPublic: true}).select('id', 'name', 'description', 'avatar_url').all();
   }

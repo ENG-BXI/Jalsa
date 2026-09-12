@@ -9,6 +9,7 @@ export class ServerService {
   }
   async getServerById(serverId: string, userId: string) {
     const server = await this.serverRepository.getServerById(serverId);
+    if (!server) throw new Error('Server not found');
     if (!server?.isPublic) {
       const userInServer = await this.serverRepository.isUserInServer(serverId, userId);
       if (!userInServer) {
@@ -20,6 +21,17 @@ export class ServerService {
   async getAllServerForMember(userId: string) {
     const allServer = await this.serverRepository.getAllServerForMember(userId);
     return allServer;
+  }
+  async getAllMemberInMyServer(serverId: string, userId: string) {
+    const server = await this.serverRepository.getServerById(serverId);
+    if (!server) throw new Error('Server not found');
+    const isUserInServer = await this.serverRepository.isUserInServer(serverId, userId);
+
+    if (!isUserInServer) {
+      throw new Error('User is not a member of this server');
+    }
+    const AllMember = await this.serverRepository.getAllMemberInMyServer(serverId);
+    return AllMember;
   }
   async getAllPublicServer() {
     const allServer = await this.serverRepository.getAllPublicServer();

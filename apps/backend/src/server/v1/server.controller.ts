@@ -38,6 +38,21 @@ export class ServerController {
       else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Server For Member Failed', error: 'Unknown error'});
     }
   }
+  async getAllMemberInMyServer(req: Request, res: Response) {
+    try {
+      const serverId = req.params.serverId as string;
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.getAllMemberInMyServer(serverId, user.id);
+      return res.status(HttpStatus.OK).json({message: 'Get All Members Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Get All Members ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Members Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Members Failed', error: 'Unknown error'});
+    }
+  }
   async getAllPublicServer(req: Request, res: Response) {
     try {
       const data = await this.serverService.getAllPublicServer();
@@ -71,13 +86,13 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.addUserToServer(user.id, serverId);
-      return res.status(HttpStatus.OK).json({message: 'Create Server Successful', data});
+      return res.status(HttpStatus.OK).json({message: 'Add User to Server Successful', data});
     } catch (error) {
       console.log('====================================');
-      console.log('ERROR IN Create Server ', error);
+      console.log('ERROR IN Add User to Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Create Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Create Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Add User to Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Add User to Server Failed', error: 'Unknown error'});
     }
   }
   async editServer(req: Request, res: Response) {
