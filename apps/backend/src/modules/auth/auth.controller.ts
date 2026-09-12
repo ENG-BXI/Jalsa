@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import {AuthServices} from './auth.services.js';
 import {LoginDto} from './dto/login.dto.js';
-import {HttpStatus} from '../lib/http-status.js';
+import {HttpStatus} from '../../lib/http-status.js';
 import {RegisterDto} from './dto/register.dto.js';
 
 export class AuthController {

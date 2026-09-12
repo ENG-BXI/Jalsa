@@ -127,6 +127,7 @@
               },
               "server": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "serverId"
@@ -180,7 +181,7 @@
                 }
               },
               "from": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -225,6 +226,7 @@
             "relations": {
               "channel": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "channelId"
@@ -240,6 +242,7 @@
               },
               "fromUser": {
                 "cardinality": "N:1",
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "from"
@@ -347,6 +350,7 @@
             "relations": {
               "fromUser": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "from"
@@ -362,6 +366,7 @@
               },
               "toUser": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "to"
@@ -462,6 +467,7 @@
             "relations": {
               "admin": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "admin_id"
@@ -728,6 +734,7 @@
             "relations": {
               "server": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "serverId"
@@ -743,6 +750,7 @@
               },
               "user": {
                 "cardinality": "N:1",
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "userId"
@@ -892,7 +900,7 @@
                 "from": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/text@1",
@@ -930,6 +938,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "channelId"
@@ -946,6 +955,7 @@
                   }
                 },
                 {
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "from"
@@ -1044,6 +1054,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "from"
@@ -1060,6 +1071,7 @@
                   }
                 },
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "to"
@@ -1297,6 +1309,7 @@
               },
               "foreignKeys": [
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "serverId"
@@ -1313,6 +1326,7 @@
                   }
                 },
                 {
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "userId"
@@ -1384,7 +1398,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "dfb9808e3f020f36d36115e50a354279dcb2927acc33727619b23718088d42bb"
+    "storageHash": "400d3b731455987cee5d94718d650968e761d8461ba8ad41e6f3702c9d152b02"
   },
   "execution": {
     "executionHash": "0db59b66d9a273682c48e7e0722ab57775c57d735e3202df03a78a92536f23cf",

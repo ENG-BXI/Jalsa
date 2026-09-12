@@ -1,4 +1,4 @@
-import {db} from '../prisma/db.js';
+import {db} from '../../prisma/db.js';
 import UserRepository from '../users/user.repository.js';
 import {AuthController} from './auth.controller.js';
 import {AuthRepository} from './auth.repository.js';
