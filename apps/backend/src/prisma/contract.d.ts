@@ -22,6 +22,7 @@ import type {
 
 import type {
   ContractWithTypeMaps,
+  RelationKeys,
   TypeMaps as TypeMapsType,
 } from '@prisma/orm-postgres/family-contract/types';
 import type {
@@ -33,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'dfb9808e3f020f36d36115e50a354279dcb2927acc33727619b23718088d42bb'>;
+  StorageHashBase<'400d3b731455987cee5d94718d650968e761d8461ba8ad41e6f3702c9d152b02'>;
 export type ExecutionHash =
   ExecutionHashBase<'0db59b66d9a273682c48e7e0722ab57775c57d735e3202df03a78a92536f23cf'>;
 export type ProfileHash =
@@ -250,7 +251,7 @@ export type FieldOutputTypes = {
     };
     readonly ChannelMassage: {
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly from: CodecTypes['pg/text@1']['output'];
+      readonly from: CodecTypes['pg/text@1']['output'] | null;
       readonly text: CodecTypes['pg/text@1']['output'] | null;
       readonly imageUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly channelId: CodecTypes['pg/text@1']['output'];
@@ -305,7 +306,7 @@ export type FieldInputTypes = {
     };
     readonly ChannelMassage: {
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly from: CodecTypes['pg/text@1']['input'];
+      readonly from: CodecTypes['pg/text@1']['input'] | null;
       readonly text: CodecTypes['pg/text@1']['input'] | null;
       readonly imageUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly channelId: CodecTypes['pg/text@1']['input'];
@@ -361,7 +362,7 @@ export type StorageColumnTypes = {
     readonly channelMassage: {
       readonly channelId: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
-      readonly from: CodecTypes['pg/text@1']['output'];
+      readonly from: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly imageUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly softDelete: CodecTypes['pg/bool@1']['output'];
@@ -416,7 +417,7 @@ export type StorageColumnInputTypes = {
     readonly channelMassage: {
       readonly channelId: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
-      readonly from: CodecTypes['pg/text@1']['input'];
+      readonly from: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly imageUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly softDelete: CodecTypes['pg/bool@1']['input'];
@@ -459,6 +460,95 @@ export type StorageColumnInputTypes = {
     };
   };
 };
+
+export namespace Models {
+  export type public_User = {
+    id: CodecTypes['pg/text@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    userName: CodecTypes['pg/text@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
+    password: CodecTypes['pg/text@1']['output'];
+    jointAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    SenderMassages: public_DirectMassage[];
+    channelMassages: public_ChannelMassage[];
+    myServers: public_Server[];
+    receiverMessage: public_DirectMassage[];
+    userSevers: public_UserSever[];
+    readonly [RelationKeys]?:
+      'SenderMassages' | 'channelMassages' | 'myServers' | 'receiverMessage' | 'userSevers';
+  };
+  export type public_Server = {
+    id: CodecTypes['pg/text@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    description: CodecTypes['pg/text@1']['output'] | null;
+    avatar_url: CodecTypes['pg/text@1']['output'] | null;
+    admin_id: CodecTypes['pg/text@1']['output'];
+    isPublic: CodecTypes['pg/bool@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    admin: public_User;
+    channels: public_Channel[];
+    userSevers: public_UserSever[];
+    readonly [RelationKeys]?: 'admin' | 'channels' | 'userSevers';
+  };
+  export type public_UserSever = {
+    id: CodecTypes['pg/text@1']['output'];
+    serverId: CodecTypes['pg/text@1']['output'];
+    userId: CodecTypes['pg/text@1']['output'];
+    role: 'OWNER' | 'ADMIN' | 'MEMBER';
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    server: public_Server;
+    user: public_User;
+    readonly [RelationKeys]?: 'server' | 'user';
+  };
+  export type public_Channel = {
+    id: CodecTypes['pg/text@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    type: 'TEXT' | 'VOICE';
+    serverId: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    channelMassages: public_ChannelMassage[];
+    server: public_Server;
+    readonly [RelationKeys]?: 'channelMassages' | 'server';
+  };
+  export type public_DirectMassage = {
+    id: CodecTypes['pg/text@1']['output'];
+    from: CodecTypes['pg/text@1']['output'];
+    to: CodecTypes['pg/text@1']['output'];
+    text: CodecTypes['pg/text@1']['output'] | null;
+    imageUrl: CodecTypes['pg/text@1']['output'] | null;
+    softDelete: CodecTypes['pg/bool@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    fromUser: public_User;
+    toUser: public_User;
+    readonly [RelationKeys]?: 'fromUser' | 'toUser';
+  };
+  export type public_ChannelMassage = {
+    id: CodecTypes['pg/text@1']['output'];
+    from: CodecTypes['pg/text@1']['output'] | null;
+    text: CodecTypes['pg/text@1']['output'] | null;
+    imageUrl: CodecTypes['pg/text@1']['output'] | null;
+    channelId: CodecTypes['pg/text@1']['output'];
+    softDelete: CodecTypes['pg/bool@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    channel: public_Channel;
+    fromUser: public_User | null;
+    readonly [RelationKeys]?: 'channel' | 'fromUser';
+  };
+}
+
+export declare const models: {
+  public: {
+    User: Models.public_User;
+    Server: Models.public_Server;
+    UserSever: Models.public_UserSever;
+    Channel: Models.public_Channel;
+    DirectMassage: Models.public_DirectMassage;
+    ChannelMassage: Models.public_ChannelMassage;
+  };
+};
+
 export type TypeMaps = TypeMapsType<
   CodecTypes,
   QueryOperationTypes,
@@ -545,7 +635,7 @@ type ContractBase = Omit<
                 readonly from: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                 };
                 readonly text: {
                   readonly nativeType: 'text';
@@ -987,6 +1077,7 @@ type ContractBase = Omit<
                   readonly model: 'Server';
                 };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['serverId'];
                   readonly targetFields: readonly ['id'];
@@ -1012,7 +1103,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly from: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly text: {
@@ -1053,6 +1144,7 @@ type ContractBase = Omit<
                   readonly model: 'Channel';
                 };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['channelId'];
                   readonly targetFields: readonly ['id'];
@@ -1061,6 +1153,7 @@ type ContractBase = Omit<
               readonly fromUser: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['from'];
                   readonly targetFields: readonly ['id'];
@@ -1127,6 +1220,7 @@ type ContractBase = Omit<
               readonly fromUser: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['from'];
                   readonly targetFields: readonly ['id'];
@@ -1135,6 +1229,7 @@ type ContractBase = Omit<
               readonly toUser: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['to'];
                   readonly targetFields: readonly ['id'];
@@ -1194,6 +1289,7 @@ type ContractBase = Omit<
               readonly admin: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['admin_id'];
                   readonly targetFields: readonly ['id'];
@@ -1369,6 +1465,7 @@ type ContractBase = Omit<
                   readonly model: 'Server';
                 };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['serverId'];
                   readonly targetFields: readonly ['id'];
@@ -1377,6 +1474,7 @@ type ContractBase = Omit<
               readonly user: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
+                readonly nullable: false;
                 readonly on: {
                   readonly localFields: readonly ['userId'];
                   readonly targetFields: readonly ['id'];

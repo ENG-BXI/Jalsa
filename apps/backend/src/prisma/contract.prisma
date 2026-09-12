@@ -1,4 +1,4 @@
-// use prisma-next
+// use prisma-8
 // Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
 
 model User {
@@ -37,9 +37,9 @@ enum enServerRole {
 model UserSever {
   id        String       @id @default(uuid())
   serverId  String
-  server    Server       @relation(references: [id], fields: [serverId])
+  server    Server       @relation(references: [id], fields: [serverId], onDelete: Cascade)
   userId    String
-  user      User         @relation(references: [id], fields: [userId])
+  user      User         @relation(references: [id], fields: [userId], onDelete: Cascade)
   role      enServerRole @default(MEMBER)
   createdAt DateTime     @default(now())
 
@@ -67,8 +67,8 @@ model DirectMassage {
   to         String
   text       String?
   imageUrl   String?
-  fromUser   User     @relation(references: [id], fields: [from], name: "sender")
-  toUser     User     @relation(references: [id], fields: [to], name: "receiver")
+  fromUser   User     @relation(references: [id], fields: [from], name: "sender", onDelete: Cascade)
+  toUser     User     @relation(references: [id], fields: [to], name: "receiver", onDelete: Cascade)
   softDelete Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
@@ -76,12 +76,12 @@ model DirectMassage {
 
 model ChannelMassage {
   id         String   @id @default(uuid())
-  from       String
+  from       String?
   text       String?
   imageUrl   String?
   channelId  String
-  channel    Channel  @relation(fields: [channelId], references: [id])
-  fromUser   User     @relation(references: [id], fields: [from], name: "ChannelMassageSender")
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  fromUser   User?    @relation(references: [id], fields: [from], name: "ChannelMassageSender", onDelete: SetNull)
   softDelete Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
