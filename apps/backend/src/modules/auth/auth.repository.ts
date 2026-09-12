@@ -1,5 +1,5 @@
 import type {PostgresClient} from '@prisma/orm-postgres/runtime';
-import type {Contract} from '../prisma/contract.d.ts';
+import type {Contract} from '../../prisma/contract.js';
 import {LoginDto} from './dto/login.dto.js';
 import {RegisterDto} from './dto/register.dto.js';
 

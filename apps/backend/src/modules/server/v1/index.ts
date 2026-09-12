@@ -1,4 +1,4 @@
-import { db } from '../../prisma/db.js';
+import { db } from '../../../prisma/db.js';
 import {ServerRepository} from '../server.repository.js';
 import {ServerService} from '../server.service.js';
 import {ServerController} from './server.controller.js';

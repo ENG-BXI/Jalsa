@@ -1,8 +1,8 @@
 import {Router} from 'express';
 import UserController from './user.controller.js';
-import {ValidationMiddleware} from '../../middlewares/validation.middleware.js';
+import {ValidationMiddleware} from '../../../middlewares/validation.middleware.js';
 import {EditUserDtoSchema} from '../dto/edit-user.dto.js';
-import {authMiddleWare} from '../../middlewares/auth.middleware.js';
+import {authMiddleWare} from '../../../middlewares/auth.middleware.js';
 class UserRoute {
   private userController;
   private router = Router();

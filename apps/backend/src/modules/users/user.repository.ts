@@ -1,5 +1,5 @@
 import type {PostgresClient} from '@prisma/orm-postgres/runtime';
-import type {Contract} from '../prisma/contract.d.ts';
+import type {Contract} from '../../prisma/contract.d.ts';
 import {EditUserDto} from './dto/edit-user.dto.js';
 
 class UserRepository {

@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import {ServerService} from '../server.service.js';
-import {HttpStatus} from '../../lib/http-status.js';
+import {HttpStatus} from '../../../lib/http-status.js';
 import {CreateServerDto} from '../dto/create-server.dto.js';
 import {EditServerDto} from '../dto/edit-server.dto.js';
 

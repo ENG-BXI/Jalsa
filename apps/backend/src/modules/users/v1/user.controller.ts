@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import UserService from '../user.service.js';
 import {EditUserDto} from '../dto/edit-user.dto.js';
-import {HttpStatus} from '../../lib/http-status.js';
+import {HttpStatus} from '../../../lib/http-status.js';
 
 class UserController {
   private userService: UserService;

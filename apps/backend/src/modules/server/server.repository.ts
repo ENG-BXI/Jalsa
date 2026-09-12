@@ -1,7 +1,7 @@
 import type {PostgresClient} from '@prisma/orm-postgres/runtime';
-import type {Contract} from '../prisma/contract.d.ts';
+import type {Contract} from '../../prisma/contract.d.ts';
 import {CreateServerDto} from './dto/create-server.dto.js';
-import {TUserRole} from '../enum/user.role.js';
+import {TUserRole} from '../../enum/user.role.js';
 import {EditServerDto} from './dto/edit-server.dto.js';
 
 export class ServerRepository {
