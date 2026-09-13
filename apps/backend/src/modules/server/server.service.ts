@@ -1,12 +1,15 @@
 import {TUserRole} from '../../enum/user.role.js';
+import {ChannelRepository} from '../channel/channel.repository.js';
 import {CreateServerDto} from './dto/create-server.dto.js';
 import {EditServerDto} from './dto/edit-server.dto.js';
 import {ServerRepository} from './server.repository.js';
 
 export class ServerService {
   private serverRepository: ServerRepository;
-  constructor(serverRepository: ServerRepository) {
+  private channelRepository: ChannelRepository;
+  constructor(serverRepository: ServerRepository, channelRepository: ChannelRepository) {
     this.serverRepository = serverRepository;
+    this.channelRepository = channelRepository;
   }
   async getServerById(serverId: string, userId: string) {
     const server = await this.serverRepository.getServerById(serverId);
@@ -45,6 +48,8 @@ export class ServerService {
     }
     const createServer = await this.serverRepository.createServer(userId, body);
     await this.serverRepository.addUserToServer(userId, createServer.id, 'ADMIN');
+    // Add General Channel as Default Channel in New Server
+    await this.channelRepository.createChannel({name: 'general', serverId: createServer.id, type: 'TEXT'});
     return createServer;
   }
   async addUserToServer(userId: string, serverId: string) {
