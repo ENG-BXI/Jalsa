@@ -4,9 +4,10 @@ import {ChannelRepository} from './channel.repository.js';
 import {ServerRepository} from '../server/server.repository.js';
 
 export class ChannelService {
-  private channelRepository: ChannelRepository;
-  private serverRepository: ServerRepository;
-  constructor(channelRepository: ChannelRepository, serverRepository: ServerRepository) {
+  constructor(
+    private channelRepository: ChannelRepository,
+    private serverRepository: ServerRepository
+  ) {
     this.channelRepository = channelRepository;
     this.serverRepository = serverRepository;
   }

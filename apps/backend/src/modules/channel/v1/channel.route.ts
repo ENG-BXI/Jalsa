@@ -6,9 +6,8 @@ import {CreateChannelDtoSchema} from '../dto/create-channel.dto.js';
 import {EditChannelDtoSchema} from '../dto/edit-channel.dto.js';
 
 export class ChannelRoute {
-  private channelController: ChannelController;
   private router: Router;
-  constructor(channelController: ChannelController) {
+  constructor(private channelController: ChannelController) {
     this.channelController = channelController;
     this.router = Router();
     this.router.get('/server/:serverId', authMiddleWare, (req, res) => this.channelController.getAllChannelsInServer(req, res));

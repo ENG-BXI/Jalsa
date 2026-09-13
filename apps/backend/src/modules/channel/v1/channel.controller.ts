@@ -5,8 +5,7 @@ import {CreateChannelDto} from '../dto/create-channel.dto.js';
 import {EditChannelDto} from '../dto/edit-channel.dto.js';
 
 export class ChannelController {
-  private channelService: ChannelService;
-  constructor(channelService: ChannelService) {
+  constructor(private channelService: ChannelService) {
     this.channelService = channelService;
   }
   async getChannelById(req: Request, res: Response) {
