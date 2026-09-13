@@ -38,7 +38,7 @@ export class ServerRepository {
     //TODO: Implement Avatar Server
     const newServer = await this.db.orm.public.Server.select('id', 'name', 'description', 'isPublic').create({
       ...body,
-      admin_id: userId
+      owner_id: userId
     });
     return newServer;
   }
@@ -63,5 +63,18 @@ export class ServerRepository {
   async leaveUserFromServer(serverId: string, userId: string) {
     const leaveUser = await this.db.orm.public.UserSever.where({userId, serverId}).delete();
     return leaveUser;
+  }
+  async changeRoleInServer(serverId: string, memberId: string, role: TUserRole) {
+    const changedRole = await this.db.orm.public.UserSever.where({userId: memberId, serverId}).update({role});
+    return changedRole;
+  }
+  async isUserIsAdminOrAdminOfServer(userId: string, serverId: string) {
+    const user = await this.db.orm.public.UserSever.where({userId, serverId}).first();
+    const isUserAdminOrAdmin = user?.role == 'ADMIN' || user?.role == 'OWNER';
+    return isUserAdminOrAdmin;
+  }
+  async getRoleOfUser(userId: string, serverId: string) {
+    const user = await this.db.orm.public.UserSever.where({userId, serverId}).first();
+    return user?.role;
   }
 }

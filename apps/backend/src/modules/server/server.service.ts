@@ -1,3 +1,4 @@
+import {TUserRole} from '../../enum/user.role.js';
 import {CreateServerDto} from './dto/create-server.dto.js';
 import {EditServerDto} from './dto/edit-server.dto.js';
 import {ServerRepository} from './server.repository.js';
@@ -59,16 +60,16 @@ export class ServerService {
   async editServer(userId: string, serverId: string, body: EditServerDto) {
     const server = await this.serverRepository.getServerById(serverId);
     if (!server) throw new Error('Server not found');
-    const isUserIsAdminForThisServer = server.admin_id == userId;
-    if (!isUserIsAdminForThisServer) throw new Error('Only the server admin can edit this server');
+    const isUserAdmin = await this.serverRepository.isUserIsAdminOrAdminOfServer(userId, serverId);
+    if (!isUserAdmin) throw new Error('Only the server (admin| owner) can edit this server');
     const editedServer = await this.serverRepository.editServer(serverId, body);
     return editedServer;
   }
   async deleteServer(userId: string, serverId: string) {
     const server = await this.serverRepository.getServerById(serverId);
     if (!server) throw new Error('Server not found');
-    const isUserIsAdminForThisServer = server.admin_id == userId;
-    if (!isUserIsAdminForThisServer) throw new Error('Only the server admin can delete this server');
+    const isUserIsAdminForThisServer = server.owner_id == userId;
+    if (!isUserIsAdminForThisServer) throw new Error('Only the server Owner can delete this server');
     const deletedServer = await this.serverRepository.deleteServer(serverId);
     return deletedServer;
   }
@@ -79,5 +80,18 @@ export class ServerService {
     if (isUserIsAdminForThisServer) throw new Error('Server admin cannot leave the server');
     const leaverServer = await this.serverRepository.leaveUserFromServer(serverId, userId);
     return leaverServer;
+  }
+  async changeRoleInServer(serverId: string, userId: string, memberId: string, role: TUserRole) {
+    const server = await this.serverRepository.getServerById(serverId);
+    if (!server) throw new Error('Server not found');
+    if (memberId == server.owner_id) throw new Error('Cannot change the server owner role');
+    const isUserAdminOrAdmin = await this.serverRepository.isUserIsAdminOrAdminOfServer(userId, serverId);
+    if (!isUserAdminOrAdmin) throw new Error('Only the server (admin | owner) can change member roles');
+    const memberRole = await this.serverRepository.getRoleOfUser(memberId, serverId);
+    if (memberRole === role) {
+      throw new Error('User already has this role');
+    }
+    const changeRole = await this.serverRepository.changeRoleInServer(serverId, memberId, role);
+    return changeRole;
   }
 }
