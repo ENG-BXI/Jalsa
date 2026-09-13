@@ -82,6 +82,7 @@ export class ServerService {
     return leaverServer;
   }
   async changeRoleInServer(serverId: string, userId: string, memberId: string, role: TUserRole) {
+    if (role == 'OWNER') throw new Error('The owner role cannot be assigned');
     const server = await this.serverRepository.getServerById(serverId);
     if (!server) throw new Error('Server not found');
     if (memberId == server.owner_id) throw new Error('Cannot change the server owner role');
