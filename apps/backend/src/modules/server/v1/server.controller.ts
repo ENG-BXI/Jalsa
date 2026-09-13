@@ -3,6 +3,7 @@ import {ServerService} from '../server.service.js';
 import {HttpStatus} from '../../../lib/http-status.js';
 import {CreateServerDto} from '../dto/create-server.dto.js';
 import {EditServerDto} from '../dto/edit-server.dto.js';
+import {ChangeRoleDto} from '../dto/change-role.dto.js';
 
 export class ServerController {
   private serverService: ServerService;
@@ -139,6 +140,22 @@ export class ServerController {
       console.log('====================================');
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Leave From Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Leave From Server Failed', error: 'Unknown error'});
+    }
+  }
+  async changeRoleInServer(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const serverId = req.params.serverId as string;
+      const {memberId, role} = req.body as ChangeRoleDto;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.changeRoleInServer(serverId, user.id, memberId, role);
+      return res.status(HttpStatus.OK).json({message: 'Change Role Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Change Role ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Change Role Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Change Role Failed', error: 'Unknown error'});
     }
   }
 }

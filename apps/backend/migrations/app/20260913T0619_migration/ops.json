@@ -1,0 +1,80 @@
+[
+  {
+    "id": "rename.server.admin_id-to-owner_id",
+    "label": "Rename column \"admin_id\" to \"owner_id\" on \"server\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "\"admin_id\" still exists",
+        "sql": "SELECT EXISTS (\n              SELECT 1 FROM information_schema.columns\n              WHERE table_schema = 'public' AND table_name = 'server' AND column_name = 'admin_id'\n            )"
+      }
+    ],
+    "execute": [
+      {
+        "description": "Rename the column",
+        "sql": "ALTER TABLE \"public\".\"server\" RENAME COLUMN \"admin_id\" TO \"owner_id\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "\"owner_id\" now exists",
+        "sql": "SELECT EXISTS (\n              SELECT 1 FROM information_schema.columns\n              WHERE table_schema = 'public' AND table_name = 'server' AND column_name = 'owner_id'\n            )"
+      }
+    ]
+  },
+  {
+    "id": "rename.server.admin_id_fkey-to-owner_id_fkey",
+    "label": "Rename constraint \"server_admin_id_fkey\" to \"server_owner_id_fkey\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "old constraint name still exists",
+        "sql": "SELECT EXISTS (\n              SELECT 1 FROM pg_constraint WHERE conname = 'server_admin_id_fkey'\n            )"
+      }
+    ],
+    "execute": [
+      {
+        "description": "Rename the foreign key constraint",
+        "sql": "ALTER TABLE \"public\".\"server\" RENAME CONSTRAINT \"server_admin_id_fkey\" TO \"server_owner_id_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "new constraint name now exists",
+        "sql": "SELECT EXISTS (\n              SELECT 1 FROM pg_constraint WHERE conname = 'server_owner_id_fkey'\n            )"
+      }
+    ]
+  },
+  {
+    "id": "rename.server.admin_id_idx-to-owner_id_idx",
+    "label": "Rename index \"server_admin_id_idx_78cc3551\" to \"server_owner_id_idx_ade9f347\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "old index name still exists",
+        "sql": "SELECT EXISTS (\n              SELECT 1 FROM pg_class WHERE relname = 'server_admin_id_idx_78cc3551'\n            )"
+      }
+    ],
+    "execute": [
+      {
+        "description": "Rename the index",
+        "sql": "ALTER INDEX \"server_admin_id_idx_78cc3551\" RENAME TO \"server_owner_id_idx_ade9f347\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "new index name now exists",
+        "sql": "SELECT EXISTS (\n              SELECT 1 FROM pg_class WHERE relname = 'server_owner_id_idx_ade9f347'\n            )"
+      }
+    ]
+  }
+]
