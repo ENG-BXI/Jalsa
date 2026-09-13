@@ -414,13 +414,6 @@
           },
           "Server": {
             "fields": {
-              "admin_id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "avatar_url": {
                 "nullable": true,
                 "type": {
@@ -462,25 +455,16 @@
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
+              },
+              "owner_id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
               }
             },
             "relations": {
-              "admin": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "admin_id"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              },
               "channels": {
                 "cardinality": "1:N",
                 "on": {
@@ -493,6 +477,22 @@
                 },
                 "to": {
                   "model": "Channel",
+                  "namespace": "public"
+                }
+              },
+              "owner": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "owner_id"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
                   "namespace": "public"
                 }
               },
@@ -514,9 +514,6 @@
             },
             "storage": {
               "fields": {
-                "admin_id": {
-                  "column": "admin_id"
-                },
                 "avatar_url": {
                   "column": "avatar_url"
                 },
@@ -534,6 +531,9 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "owner_id": {
+                  "column": "owner_id"
                 }
               },
               "namespaceId": "public",
@@ -623,7 +623,7 @@
                     "id"
                   ],
                   "targetFields": [
-                    "admin_id"
+                    "owner_id"
                   ]
                 },
                 "to": {
@@ -1115,11 +1115,6 @@
             },
             "server": {
               "columns": {
-                "admin_id": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
                 "avatar_url": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -1157,6 +1152,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "owner_id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
                 }
               },
               "foreignKeys": [
@@ -1164,7 +1164,7 @@
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
-                      "admin_id"
+                      "owner_id"
                     ],
                     "namespaceId": "public",
                     "tableName": "server"
@@ -1181,10 +1181,10 @@
               "indexes": [
                 {
                   "columns": [
-                    "admin_id"
+                    "owner_id"
                   ],
-                  "name": "server_admin_id_idx_78cc3551",
-                  "prefix": "server_admin_id_idx",
+                  "name": "server_owner_id_idx_ade9f347",
+                  "prefix": "server_owner_id_idx",
                   "unique": false
                 }
               ],
@@ -1398,7 +1398,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "400d3b731455987cee5d94718d650968e761d8461ba8ad41e6f3702c9d152b02"
+    "storageHash": "220d672b24fc7e149173039158f74321d18f270cba36d9b5f158bb25af71c951"
   },
   "execution": {
     "executionHash": "0db59b66d9a273682c48e7e0722ab57775c57d735e3202df03a78a92536f23cf",

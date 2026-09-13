@@ -7,7 +7,7 @@ model User {
   userName        String           @unique
   email           String           @unique
   password        String
-  myServers       Server[]         @relation(name: "admin")
+  myServers       Server[]         @relation(name: "owner")
   userSevers      UserSever[]
   SenderMassages  DirectMassage[]  @relation(name: "sender")
   receiverMessage DirectMassage[]  @relation(name: "receiver")
@@ -20,8 +20,8 @@ model Server {
   name        String      @unique
   description String?
   avatar_url  String?
-  admin_id    String
-  admin       User        @relation(references: [id], fields: [admin_id], name: "admin", onDelete: Cascade)
+  owner_id    String
+  owner       User        @relation(references: [id], fields: [owner_id], name: "owner", onDelete: Cascade)
   isPublic    Boolean     @default(false)
   userSevers  UserSever[]
   channels    Channel[]

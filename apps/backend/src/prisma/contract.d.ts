@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'400d3b731455987cee5d94718d650968e761d8461ba8ad41e6f3702c9d152b02'>;
+  StorageHashBase<'220d672b24fc7e149173039158f74321d18f270cba36d9b5f158bb25af71c951'>;
 export type ExecutionHash =
   ExecutionHashBase<'0db59b66d9a273682c48e7e0722ab57775c57d735e3202df03a78a92536f23cf'>;
 export type ProfileHash =
@@ -274,7 +274,7 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly avatar_url: CodecTypes['pg/text@1']['output'] | null;
-      readonly admin_id: CodecTypes['pg/text@1']['output'];
+      readonly owner_id: CodecTypes['pg/text@1']['output'];
       readonly isPublic: CodecTypes['pg/bool@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
@@ -329,7 +329,7 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly avatar_url: CodecTypes['pg/text@1']['input'] | null;
-      readonly admin_id: CodecTypes['pg/text@1']['input'];
+      readonly owner_id: CodecTypes['pg/text@1']['input'];
       readonly isPublic: CodecTypes['pg/bool@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
@@ -380,13 +380,13 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
     readonly server: {
-      readonly admin_id: CodecTypes['pg/text@1']['output'];
       readonly avatar_url: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly isPublic: CodecTypes['pg/bool@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly owner_id: CodecTypes['pg/text@1']['output'];
     };
     readonly user: {
       readonly email: CodecTypes['pg/text@1']['output'];
@@ -435,13 +435,13 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
     readonly server: {
-      readonly admin_id: CodecTypes['pg/text@1']['input'];
       readonly avatar_url: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly isPublic: CodecTypes['pg/bool@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly owner_id: CodecTypes['pg/text@1']['input'];
     };
     readonly user: {
       readonly email: CodecTypes['pg/text@1']['input'];
@@ -482,13 +482,13 @@ export namespace Models {
     name: CodecTypes['pg/text@1']['output'];
     description: CodecTypes['pg/text@1']['output'] | null;
     avatar_url: CodecTypes['pg/text@1']['output'] | null;
-    admin_id: CodecTypes['pg/text@1']['output'];
+    owner_id: CodecTypes['pg/text@1']['output'];
     isPublic: CodecTypes['pg/bool@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
-    admin: public_User;
     channels: public_Channel[];
+    owner: public_User;
     userSevers: public_UserSever[];
-    readonly [RelationKeys]?: 'admin' | 'channels' | 'userSevers';
+    readonly [RelationKeys]?: 'channels' | 'owner' | 'userSevers';
   };
   export type public_UserSever = {
     id: CodecTypes['pg/text@1']['output'];
@@ -831,7 +831,7 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                 };
-                readonly admin_id: {
+                readonly owner_id: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
@@ -856,9 +856,9 @@ type ContractBase = Omit<
               uniques: readonly [{ readonly columns: readonly ['name'] }];
               indexes: readonly [
                 {
-                  readonly name: 'server_admin_id_idx_78cc3551';
-                  readonly prefix: 'server_admin_id_idx';
-                  readonly columns: readonly ['admin_id'];
+                  readonly name: 'server_owner_id_idx_ade9f347';
+                  readonly prefix: 'server_owner_id_idx';
+                  readonly columns: readonly ['owner_id'];
                   readonly unique: false;
                 },
               ];
@@ -867,7 +867,7 @@ type ContractBase = Omit<
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'server';
-                    readonly columns: readonly ['admin_id'];
+                    readonly columns: readonly ['owner_id'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -1269,7 +1269,7 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly admin_id: {
+              readonly owner_id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -1286,15 +1286,6 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
-              readonly admin: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['admin_id'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
               readonly channels: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1304,6 +1295,15 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['serverId'];
+                };
+              };
+              readonly owner: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['owner_id'];
+                  readonly targetFields: readonly ['id'];
                 };
               };
               readonly userSevers: {
@@ -1326,7 +1326,7 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly description: { readonly column: 'description' };
                 readonly avatar_url: { readonly column: 'avatar_url' };
-                readonly admin_id: { readonly column: 'admin_id' };
+                readonly owner_id: { readonly column: 'owner_id' };
                 readonly isPublic: { readonly column: 'isPublic' };
                 readonly createdAt: { readonly column: 'createdAt' };
               };
@@ -1393,7 +1393,7 @@ type ContractBase = Omit<
                 readonly cardinality: '1:N';
                 readonly on: {
                   readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['admin_id'];
+                  readonly targetFields: readonly ['owner_id'];
                 };
               };
               readonly receiverMessage: {
