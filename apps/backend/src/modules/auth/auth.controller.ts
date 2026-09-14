@@ -13,31 +13,31 @@ export class AuthController {
     try {
       const body = req.body as LoginDto;
       const token = await this.authServices.login(body);
-      return res.status(HttpStatus.OK).json({massage: 'Login Successful', data: token});
+      return res.status(HttpStatus.OK).json({message: 'Login Successful', data: token});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR in LOGIN', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Login Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Login Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Login Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Login Failed', error: 'Unknown error'});
     }
   }
   async register(req: Request, res: Response) {
     try {
       const body = req.body as RegisterDto;
       const newUserAndToken = await this.authServices.register(body);
-      return res.status(HttpStatus.OK).json({massage: 'Register Successful', data: newUserAndToken});
+      return res.status(HttpStatus.OK).json({message: 'Register Successful', data: newUserAndToken});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR in Register', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Register Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Register Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Register Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Register Failed', error: 'Unknown error'});
     }
   }
   async me(req: Request, res: Response) {
     const user = req.user;
     if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-    return res.status(HttpStatus.OK).json({massage: 'Get User Me Successful', data: user});
+    return res.status(HttpStatus.OK).json({message: 'Get User Me Successful', data: user});
   }
 }
