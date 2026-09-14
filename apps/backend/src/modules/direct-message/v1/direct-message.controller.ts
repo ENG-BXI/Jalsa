@@ -1,0 +1,73 @@
+import {Request, Response} from 'express';
+import {DirectMessageService} from '../direct-message.service.js';
+import {HttpStatus} from '../../../lib/http-status.js';
+import {MessageDto} from '../dto/message-dto.dto.js';
+
+export class DirectMessageController {
+  private directMessageService: DirectMessageService;
+  constructor(directMessageService: DirectMessageService) {
+    this.directMessageService = directMessageService;
+  }
+  async getAllMessage(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const receiverId = req.params.receiverId as string;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.directMessageService.getAllMessages(user.id, receiverId);
+      return res.status(HttpStatus.OK).json({message: 'Get All Message Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Get All Message ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Message Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Message Failed', error: 'Unknown error'});
+    }
+  }
+  async sendMessage(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const receiverId = req.params.receiverId as string;
+      const message = req.body as MessageDto;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.directMessageService.sendMessage(user.id, receiverId, message);
+      return res.status(HttpStatus.OK).json({message: 'Send Message Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Send Message ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Send Message Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Send Message Failed', error: 'Unknown error'});
+    }
+  }
+  async editMessage(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const messageId = req.params.messageId as string;
+      const message = req.body as MessageDto;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.directMessageService.editMessage(user.id, messageId, message);
+      return res.status(HttpStatus.OK).json({message: 'Edit Message Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Edit Message ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Message Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Message Failed', error: 'Unknown error'});
+    }
+  }
+  async deleteMessage(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const messageId = req.params.messageId as string;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.directMessageService.deleteMessage(user.id, messageId);
+      return res.status(HttpStatus.OK).json({message: 'Delete Message Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Delete Message ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Delete Message Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Delete Message Failed', error: 'Unknown error'});
+    }
+  }
+}
