@@ -10,10 +10,8 @@ export class DirectMessageService {
     this.userRepository = userRepository;
   }
   async getAllMessages(userId: string, receiverId: string) {
-    const [existUser, existReceiverUser] = await Promise.all([this.userRepository.getUserById(userId), this.userRepository.getUserById(receiverId)]);
-    if (!existUser) {
-      throw new Error('User not found');
-    }
+    const existReceiverUser = await this.userRepository.getUserById(receiverId);
+
     if (!existReceiverUser) {
       throw new Error('Receiver user not found');
     }
@@ -21,10 +19,8 @@ export class DirectMessageService {
     return allMessage;
   }
   async sendMessage(userId: string, receiverId: string, message: MessageDto) {
-    const [existUser, existReceiverUser] = await Promise.all([this.userRepository.getUserById(userId), this.userRepository.getUserById(receiverId)]);
-    if (!existUser) {
-      throw new Error('User not found');
-    }
+    const existReceiverUser = await this.userRepository.getUserById(receiverId);
+
     if (!existReceiverUser) {
       throw new Error('Receiver user not found');
     }
@@ -32,10 +28,6 @@ export class DirectMessageService {
     return sendMessage;
   }
   async editMessage(userId: string, messageId: string, message: MessageDto) {
-    const existUser = await this.userRepository.getUserById(userId);
-    if (!existUser) {
-      throw new Error('User not found');
-    }
     const existMessage = await this.directMessageRepository.getMessageById(userId, messageId);
     if (!existMessage) {
       throw new Error('Message not found');
@@ -44,10 +36,6 @@ export class DirectMessageService {
     return editedMessage;
   }
   async deleteMessage(userId: string, messageId: string) {
-    const existUser = await this.userRepository.getUserById(userId);
-    if (!existUser) {
-      throw new Error('User not found');
-    }
     const existMessage = await this.directMessageRepository.getMessageById(userId, messageId);
     if (!existMessage) {
       throw new Error('Message not found');
