@@ -139,6 +139,8 @@
   --color-dialog-primary: #242429;
   --color-border-1: #2E2F34;
   --color-text-1: #7F8088;
+  --color-brand: #5869F5;
+  --color-brand-hover: #4758C4;
 }
 
 @utility no-scrollbar {
