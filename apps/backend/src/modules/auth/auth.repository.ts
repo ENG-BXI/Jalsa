@@ -9,7 +9,7 @@ export class AuthRepository {
     this.db = db;
   }
   async login(body: LoginDto) {
-    const user = await this.db.orm.public.User.where({email: body.email, password: body.password}).select('id', 'email', 'name', 'userName').first();
+    const user = await this.db.orm.public.User.where({email: body.email, password: body.password}).select('id', 'email', 'name', 'userName','jointAt').first();
     return user;
   }
   async register(body: RegisterDto) {

@@ -36,8 +36,16 @@ export class AuthController {
     }
   }
   async me(req: Request, res: Response) {
-    const user = req.user;
-    if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-    return res.status(HttpStatus.OK).json({message: 'Get User Me Successful', data: user});
+    try {
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      return res.status(HttpStatus.OK).json({message: 'Get User Me Successful', data: user});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR in Me', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Me Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Me Failed', error: 'Unknown error'});
+    }
   }
 }

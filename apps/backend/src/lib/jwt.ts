@@ -8,6 +8,7 @@ export interface UserPayload {
   name: string;
   email: string;
   userName: string;
+  jointAt: string;
 }
 
 export function generateToken(user: UserPayload): string {
