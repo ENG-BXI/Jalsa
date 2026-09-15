@@ -17,7 +17,7 @@ class UserRepository {
     return await this.db.orm.public.User.where({userName}).first();
   }
   async editUser(userId: string, body: EditUserDto) {
-    const editedUser = await this.db.orm.public.User.select('id', 'name', 'email', 'userName').where({id: userId}).update(body);
+    const editedUser = await this.db.orm.public.User.select('id', 'name', 'email', 'userName','jointAt').where({id: userId}).update(body);
     return editedUser;
   }
   async deleteUser(userId: string) {
