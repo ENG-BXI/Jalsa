@@ -13,7 +13,7 @@ export class ChannelMessageController {
       const user = req.user;
       const channelId = req.params.channelId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.channelMessageService.getAllMessages(channelId);
+      const data = await this.channelMessageService.getAllMessages(user.id, channelId);
       return res.status(HttpStatus.OK).json({message: 'Get All Message Successful', data});
     } catch (error) {
       console.log('====================================');

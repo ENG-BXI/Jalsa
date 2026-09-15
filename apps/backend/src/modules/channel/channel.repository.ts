@@ -24,4 +24,8 @@ export class ChannelRepository {
   async deleteChannel(channelId: string) {
     return await this.db.orm.public.Channel.where({id: channelId}).delete();
   }
+  async isUserInServer(userId: string, serverId: string) {
+    const user = await this.db.orm.public.UserSever.where({userId, serverId}).select('userId', 'role');
+    return user;
+  }
 }
