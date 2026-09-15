@@ -20,7 +20,7 @@ export class AuthServices {
     const loggingUser = await this.authRepository.login(body);
     if (!loggingUser) throw new Error('Email or Password is incorrect');
     const token = generateToken(loggingUser);
-    return token;
+    return {user: loggingUser, token};
   }
   async register(body: RegisterDto) {
     const existUser = await this.userRepository.getUserByEmail(body.email);
