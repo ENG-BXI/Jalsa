@@ -1,37 +1,68 @@
 import App from '@/App';
+import AuthLayout from '@/layout/auth-layout';
+import AuthMiddleware from '@/middleware/auth.middleware';
+import GuestMiddleware from '@/middleware/guest.middleware';
 import {createBrowserRouter} from 'react-router';
 
 const Routers = createBrowserRouter([
   {
-    path: '/',
-    Component: () => <App />,
+    element: <AuthMiddleware />,
     children: [
       {
-        path: '/server/:serverId',
+        path: '/',
+        Component: App,
         children: [
           {
-            index: true,
-            lazy: async () => {
-              const {default: Component} = await import('@/feature/server');
-              return {Component};
-            }
+            path: 'server/:serverId',
+            children: [
+              {
+                index: true,
+                lazy: async () => {
+                  const {default: Component} = await import('@/feature/server');
+                  return {Component};
+                }
+              },
+              {
+                path: ':channelName',
+                lazy: async () => {
+                  const {default: Component} = await import('@/feature/server/text-channel');
+                  return {Component};
+                }
+              }
+            ]
           },
           {
-            path: ':channelName',
+            path: 'direct-message',
             lazy: async () => {
-              // TODO Add Channel Page Here
-              const {default: Component} = await import('@/feature/server/text-channel');
+              const {default: Component} = await import('@/feature/direct-message');
               return {Component};
             }
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    element: <GuestMiddleware />,
+    children: [
       {
-        path: 'direct-message',
-        lazy: async () => {
-          const {default: Component} = await import('@/feature/direct-message');
-          return {Component};
-        }
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'login',
+            lazy: async () => {
+              const {default: Component} = await import('@/feature/auth/login');
+              return {Component};
+            }
+          },
+          {
+            path: 'register',
+            lazy: async () => {
+              const {default: Component} = await import('@/feature/auth/register');
+              return {Component};
+            }
+          }
+        ]
       }
     ]
   }

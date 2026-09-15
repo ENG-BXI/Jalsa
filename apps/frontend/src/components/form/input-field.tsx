@@ -12,11 +12,12 @@ interface InputFieldProps<T extends FieldValues> {
   control: Control<T>;
   register: UseControllerProps<T>;
   placeholder?: string;
+  required?: boolean;
   description?: string;
   props?: React.ComponentProps<'input'>;
 }
 
-function InputField<T extends FieldValues>({label, labelClassName, description, className, inputClassName, placeholder, register, control, props}: InputFieldProps<T>) {
+function InputField<T extends FieldValues>({label, labelClassName, required = false, description, className, inputClassName, placeholder, register, control, props}: InputFieldProps<T>) {
   return (
     <Controller
       {...register}
@@ -25,7 +26,7 @@ function InputField<T extends FieldValues>({label, labelClassName, description, 
         <Field className={cn(className)}>
           {label && (
             <FieldLabel htmlFor={props?.id} className={cn(labelClassName)}>
-              {label}
+              {label} {required&&<span className='text-red-500'>*</span>}
             </FieldLabel>
           )}
           <Input {...field} placeholder={placeholder} {...props} className={cn(inputClassName)} />

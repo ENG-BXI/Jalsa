@@ -1,1 +1,4 @@
-// export type TExample = {};
+export type TResponse<T> = {
+  message: string;
+  data: T;
+};
