@@ -19,8 +19,8 @@ class UserController {
       console.log('====================================');
       console.log('ERROR IN EDIT USER ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Edit User Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Edit User Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit User Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit User Failed', error: 'Unknown error'});
     }
   }
   async deleteUser(req: Request, res: Response) {
@@ -33,8 +33,8 @@ class UserController {
       console.log('====================================');
       console.log('ERROR IN Delete USER ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Delete User Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Delete User Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Delete User Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Delete User Failed', error: 'Unknown error'});
     }
   }
 }

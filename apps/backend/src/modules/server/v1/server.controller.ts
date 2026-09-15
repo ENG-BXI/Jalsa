@@ -21,8 +21,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Get Server By Id ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get Server By Id Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get Server By Id Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Server By Id Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Server By Id Failed', error: 'Unknown error'});
     }
   }
   async getAllServerForMember(req: Request, res: Response) {
@@ -35,8 +35,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Get All Server For Member ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Server For Member Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Server For Member Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Server For Member Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Server For Member Failed', error: 'Unknown error'});
     }
   }
   async getAllMemberInMyServer(req: Request, res: Response) {
@@ -50,8 +50,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Get All Members ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Members Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Members Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Members Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Members Failed', error: 'Unknown error'});
     }
   }
   async getAllPublicServer(req: Request, res: Response) {
@@ -62,8 +62,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Get All Public Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Public Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Get All Public Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Public Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Public Server Failed', error: 'Unknown error'});
     }
   }
   async createServer(req: Request, res: Response) {
@@ -77,8 +77,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Create Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Create Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Create Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: 'Unknown error'});
     }
   }
   async addUserToServer(req: Request, res: Response) {
@@ -92,8 +92,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Add User to Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Add User to Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Add User to Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Add User to Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Add User to Server Failed', error: 'Unknown error'});
     }
   }
   async editServer(req: Request, res: Response) {
@@ -108,8 +108,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Edit Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Edit Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Edit Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Server Failed', error: 'Unknown error'});
     }
   }
   async deleteServer(req: Request, res: Response) {
@@ -123,8 +123,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Delete Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Delete Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Delete Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Delete Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Delete Server Failed', error: 'Unknown error'});
     }
   }
   async leaveUserFromServer(req: Request, res: Response) {
@@ -138,8 +138,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Leave From Server ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Leave From Server Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Leave From Server Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Leave From Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Leave From Server Failed', error: 'Unknown error'});
     }
   }
   async changeRoleInServer(req: Request, res: Response) {
@@ -154,8 +154,8 @@ export class ServerController {
       console.log('====================================');
       console.log('ERROR IN Change Role ', error);
       console.log('====================================');
-      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Change Role Failed', error: error.message});
-      else return res.status(HttpStatus.BAD_REQUEST).json({massage: 'Change Role Failed', error: 'Unknown error'});
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Change Role Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Change Role Failed', error: 'Unknown error'});
     }
   }
 }
