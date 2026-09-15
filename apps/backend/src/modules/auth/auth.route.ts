@@ -13,6 +13,7 @@ class AuthRouter {
     this.router.post('/login', ValidationMiddleware(LoginDtoSchema), (req, res) => this.authController.login(req, res));
     this.router.post('/register', ValidationMiddleware(RegisterDtoSchema), (req, res) => this.authController.register(req, res));
     this.router.get('/me', authMiddleWare, (req, res) => this.authController.me(req, res));
+    this.router.post('/is-user-name-available', (req, res) => this.authController.isUserNameAvailable(req, res));
   }
   getRoutes() {
     return this.router;

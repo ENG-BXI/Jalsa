@@ -48,4 +48,17 @@ export class AuthController {
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Me Failed', error: 'Unknown error'});
     }
   }
+  async isUserNameAvailable(req: Request, res: Response) {
+    try {
+      const {userName} = req.body as {userName: string};
+      const data = await this.authServices.isUserNameAvailable(userName);
+      return res.status(HttpStatus.OK).json({message: 'Is UserName Available Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Is UserName Available ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Is UserName Available Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Is UserName Available Failed', error: 'Unknown error'});
+    }
+  }
 }
