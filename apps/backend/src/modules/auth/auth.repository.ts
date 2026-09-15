@@ -9,11 +9,15 @@ export class AuthRepository {
     this.db = db;
   }
   async login(body: LoginDto) {
-    const user = await this.db.orm.public.User.where({email: body.email, password: body.password}).select('id', 'email', 'name', 'userName','jointAt').first();
+    const user = await this.db.orm.public.User.where({email: body.email, password: body.password}).select('id', 'email', 'name', 'userName', 'jointAt').first();
     return user;
   }
   async register(body: RegisterDto) {
     const newUser = await this.db.orm.public.User.select('id', 'email', 'name', 'userName', 'jointAt').create(body);
     return newUser;
+  }
+  async isUserNameAvailable(userName: string) {
+    const isAvailable = await this.db.orm.public.User.where({userName}).select('userName').first();
+    return !isAvailable;
   }
 }

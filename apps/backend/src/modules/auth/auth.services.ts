@@ -39,4 +39,8 @@ export class AuthServices {
 
     return {user: newUser, token};
   }
+  async isUserNameAvailable(userName: string) {
+    const isAvailable = await this.authRepository.isUserNameAvailable(userName);
+    return isAvailable;
+  }
 }
