@@ -6,18 +6,18 @@ import {useNavigate, useParams} from 'react-router';
 import {useAppDialog} from '@/store/dialog-store';
 import CreateServerForm from '../../server/create-server-form';
 
-function getPath(id: string, type: TServerBoxType = 'server') {
+function getPath(name: string, type: TServerBoxType = 'server') {
   if (type == 'direct') return 'direct-message';
-  else if (type == 'server') return `server/${id}`;
+  else if (type == 'server') return `server/${name}`;
   else return '';
 }
 
 const ServerBox = ({server, className}: {server: TSideBardServer; className?: string}) => {
   const navigate = useNavigate();
-  const setDialog = useAppDialog(state => state.setDialog);
-  const pathName = useParams<{serverId: string}>();
-  const isActive = server.id == pathName.serverId || (server.type == 'direct' && !pathName.serverId);
-  const path = getPath(server.id, server.type);
+  const {setDialog, onClose} = useAppDialog();
+  const pathName = useParams<{serverName: string}>();
+  const isActive = server.name == pathName.serverName || (server.type == 'direct' && !pathName.serverName);
+  const path = getPath(server.name, server.type);
   const Icon = server.icon;
   function onClick() {
     if (server.type == 'create-server') {
@@ -32,13 +32,7 @@ const ServerBox = ({server, className}: {server: TSideBardServer; className?: st
           className: 'text-center'
         },
 
-        content: (
-          <CreateServerForm
-            onSubmit={data => {
-              console.log('Create server:', data);
-            }}
-          />
-        ),
+        content: <CreateServerForm onClose={onClose} />,
 
         primaryAction: {
           text: 'Create Server',

@@ -6,6 +6,9 @@ import {FieldGroup} from '@/components/ui/field';
 import InputField from '../form/input-field';
 import TextareaField from '../form/textarea-field';
 import FileUploadField from '../form/upload-file';
+import {useCreateServer} from '@/api/server/api';
+import {useAppDialog} from '@/store/dialog-store';
+import {useEffect} from 'react';
 
 const createServerSchema = z.object({
   name: z.string().trim().min(2, 'Server name must be at least 2 characters.').max(50, 'Server name must be at most 50 characters.'),
@@ -22,10 +25,12 @@ const createServerSchema = z.object({
 export type CreateServerFormValues = z.infer<typeof createServerSchema>;
 
 interface CreateServerFormProps {
-  onSubmit: (data: CreateServerFormValues) => void;
+  onClose: () => void;
 }
 
-const CreateServerForm = ({onSubmit}: CreateServerFormProps) => {
+const CreateServerForm = ({onClose}: CreateServerFormProps) => {
+  const {mutate: createServer, isPending} = useCreateServer();
+  const {dialog, setDialog} = useAppDialog();
   const form = useForm<CreateServerFormValues>({
     resolver: zodResolver(createServerSchema),
     defaultValues: {
@@ -34,6 +39,42 @@ const CreateServerForm = ({onSubmit}: CreateServerFormProps) => {
       image: undefined
     }
   });
+  function onSubmit(data: CreateServerFormValues) {
+    createServer(
+      {
+        name: data.name,
+        description: data.description,
+        isPublic: true
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        }
+      }
+    );
+  }
+  useEffect(() => {
+    if (dialog)
+      setDialog({
+        ...dialog,
+        primaryAction: isPending
+          ? {
+              ...dialog.primaryAction,
+              text: 'Creating Server',
+              disabled: true
+            }
+          : {...dialog.primaryAction, text: 'Create Server', disabled: false},
+        secondaryAction:
+          dialog.secondaryAction &&
+          (isPending
+            ? {
+                ...dialog.secondaryAction,
+                text: dialog.secondaryAction!.text,
+                disabled: true
+              }
+            : {...dialog.secondaryAction, text: dialog.secondaryAction?.text || '', disabled: false})
+      });
+  }, [isPending]);
 
   return (
     <form id='create-server-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-5'>
@@ -45,7 +86,8 @@ const CreateServerForm = ({onSubmit}: CreateServerFormProps) => {
           control={form.control}
           register={form.register('image')}
           props={{
-            id: 'server-image'
+            id: 'server-image',
+            disabled: isPending
           }}
           inputClassName='min-h-32'
         />
@@ -57,7 +99,8 @@ const CreateServerForm = ({onSubmit}: CreateServerFormProps) => {
           control={form.control}
           register={form.register('name')}
           props={{
-            id: 'server-name'
+            id: 'server-name',
+            disabled: isPending
           }}
         />
 
@@ -68,7 +111,8 @@ const CreateServerForm = ({onSubmit}: CreateServerFormProps) => {
           control={form.control}
           register={form.register('description')}
           props={{
-            id: 'server-description'
+            id: 'server-description',
+            disabled: isPending
           }}
         />
       </FieldGroup>

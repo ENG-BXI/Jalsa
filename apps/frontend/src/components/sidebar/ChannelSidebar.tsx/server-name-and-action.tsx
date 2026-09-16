@@ -1,6 +1,5 @@
 import {Button} from '@/components/ui/button';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {serverName} from '../helper';
 import {useState} from 'react';
 import {IconChevronDown, IconUsersPlus} from '@tabler/icons-react';
 import {cn} from 'cn';
@@ -10,11 +9,14 @@ import {useAppDialog} from '@/store/dialog-store';
 import InviteFriendDialog from '@/components/server/invite-friend-dialog';
 import EditServerForm from '@/components/server/edit-server-form';
 import ViewServerForm from '@/components/server/view-server-form';
+import {useParams} from 'react-router';
+import {formatText} from '@/lib/utils';
 
 const ServerNameAndAction = () => {
+  const {serverName} = useParams<{serverName: string}>();
   return (
     <div className='py-2 px-3 min-h-12! flex justify-between items-center'>
-      <ServerNamePopover name={serverName} />
+      <ServerNamePopover name={serverName || ''} />
       <InviteFriend />
     </div>
   );
@@ -108,7 +110,7 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
 
       primaryAction: {
         text: 'Leave Server',
-        className:'bg-red-500',
+        className: 'bg-red-500',
         onClick: () => {}
       },
 
@@ -124,7 +126,7 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
       <PopoverTrigger
         render={
           <Button variant={'ghost'}>
-            {name} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
+            {formatText(name, {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
           </Button>
         }
       />

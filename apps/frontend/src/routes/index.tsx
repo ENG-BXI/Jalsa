@@ -13,7 +13,7 @@ const Routers = createBrowserRouter([
         Component: App,
         children: [
           {
-            path: 'server/:serverId',
+            path: 'server/:serverName',
             children: [
               {
                 index: true,

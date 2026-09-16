@@ -21,12 +21,15 @@ export type DialogProps = {
 export type TAppDialog = {
   dialog: DialogProps | null;
   setDialog: (value: DialogProps) => void;
+  disabled: boolean | null;
+  setDisabled: (val: boolean | null) => void;
   onClose: () => void;
 };
 
 export const useAppDialog = create<TAppDialog>(set => ({
   dialog: null,
-
+  disabled: null,
+  setDisabled: val => set({disabled: val}),
   setDialog: value => {
     set({dialog: value});
   },
