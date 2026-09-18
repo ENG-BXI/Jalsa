@@ -24,6 +24,20 @@ export type TServerByIdResponse = {
   name: string;
   owner_id: string;
 };
+export type TServerByNameResponse = {
+  id: string;
+  name: string;
+  description: string | null;
+  avatar_url: string | null;
+  owner_id: string;
+  isPublic: boolean;
+  createdAt: string;
+  userSevers: [
+    {
+      role: TUserRole;
+    }
+  ];
+};
 export type TAllMembersResponse = {
   role: TUserRole;
   user: {
@@ -40,6 +54,17 @@ export type TCreateServerBody = {
   isPublic: boolean;
 };
 export type TCreateServerResponse = {
+  id: string;
+  name: string;
+  description: string;
+  isPublic: boolean;
+};
+export type TEditServerBody = {
+  name?: string;
+  description?: string;
+  isPublic?: boolean;
+};
+export type TEditServerResponse = {
   id: string;
   name: string;
   description: string;

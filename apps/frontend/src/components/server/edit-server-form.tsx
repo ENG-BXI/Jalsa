@@ -6,6 +6,8 @@ import {FieldGroup} from '@/components/ui/field';
 import InputField from '../form/input-field';
 import TextareaField from '../form/textarea-field';
 import FileUploadField from '../form/upload-file';
+import {useEditServer, useServerById} from '@/api/server/api';
+import {useEffect} from 'react';
 
 const editServerSchema = z.object({
   name: z.string().trim().min(2, 'Server name must be at least 2 characters.').max(50, 'Server name must be at most 50 characters.'),
@@ -21,7 +23,9 @@ const editServerSchema = z.object({
 
 export type EditServerFormValues = z.infer<typeof editServerSchema>;
 
-const EditServerForm = ({serverId}: {serverId: string}) => {
+const EditServerForm = ({serverId, onClose}: {serverId: string; onClose: (data: EditServerFormValues) => void}) => {
+  const {data, isLoading, isFetched, isError} = useServerById(serverId, {select: res => res.data.data});
+  const {mutate: editServer, isPending} = useEditServer();
   const form = useForm<EditServerFormValues>({
     resolver: zodResolver(editServerSchema),
     defaultValues: {
@@ -30,14 +34,25 @@ const EditServerForm = ({serverId}: {serverId: string}) => {
       image: undefined
     }
   });
-
+  useEffect(() => {
+    if (isFetched && !isError) {
+      form.setValues({
+        name: data?.name,
+        description: data?.description,
+        // TODO: Fix This later
+        image: undefined
+      });
+    }
+  }, [data, form, isError, isFetched, isLoading]);
   function handleSubmit(data: EditServerFormValues) {
-    console.log('Update server:', {
-      serverId,
-      ...data
-    });
-
-    // update server API هنا
+    editServer(
+      {id: serverId, body: data},
+      {
+        onSuccess: () => {
+          onClose(data);
+        }
+      }
+    );
   }
 
   return (
@@ -50,7 +65,8 @@ const EditServerForm = ({serverId}: {serverId: string}) => {
           control={form.control}
           register={form.register('image')}
           props={{
-            id: 'server-image'
+            id: 'server-image',
+            disabled: isLoading || isPending
           }}
           inputClassName='min-h-32'
         />
@@ -62,7 +78,8 @@ const EditServerForm = ({serverId}: {serverId: string}) => {
           control={form.control}
           register={form.register('name')}
           props={{
-            id: 'server-name'
+            id: 'server-name',
+            disabled: isLoading || isPending
           }}
         />
 
@@ -73,7 +90,8 @@ const EditServerForm = ({serverId}: {serverId: string}) => {
           control={form.control}
           register={form.register('description')}
           props={{
-            id: 'server-description'
+            id: 'server-description',
+            disabled: isLoading || isPending
           }}
         />
       </FieldGroup>

@@ -8,3 +8,5 @@ export const MY_SERVERS = 'my-servers';
 export const PUBLIC_SERVER = 'public-server';
 export const ALL_MEMBERS = 'all-members';
 export const CREATE_SERVER = 'create-server';
+export const NAME = 'name';
+export const EDIT_SERVER = 'edit-server';

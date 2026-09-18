@@ -9,14 +9,14 @@ import {useAppDialog} from '@/store/dialog-store';
 import InviteFriendDialog from '@/components/server/invite-friend-dialog';
 import EditServerForm from '@/components/server/edit-server-form';
 import ViewServerForm from '@/components/server/view-server-form';
-import {useParams} from 'react-router';
 import {formatText} from '@/lib/utils';
+import {useChannelSideBar} from '@/store/server-store';
+import {useLocation, useNavigate} from 'react-router';
 
 const ServerNameAndAction = () => {
-  const {serverName} = useParams<{serverName: string}>();
   return (
     <div className='py-2 px-3 min-h-12! flex justify-between items-center'>
-      <ServerNamePopover name={serverName || ''} />
+      <ServerNamePopover />
       <InviteFriend />
     </div>
   );
@@ -24,14 +24,15 @@ const ServerNameAndAction = () => {
 
 export default ServerNameAndAction;
 
-interface TServerNamePopoverProps {
-  name: string;
-}
-function ServerNamePopover({name}: TServerNamePopoverProps) {
+function ServerNamePopover() {
   const [open, setOpen] = useState(false);
-  const {setDialog} = useAppDialog();
+  const {setDialog, onClose} = useAppDialog();
+  const navigate = useNavigate();
+  const locale = useLocation();
+  const path = locale.pathname.split('/').slice(3);
   const inviteLink = 'https://jalsa-domain/invite/abc123';
-
+  const {channelSideBar, setChannelSideBar} = useChannelSideBar();
+  if (!channelSideBar || !channelSideBar.channelSideBar) return;
   function onClickInvite() {
     setDialog({
       title: {
@@ -48,6 +49,7 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
     });
   }
   function onClickEditServer() {
+    if (!channelSideBar.channelSideBar?.id) return;
     setDialog({
       title: {
         title: 'Edit Server',
@@ -59,7 +61,16 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
         className: 'text-center'
       },
 
-      content: <EditServerForm serverId={name} />,
+      content: (
+        <EditServerForm
+          serverId={channelSideBar.channelSideBar.id}
+          onClose={data => {
+            navigate(`server/${data.name}/${path}`);
+            setChannelSideBar({type: 'server', channelSideBar: {name: data.name}});
+            onClose();
+          }}
+        />
+      ),
 
       primaryAction: {
         text: 'Save Changes',
@@ -72,6 +83,7 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
     });
   }
   function onClickViewServerSetting() {
+    if (!channelSideBar.channelSideBar?.id) return;
     setDialog({
       title: {
         title: 'Server Information',
@@ -83,7 +95,7 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
         className: 'text-center'
       },
 
-      content: <ViewServerForm serverId={name} />,
+      content: <ViewServerForm serverId={channelSideBar.channelSideBar.id}/>,
 
       primaryAction: {
         text: 'Save Changes',
@@ -119,14 +131,14 @@ function ServerNamePopover({name}: TServerNamePopoverProps) {
       }
     });
   }
-  const serverPopoverOptions = GetServerPopoverOptions({onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer});
+  const serverPopoverOptions = GetServerPopoverOptions({role: channelSideBar.role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer});
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         render={
           <Button variant={'ghost'}>
-            {formatText(name, {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
+            {formatText(channelSideBar.channelSideBar!.name, {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
           </Button>
         }
       />
