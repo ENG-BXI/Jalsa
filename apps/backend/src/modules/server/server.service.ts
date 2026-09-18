@@ -22,6 +22,17 @@ export class ServerService {
     }
     return server;
   }
+  async getServerByName(serverName: string, userId: string) {
+    const server = await this.serverRepository.getServerByName(serverName, userId);
+    if (!server) throw new Error('Server not found');
+    if (!server?.isPublic) {
+      const userInServer = await this.serverRepository.isUserInServer(server.id, userId);
+      if (!userInServer) {
+        throw new Error('You are not a member of this server');
+      }
+    }
+    return server;
+  }
   async getAllServerForMember(userId: string) {
     const allServer = await this.serverRepository.getAllServerForMember(userId);
     return allServer;
@@ -42,12 +53,12 @@ export class ServerService {
     return allServer;
   }
   async createServer(userId: string, body: CreateServerDto) {
-    const isServerExist = await this.serverRepository.getServerByName(body.name);
+    const isServerExist = await this.serverRepository.getServerByName(body.name, userId);
     if (isServerExist) {
       throw new Error('A server with this name already exists');
     }
     const createServer = await this.serverRepository.createServer(userId, body);
-    await this.serverRepository.addUserToServer(userId, createServer.id, 'ADMIN');
+    await this.serverRepository.addUserToServer(userId, createServer.id, 'OWNER');
     // Add General Channel as Default Channel in New Server
     await this.channelRepository.createChannel({name: 'general', serverId: createServer.id, type: 'TEXT'});
     return createServer;
