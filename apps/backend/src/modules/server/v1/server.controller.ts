@@ -25,6 +25,21 @@ export class ServerController {
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Server By Id Failed', error: 'Unknown error'});
     }
   }
+  async getServerByName(req: Request, res: Response) {
+    try {
+      const serverName = req.params.serverName as string;
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.getServerByName(serverName, user.id);
+      return res.status(HttpStatus.OK).json({message: 'Get Server By Name Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Get Server By Name ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Server By Name Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Server By Name Failed', error: 'Unknown error'});
+    }
+  }
   async getAllServerForMember(req: Request, res: Response) {
     try {
       const user = req.user;

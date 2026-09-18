@@ -12,8 +12,12 @@ export class ServerRepository {
   async getServerById(id: string) {
     return await this.db.orm.public.Server.where({id}).first();
   }
-  async getServerByName(name: string) {
-    return await this.db.orm.public.Server.where({name}).first();
+  async getServerByName(name: string, userId: string) {
+    return await this.db.orm.public.Server.where({name})
+      .include('userSevers', col => {
+        return col.where({userId}).select('role');
+      })
+      .first();
   }
   async getAllServerForMember(userId: string) {
     return await this.db.orm.public.UserSever.where({userId})
