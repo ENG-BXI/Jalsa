@@ -10,3 +10,6 @@ export const ALL_MEMBERS = 'all-members';
 export const CREATE_SERVER = 'create-server';
 export const NAME = 'name';
 export const EDIT_SERVER = 'edit-server';
+export const LEAVE_USER_FROM_SERVER = 'leave-user-from-server';
+export const DELETE_SERVER = 'delete-server';
+export const CHANGE_ROLE = 'change-role';

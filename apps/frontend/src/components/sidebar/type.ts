@@ -8,4 +8,4 @@ export type TSideBardServer = {
   icon?: ElementType;
 };
 
-export type TServerBoxType = 'server' | 'direct' | 'create-server';
+export type TServerBoxType = 'server' | 'direct' | 'create-server' | 'community';

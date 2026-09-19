@@ -37,6 +37,13 @@ const Routers = createBrowserRouter([
               const {default: Component} = await import('@/feature/direct-message');
               return {Component};
             }
+          },
+          {
+            path: 'community',
+            lazy: async () => {
+              const {default: Component} = await import('@/feature/community');
+              return {Component};
+            }
           }
         ]
       }

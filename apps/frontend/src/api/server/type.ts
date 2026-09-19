@@ -70,3 +70,27 @@ export type TEditServerResponse = {
   description: string;
   isPublic: boolean;
 };
+export type TLeaveUserFromServerResponse = {
+  id: string;
+  serverId: string;
+  userId: string;
+  role: TUserRole;
+  createdAt: string;
+};
+export type TDeleteServerResponse = {
+  id: string;
+  name: string;
+  description: string;
+  isPublic: boolean;
+};
+export type TChangeRoleBody = {
+  memberId: string;
+  role: TUserRole;
+};
+export type TChangeRoleResponse = {
+  id: string;
+  serverId: string;
+  userId: string;
+  role: TUserRole;
+  createdAt: string;
+};

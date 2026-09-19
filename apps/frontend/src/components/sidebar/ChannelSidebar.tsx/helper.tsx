@@ -14,7 +14,7 @@ export const channelMapper: Record<TChannelType, {title: string; icon: ElementTy
   }
 };
 
-export function GetServerPopoverOptions({role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer}: {role?: TUserRole; onClickInvite: () => void; onClickEditServer: () => void; onClickViewServerSetting: () => void; onClickLeaveServer: () => void}): TServerPopoverOptions[] {
+export function GetServerPopoverOptions({role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer}: {role?: TUserRole; onClickInvite: () => void; onClickEditServer: () => void; onClickViewServerSetting: () => void; onClickLeaveServer: () => void; onClickDeleteServer: () => void}): TServerPopoverOptions[] {
   return [
     {
       group: [
@@ -60,7 +60,7 @@ export function GetServerPopoverOptions({role, onClickInvite, onClickEditServer,
               {
                 title: 'Delete Server',
                 icon: IconLogout,
-                onClick: onClickLeaveServer,
+                onClick: onClickDeleteServer,
                 color: 'text-red-400'
               }
             ]

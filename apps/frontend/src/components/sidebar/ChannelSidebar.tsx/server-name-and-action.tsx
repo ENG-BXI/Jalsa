@@ -1,6 +1,6 @@
 import {Button} from '@/components/ui/button';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {IconChevronDown, IconUsersPlus} from '@tabler/icons-react';
 import {cn} from 'cn';
 import {GetServerPopoverOptions} from './helper';
@@ -8,10 +8,11 @@ import {Separator} from '@/components/ui/separator';
 import {useAppDialog} from '@/store/dialog-store';
 import InviteFriendDialog from '@/components/server/invite-friend-dialog';
 import EditServerForm from '@/components/server/edit-server-form';
-import ViewServerForm from '@/components/server/view-server-form';
 import {formatText} from '@/lib/utils';
 import {useChannelSideBar} from '@/store/server-store';
 import {useLocation, useNavigate} from 'react-router';
+import {useDeleteServer, useLeaveUserFromServer} from '@/api/server/api';
+import ViewServer from '@/components/server/view-server-form';
 
 const ServerNameAndAction = () => {
   return (
@@ -26,12 +27,52 @@ export default ServerNameAndAction;
 
 function ServerNamePopover() {
   const [open, setOpen] = useState(false);
-  const {setDialog, onClose} = useAppDialog();
+  const {dialog, setDialog, onClose} = useAppDialog();
+  const {mutate: leaveFromServerMutate, isPending: isLeaveUserPending} = useLeaveUserFromServer();
+  const {mutate: deleteServerMutate, isPending: isDeleteServerPending} = useDeleteServer();
   const navigate = useNavigate();
   const locale = useLocation();
   const path = locale.pathname.split('/').slice(3);
   const inviteLink = 'https://jalsa-domain/invite/abc123';
   const {channelSideBar, setChannelSideBar} = useChannelSideBar();
+  // Delete Server
+  useEffect(() => {
+    if (isDeleteServerPending && dialog) {
+      setDialog({
+        ...dialog,
+        primaryAction: {
+          ...dialog.primaryAction,
+          text: isDeleteServerPending ? 'Deleting Server' : 'Delete Server',
+          disabled: isDeleteServerPending
+        },
+        secondaryAction: {
+          ...dialog.secondaryAction,
+          text: dialog.secondaryAction?.text || '',
+          disabled: isDeleteServerPending
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDeleteServerPending]);
+  // Leaver User From Server
+  useEffect(() => {
+    if (isLeaveUserPending && dialog) {
+      setDialog({
+        ...dialog,
+        primaryAction: {
+          ...dialog.primaryAction,
+          text: isLeaveUserPending ? 'Leaving From Server' : 'Leave Server',
+          disabled: isLeaveUserPending
+        },
+        secondaryAction: {
+          ...dialog.secondaryAction,
+          text: dialog.secondaryAction?.text || '',
+          disabled: isLeaveUserPending
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLeaveUserPending]);
   if (!channelSideBar || !channelSideBar.channelSideBar) return;
   function onClickInvite() {
     setDialog({
@@ -95,16 +136,7 @@ function ServerNamePopover() {
         className: 'text-center'
       },
 
-      content: <ViewServerForm serverId={channelSideBar.channelSideBar.id}/>,
-
-      primaryAction: {
-        text: 'Save Changes',
-        formId: 'edit-server-form'
-      },
-
-      secondaryAction: {
-        text: 'Cancel'
-      }
+      content: <ViewServer serverId={channelSideBar.channelSideBar.id} />
     });
   }
   function onClickLeaveServer() {
@@ -113,17 +145,64 @@ function ServerNamePopover() {
         title: 'Leave Server',
         className: 'text-center'
       },
-
       description: {
         description: 'Are you sure you want to leave this server? You will need a new invite to join again.',
         className: 'text-center'
       },
       content: null,
+      primaryAction: {
+        text: isLeaveUserPending ? 'Leaving From Server' : 'Leave Server',
+        disabled: isLeaveUserPending,
+        className: 'bg-red-500',
+        onClick: () => {
+          if (!channelSideBar.channelSideBar?.id) return;
+          leaveFromServerMutate(
+            {id: channelSideBar.channelSideBar.id},
+            {
+              onSuccess: () => {
+                navigate('/');
+                onClose();
+              }
+            }
+          );
+        }
+      },
+
+      secondaryAction: {
+        text: 'Cancel',
+        disabled: isLeaveUserPending
+      }
+    });
+  }
+  function onClickDeleteServer() {
+    setDialog({
+      title: {
+        title: 'Delete Server',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Are you sure you want to delete this server? This action cannot be undone.',
+        className: 'text-center'
+      },
+
+      content: null,
 
       primaryAction: {
-        text: 'Leave Server',
+        text: 'Delete Server',
         className: 'bg-red-500',
-        onClick: () => {}
+        onClick: () => {
+          if (!channelSideBar.channelSideBar?.id) return;
+          deleteServerMutate(
+            {id: channelSideBar.channelSideBar.id},
+            {
+              onSuccess: () => {
+                navigate('/');
+                onClose();
+              }
+            }
+          );
+        }
       },
 
       secondaryAction: {
@@ -131,7 +210,8 @@ function ServerNamePopover() {
       }
     });
   }
-  const serverPopoverOptions = GetServerPopoverOptions({role: channelSideBar.role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer});
+
+  const serverPopoverOptions = GetServerPopoverOptions({role: channelSideBar.role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer});
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

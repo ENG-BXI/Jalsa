@@ -1,79 +1,38 @@
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
-import {z} from 'zod';
+import {Separator} from '../ui/separator';
 
-import {Field, FieldGroup, FieldLabel} from '@/components/ui/field';
+import {useAllMembersInServer, useChangeRole, useServerById} from '@/api/server/api';
 
-import InputField from '../form/input-field';
-import TextareaField from '../form/textarea-field';
-import {useServerById} from '@/api/server/api';
-import {useEffect} from 'react';
-import {formatText} from '@/lib/utils';
-import {Skeleton} from '../ui/skeleton';
+import ServerInfo from './server-info';
+import ServerMembers from './server-members';
+import type {TUserRole} from '@/api/type';
 
-const viewServerSchema = z.object({
-  name: z.string(),
-  description: z.string().optional()
-});
-
-export type ViewServerFormValues = z.infer<typeof viewServerSchema>;
-
-const ViewServerForm = ({serverId}: {serverId: string}) => {
-  const {data, isLoading, isFetched, isError} = useServerById(serverId, {select: res => res.data.data});
-  const form = useForm<ViewServerFormValues>({
-    resolver: zodResolver(viewServerSchema),
-    defaultValues: {
-      name: '',
-      description: ''
-    }
+const ViewServer = ({serverId}: {serverId: string}) => {
+  const {data: server, isLoading: isServerLoading} = useServerById(serverId, {
+    select: res => res.data.data
   });
-  // TODO : View All Member Here in this Form for add Action (Leave , make an Admin)
-  useEffect(() => {
-    if (isFetched && !isError) {
-      form.setValues({
-        name: data?.name,
-        description: data?.description
-      });
-    }
-  }, [data, form, isError, isFetched, isLoading]);
+
+  const {data: members, isLoading: isMembersLoading} = useAllMembersInServer(serverId, {
+    select: res => res.data.data
+  });
+  const {mutate: changeRoleMutate, variables, isPending: isChangeRolePending} = useChangeRole();
+  function onRoleChange(userId: string, role: Exclude<TUserRole, 'OWNER'>) {
+    changeRoleMutate({
+      id: serverId,
+      body: {
+        memberId: userId,
+        role
+      }
+    });
+  }
   return (
-    <form className='space-y-5'>
-      <FieldGroup>
-        <Field>
-          <FieldLabel>Server Image</FieldLabel>
-          {isLoading ? (
-            <div className='flex justify-center'>
-              <Skeleton className='size-32 rounded-lg' />
-            </div>
-          ) : (
-            <div className='flex justify-center'>{data?.avatar_url ? <img src={data.avatar_url} alt={data.name} className='size-32 rounded-lg object-cover' /> : <div className='flex size-32 items-center justify-center rounded-lg bg-indigo-400 text-3xl font-semibold uppercase'>{formatText(data?.name || '', {mode: 'first-letter-of-words'})}</div>}</div>
-          )}
-        </Field>
+    <div className='space-y-6'>
+      <ServerInfo name={server?.name} description={server?.description} avatarUrl={server?.avatar_url} isLoading={isServerLoading} />
 
-        <InputField
-          label='Server Name'
-          control={form.control}
-          register={form.register('name')}
-          props={{
-            id: 'server-name',
-            readOnly: true,
-            disabled: isLoading
-          }}
-        />
+      <Separator />
 
-        <TextareaField
-          label='Description'
-          control={form.control}
-          register={form.register('description')}
-          props={{
-            id: 'server-description',
-            readOnly: true,
-            disabled: isLoading
-          }}
-        />
-      </FieldGroup>
-    </form>
+      <ServerMembers members={members} changedUser={variables?.body.memberId || ''} onRoleChange={onRoleChange} isChangeRolePending={isChangeRolePending} isLoading={isMembersLoading} />
+    </div>
   );
 };
 
-export default ViewServerForm;
+export default ViewServer;
