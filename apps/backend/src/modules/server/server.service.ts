@@ -48,8 +48,8 @@ export class ServerService {
     const AllMember = await this.serverRepository.getAllMemberInMyServer(serverId);
     return AllMember;
   }
-  async getAllPublicServer() {
-    const allServer = await this.serverRepository.getAllPublicServer();
+  async getAllPublicServer(search?:string) {
+    const allServer = await this.serverRepository.getAllPublicServer(search);
     return allServer;
   }
   async createServer(userId: string, body: CreateServerDto) {
@@ -92,9 +92,23 @@ export class ServerService {
   async leaveUserFromServer(userId: string, serverId: string) {
     const serverMember = await this.serverRepository.isUserInServer(serverId, userId);
     if (!serverMember) throw new Error('User is not a member of this server');
-    const isUserIsAdminForThisServer = serverMember.role == 'ADMIN';
-    if (isUserIsAdminForThisServer) throw new Error('Server admin cannot leave the server');
+    const isUserIsAdminForThisServer = serverMember.role == 'OWNER';
+    if (isUserIsAdminForThisServer) throw new Error('Server owner cannot leave the server');
     const leaverServer = await this.serverRepository.leaveUserFromServer(serverId, userId);
+    return leaverServer;
+  }
+  async kickUserFromServer(userId: string, memberId: string, serverId: string) {
+    const [serverUser, serverMember] = await Promise.all([this.serverRepository.isUserInServer(serverId, userId), this.serverRepository.isUserInServer(serverId, memberId)]);
+    //  Check if user and member inside Server
+    if (!serverUser) throw new Error('User is not a member of this server');
+    if (!serverMember) throw new Error('Member is not in server');
+    // Check if user is Admin or Owner and block member kicked
+    const isUserAdmin = await this.serverRepository.isUserIsAdminOrAdminOfServer(userId, serverId);
+    if (!isUserAdmin) throw new Error('Only server admins or owners can kick members');
+    // Check if member who kicked is Owner
+    const isUserIsAdminForThisServer = serverMember.role == 'OWNER';
+    if (isUserIsAdminForThisServer) throw new Error('Server owner cannot be kicked');
+    const leaverServer = await this.serverRepository.leaveUserFromServer(serverId, memberId);
     return leaverServer;
   }
   async changeRoleInServer(serverId: string, userId: string, memberId: string, role: TUserRole) {

@@ -4,6 +4,7 @@ import {HttpStatus} from '../../../lib/http-status.js';
 import {CreateServerDto} from '../dto/create-server.dto.js';
 import {EditServerDto} from '../dto/edit-server.dto.js';
 import {ChangeRoleDto} from '../dto/change-role.dto.js';
+import {KickUserFromServerDto} from '../dto/kick-user-from-server.dto.js';
 
 export class ServerController {
   private serverService: ServerService;
@@ -71,7 +72,8 @@ export class ServerController {
   }
   async getAllPublicServer(req: Request, res: Response) {
     try {
-      const data = await this.serverService.getAllPublicServer();
+      const search = req.query.search as string;
+      const data = await this.serverService.getAllPublicServer(search);
       return res.status(HttpStatus.OK).json({message: 'Get All Public Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -155,6 +157,22 @@ export class ServerController {
       console.log('====================================');
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Leave From Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Leave From Server Failed', error: 'Unknown error'});
+    }
+  }
+  async kickedUserFromServer(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const serverId = req.params.serverId as string;
+      const {memberId} = req.body as KickUserFromServerDto;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.kickUserFromServer(user.id, memberId, serverId);
+      return res.status(HttpStatus.OK).json({message: 'kicked User From Server Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN kicked User From Server ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'kicked User From Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'kicked User From Server Failed', error: 'Unknown error'});
     }
   }
   async changeRoleInServer(req: Request, res: Response) {
