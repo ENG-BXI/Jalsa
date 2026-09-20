@@ -1,5 +1,6 @@
 import App from '@/App';
 import AuthLayout from '@/layout/auth-layout';
+import ConversationLayout from '@/layout/conversation-layout';
 import AuthMiddleware from '@/middleware/auth.middleware';
 import GuestMiddleware from '@/middleware/guest.middleware';
 import {createBrowserRouter} from 'react-router';
@@ -13,28 +14,40 @@ const Routers = createBrowserRouter([
         Component: App,
         children: [
           {
-            path: 'server/:serverId',
+            element: <ConversationLayout />,
             children: [
               {
-                index: true,
-                lazy: async () => {
-                  const {default: Component} = await import('@/feature/server');
-                  return {Component};
-                }
+                path: 'server/:serverName',
+                children: [
+                  {
+                    index: true,
+                    lazy: async () => {
+                      const {default: Component} = await import('@/feature/server');
+                      return {Component};
+                    }
+                  },
+                  {
+                    path: ':channelName',
+                    lazy: async () => {
+                      const {default: Component} = await import('@/feature/server/text-channel');
+                      return {Component};
+                    }
+                  }
+                ]
               },
               {
-                path: ':channelName',
+                path: 'direct-message',
                 lazy: async () => {
-                  const {default: Component} = await import('@/feature/server/text-channel');
+                  const {default: Component} = await import('@/feature/direct-message');
                   return {Component};
                 }
               }
             ]
           },
           {
-            path: 'direct-message',
+            path: 'community',
             lazy: async () => {
-              const {default: Component} = await import('@/feature/direct-message');
+              const {default: Component} = await import('@/feature/community');
               return {Component};
             }
           }

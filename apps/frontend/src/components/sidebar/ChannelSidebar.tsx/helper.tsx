@@ -1,6 +1,7 @@
 import {IconEdit, IconHash, IconLogout, IconSettings2, IconUsersPlus, IconVolume} from '@tabler/icons-react';
 import type {TChannel, TChannelType, TServerPopoverOptions} from './type';
 import type {ElementType} from 'react';
+import type {TUserRole} from '@/api/type';
 
 export const channelMapper: Record<TChannelType, {title: string; icon: ElementType}> = {
   text: {
@@ -13,7 +14,7 @@ export const channelMapper: Record<TChannelType, {title: string; icon: ElementTy
   }
 };
 
-export function GetServerPopoverOptions({onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer}: {onClickInvite: () => void; onClickEditServer: () => void; onClickViewServerSetting: () => void; onClickLeaveServer: () => void}): TServerPopoverOptions[] {
+export function GetServerPopoverOptions({role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer}: {role?: TUserRole; onClickInvite: () => void; onClickEditServer: () => void; onClickViewServerSetting: () => void; onClickLeaveServer: () => void; onClickDeleteServer: () => void}): TServerPopoverOptions[] {
   return [
     {
       group: [
@@ -22,13 +23,17 @@ export function GetServerPopoverOptions({onClickInvite, onClickEditServer, onCli
           title: 'Invite to Server',
           onClick: onClickInvite
         },
+        ...(role == 'OWNER' || role == 'ADMIN'
+          ? [
+              {
+                title: 'Edit Server',
+                icon: IconEdit,
+                onClick: onClickEditServer
+              }
+            ]
+          : []),
         {
-          title: 'Edit Server',
-          icon: IconEdit,
-          onClick: onClickEditServer
-        },
-        {
-          title: 'Server Setting',
+          title: 'Server Information',
           icon: IconSettings2,
           onClick: onClickViewServerSetting
         }
@@ -36,12 +41,26 @@ export function GetServerPopoverOptions({onClickInvite, onClickEditServer, onCli
     },
     {
       group: [
-        {
-          title: 'Leave Server',
-          icon: IconLogout,
-          onClick: onClickLeaveServer,
-          color: 'text-red-400'
-        }
+        ...(role != 'OWNER'
+          ? [
+              {
+                title: 'Leave Server',
+                icon: IconLogout,
+                onClick: onClickLeaveServer,
+                color: 'text-red-400'
+              }
+            ]
+          : []),
+        ...(role == 'OWNER'
+          ? [
+              {
+                title: 'Delete Server',
+                icon: IconLogout,
+                onClick: onClickDeleteServer,
+                color: 'text-red-400'
+              }
+            ]
+          : [])
       ]
     }
   ];

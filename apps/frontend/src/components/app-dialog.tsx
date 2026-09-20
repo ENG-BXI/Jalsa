@@ -5,10 +5,10 @@ import {cn} from '@/lib/utils';
 import {useAppDialog} from '@/store/dialog-store';
 
 export function AppDialog() {
-  const {dialog, onClose} = useAppDialog();
+  const {dialog, disabled, onClose} = useAppDialog();
 
   return (
-    <Dialog defaultOpen={false} open={!!dialog} onOpenChange={() => onClose()}>
+    <Dialog defaultOpen={!!disabled} open={!!dialog || !!disabled} onOpenChange={() => !disabled && onClose()}>
       <DialogContent className='sm:max-w-lg bg-dialog-primary'>
         <DialogHeader>
           <DialogTitle className={cn('text-xl font-bold', typeof dialog?.title != 'string' && dialog?.title.className)}>{typeof dialog?.title == 'string' ? dialog.title : dialog?.title.title}</DialogTitle>

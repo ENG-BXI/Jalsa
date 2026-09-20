@@ -20,10 +20,10 @@ const Channel = ({type, channels}: TChannelProps) => {
   const navigate = useNavigate();
   const {setDialog} = useAppDialog();
   const {setHeader} = useHeader();
-  const {serverId, channelName} = useParams<{serverId: string; channelName: string}>();
+  const {serverName, channelName} = useParams<{serverName: string; channelName: string}>();
   function onClick(title: string, type: TChannelType) {
     setHeader({title, type});
-    navigate(`/server/${serverId}/${title}`);
+    navigate(`/server/${serverName}/${title}`);
   }
   const channelMap = channelMapper[type];
   // TODO: Make A Solution to generate a Link
@@ -55,7 +55,7 @@ const Channel = ({type, channels}: TChannelProps) => {
             <Button onClick={() => onClick(channel.title, type)} variant={'ghost'} size={'lg'} className={cn('group select-none text-text-1 justify-start p-2 text-sm', channelName == channel.title && 'bg-muted text-foreground')}>
               <channelMap.icon className='min-w-5 min-h-5' />
               <ChannelName title={channel.title} isOpen={channel.title == channelName} />
-              <InviteChannelButton onClick={() => onClickInvite(`${BaseLink}/${serverId}/${channelName}`)} isOpen={channel.title == channelName} />
+              <InviteChannelButton onClick={() => onClickInvite(`${BaseLink}/${serverName}/${channelName}`)} isOpen={channel.title == channelName} />
             </Button>
           ))}
         </div>
