@@ -26,7 +26,7 @@ const ViewServer = ({serverId}: {serverId: string}) => {
   }
   return (
     <div className='space-y-6'>
-      <ServerInfo name={server?.name} description={server?.description} avatarUrl={server?.avatar_url} isLoading={isServerLoading} />
+      <ServerInfo name={server?.name} description={server?.description} avatarUrl={server?.avatar_url} isPublic={server?.isPublic} isLoading={isServerLoading} />
 
       <Separator />
 

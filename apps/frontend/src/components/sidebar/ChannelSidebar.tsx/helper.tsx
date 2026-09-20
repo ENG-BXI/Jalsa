@@ -32,15 +32,11 @@ export function GetServerPopoverOptions({role, onClickInvite, onClickEditServer,
               }
             ]
           : []),
-        ...(role == 'OWNER' || role == 'ADMIN'
-          ? [
-              {
-                title: 'Server Setting',
-                icon: IconSettings2,
-                onClick: onClickViewServerSetting
-              }
-            ]
-          : [])
+        {
+          title: 'Server Information',
+          icon: IconSettings2,
+          onClick: onClickViewServerSetting
+        }
       ]
     },
     {

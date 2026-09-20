@@ -1,4 +1,4 @@
-import {IconCalendar, IconLoader2, IconUsers} from '@tabler/icons-react';
+import {IconCalendar, IconLoader2, IconTrash, IconUsers} from '@tabler/icons-react';
 
 import type {TAllMembersResponse} from '@/api/server/type';
 import type {TUserRole} from '@/api/type';
@@ -7,6 +7,9 @@ import {formatText} from '@/lib/utils';
 
 import {Skeleton} from '../ui/skeleton';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../ui/select';
+import {useChannelSideBar} from '@/store/server-store';
+import {Button} from '../ui/button';
+import {useKickUserFromServer} from '@/api/server/api';
 
 type ServerMembersProps = {
   members?: TAllMembersResponse[];
@@ -17,6 +20,14 @@ type ServerMembersProps = {
 };
 
 const ServerMembers = ({members = [], isLoading = false, changedUser, isChangeRolePending, onRoleChange}: ServerMembersProps) => {
+  const {channelSideBar} = useChannelSideBar();
+  const userRole = channelSideBar.role;
+  const {mutate: kickMember, isPending: isKickPending} = useKickUserFromServer();
+  function handleOnKickMember(memberId: string) {
+    const serverId = channelSideBar.channelSideBar?.id;
+    if (!serverId) return;
+    kickMember({id: serverId, body: {memberId}});
+  }
   return (
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
@@ -64,6 +75,11 @@ const ServerMembers = ({members = [], isLoading = false, changedUser, isChangeRo
                   <IconCalendar className='size-3.5' />
                   {new Date(member.user.jointAt).toLocaleDateString()}
                 </div>
+                {(userRole == 'OWNER' || userRole == 'ADMIN') && member.role !== 'OWNER' && (
+                  <Button disabled={isKickPending} onClick={() => handleOnKickMember(member.user.id)} variant={'outline'}>
+                    {isKickPending ? <IconLoader2 className='text-red-500 animate-spin' /> : <IconTrash className='text-red-500' />}
+                  </Button>
+                )}
               </div>
             </div>
           ))
@@ -76,10 +92,15 @@ const ServerMembers = ({members = [], isLoading = false, changedUser, isChangeRo
 };
 
 function MemberRole({role, onChange, isChangeRolePending}: {role: TUserRole; onChange?: (role: Exclude<TUserRole, 'OWNER'>) => void; isChangeRolePending?: boolean}) {
+  const {channelSideBar} = useChannelSideBar();
+  const userRole = channelSideBar.role;
   if (role === 'OWNER') {
     return <span className='text-xs text-muted-foreground'>Owner</span>;
   }
-
+  if (userRole == 'MEMBER') {
+    if (role == 'ADMIN') return <span className='text-xs text-muted-foreground'>Admin</span>;
+    if (role == 'MEMBER') return <span className='text-xs text-muted-foreground'>Member</span>;
+  }
   return (
     <Select value={role} onValueChange={value => onChange?.(value as Exclude<TUserRole, 'OWNER'>)}>
       <SelectTrigger className='h-8 w-28 text-xs'>

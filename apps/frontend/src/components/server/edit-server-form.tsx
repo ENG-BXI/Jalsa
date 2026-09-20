@@ -1,12 +1,18 @@
 import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
+
+import {Controller, useForm} from 'react-hook-form';
+
 import {z} from 'zod';
 
 import {FieldGroup} from '@/components/ui/field';
+import {Switch} from '@/components/ui/switch';
+
 import InputField from '../form/input-field';
 import TextareaField from '../form/textarea-field';
 import FileUploadField from '../form/upload-file';
+
 import {useEditServer, useServerById} from '@/api/server/api';
+
 import {useEffect} from 'react';
 
 const editServerSchema = z.object({
@@ -18,35 +24,44 @@ const editServerSchema = z.object({
     .instanceof(File, {
       message: 'Please select a server image.'
     })
-    .optional()
+    .optional(),
+
+  isPublic: z.boolean()
 });
 
 export type EditServerFormValues = z.infer<typeof editServerSchema>;
 
 const EditServerForm = ({serverId, onClose}: {serverId: string; onClose: (data: EditServerFormValues) => void}) => {
   const {data, isLoading, isFetched, isError} = useServerById(serverId, {select: res => res.data.data});
+
   const {mutate: editServer, isPending} = useEditServer();
+
   const form = useForm<EditServerFormValues>({
     resolver: zodResolver(editServerSchema),
+
     defaultValues: {
       name: '',
       description: '',
-      image: undefined
+      image: undefined,
+      isPublic: false
     }
   });
+
   useEffect(() => {
-    if (isFetched && !isError) {
-      form.setValues({
-        name: data?.name,
-        description: data?.description,
-        // TODO: Fix This later
-        image: undefined
-      });
+    if (isFetched && !isError && data) {
+      form.setValue('name', data.name);
+      form.setValue('description', data.description ?? '');
+      form.setValue('isPublic', data.isPublic);
+      form.setValue('image', undefined);
     }
-  }, [data, form, isError, isFetched, isLoading]);
+  }, [data, form, isError, isFetched]);
+
   function handleSubmit(data: EditServerFormValues) {
     editServer(
-      {id: serverId, body: data},
+      {
+        id: serverId,
+        body: data
+      },
       {
         onSuccess: () => {
           onClose(data);
@@ -93,6 +108,22 @@ const EditServerForm = ({serverId, onClose}: {serverId: string; onClose: (data: 
             id: 'server-description',
             disabled: isLoading || isPending
           }}
+        />
+
+        <Controller
+          control={form.control}
+          name='isPublic'
+          render={({field}) => (
+            <div className='flex items-center justify-between rounded-lg border border-border-1 bg-primary-3/30 p-4'>
+              <div>
+                <p className='text-sm font-medium text-white'>Public Server</p>
+
+                <p className='mt-1 text-xs leading-5 text-text-1'>Allow other users to discover and join this server.</p>
+              </div>
+
+              <Switch checked={field.value} onCheckedChange={field.onChange} disabled={isLoading || isPending} />
+            </div>
+          )}
         />
       </FieldGroup>
     </form>

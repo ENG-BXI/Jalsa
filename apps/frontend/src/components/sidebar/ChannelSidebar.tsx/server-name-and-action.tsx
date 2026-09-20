@@ -222,7 +222,7 @@ function ServerNamePopover() {
           </Button>
         }
       />
-      <PopoverContent className='w-60 bg-primary-1' align='end'>
+      <PopoverContent className='max-w-60 bg-primary-1' align='end'>
         {serverPopoverOptions.map((optionGroup, index, arr) => {
           return (
             <div key={index} className='w-full'>

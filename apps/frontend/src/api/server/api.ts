@@ -1,8 +1,8 @@
 import type {AxiosResponse} from 'axios';
-import {ALL_MEMBERS, CHANGE_ROLE, CREATE_SERVER, DELETE_SERVER, EDIT_SERVER, LEAVE_USER_FROM_SERVER, MY_SERVERS, NAME, PUBLIC_SERVER, SERVER} from '../api-endpoint';
+import {ADD_USER_TO_SERVER, ALL_MEMBERS, CHANGE_ROLE, CREATE_SERVER, DELETE_SERVER, EDIT_SERVER, KICK_USER_FROM_SERVER, LEAVE_USER_FROM_SERVER, MY_SERVERS, NAME, PUBLIC_SERVER, SERVER} from '../api-endpoint';
 import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
-import type {TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
+import type {TAddUserToServerResponse, TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TKickUserFromServerBody, TKickUserFromServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersParams, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
 import {transformMyServersFromDto} from './transform';
 import type {TSideBardServer} from '@/components/sidebar/type';
@@ -24,10 +24,9 @@ async function getMyServers() {
   };
 }
 
-async function getPublicServers() {
-  return await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`);
+async function getPublicServers(params: TPublicServersParams) {
+  return await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
 }
-
 async function getServerById(id: string) {
   return await api.get<TResponse<TServerByIdResponse>>(`${VERSION_ONE}/${SERVER}/${id}`);
 }
@@ -46,11 +45,17 @@ async function editServer({id, body}: {id: string; body: TEditServerBody}) {
 async function leaveUserFromServer({id}: {id: string}) {
   return await api.patch<TResponse<TLeaveUserFromServerResponse>>(`${VERSION_ONE}/${SERVER}/${LEAVE_USER_FROM_SERVER}/${id}`);
 }
+async function kickUserFromServer({id, body}: {id: string; body: TKickUserFromServerBody}) {
+  return await api.patch<TResponse<TKickUserFromServerResponse>>(`${VERSION_ONE}/${SERVER}/${KICK_USER_FROM_SERVER}/${id}`, body);
+}
 async function deleteServer({id}: {id: string}) {
   return await api.delete<TResponse<TDeleteServerResponse>>(`${VERSION_ONE}/${SERVER}/${DELETE_SERVER}/${id}`);
 }
 async function changeRole({id, body}: {id: string; body: TChangeRoleBody}) {
   return await api.patch<TResponse<TChangeRoleResponse>>(`${VERSION_ONE}/${SERVER}/${CHANGE_ROLE}/${id}`, body);
+}
+async function addUserToServer({id}: {id: string}) {
+  return await api.post<TResponse<TAddUserToServerResponse>>(`${VERSION_ONE}/${SERVER}/${ADD_USER_TO_SERVER}/${id}`);
 }
 // hook ...
 export function useMyServers<TData = AxiosResponse<TResponse<TSideBardServer[]>>>(queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TSideBardServer[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
@@ -60,15 +65,13 @@ export function useMyServers<TData = AxiosResponse<TResponse<TSideBardServer[]>>
     queryFn: () => getMyServers()
   });
 }
-
-export function usePublicServers<TData = AxiosResponse<TResponse<TPublicServersResponse[]>>>(queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TPublicServersResponse[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
+export function usePublicServers<TData = AxiosResponse<TResponse<TPublicServersResponse[]>>>(params: TPublicServersParams, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TPublicServersResponse[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
   return useQuery<AxiosResponse<TResponse<TPublicServersResponse[]>>, Error, TData>({
     ...queryOption,
-    queryKey: PUBLIC_SERVERS_KEY,
-    queryFn: () => getPublicServers()
+    queryKey: [...PUBLIC_SERVERS_KEY, params],
+    queryFn: () => getPublicServers(params)
   });
 }
-
 export function useServerById<TData = AxiosResponse<TResponse<TServerByIdResponse>>>(id: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TServerByIdResponse>>, Error, TData>, 'queryKey' | 'queryFn'>) {
   return useQuery<AxiosResponse<TResponse<TServerByIdResponse>>, Error, TData>({
     ...queryOption,
@@ -85,7 +88,6 @@ export function useServerByName<TData = AxiosResponse<TResponse<TServerByNameRes
     enabled: !!name
   });
 }
-
 export function useAllMembersInServer<TData = AxiosResponse<TResponse<TAllMembersResponse[]>>>(id: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TAllMembersResponse[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
   return useQuery<AxiosResponse<TResponse<TAllMembersResponse[]>>, Error, TData>({
     ...queryOption,
@@ -94,7 +96,6 @@ export function useAllMembersInServer<TData = AxiosResponse<TResponse<TAllMember
     enabled: !!id
   });
 }
-
 export function useCreateServer(option?: Omit<UseMutationOptions<AxiosResponse<TResponse<TCreateServerResponse>>, Error, TCreateServerBody>, 'mutationFn' | 'mutationKey'>) {
   return useMutation<AxiosResponse<TResponse<TCreateServerResponse>>, Error, TCreateServerBody>({
     ...option,
@@ -152,6 +153,26 @@ export function useLeaveUserFromServer(option?: Omit<UseMutationOptions<AxiosRes
     }
   });
 }
+export function useKickUserFromServer(option?: Omit<UseMutationOptions<AxiosResponse<TResponse<TKickUserFromServerResponse>>, Error, {id: string; body: TKickUserFromServerBody}>, 'mutationFn' | 'mutationKey'>) {
+  return useMutation<AxiosResponse<TResponse<TKickUserFromServerResponse>>, Error, {id: string; body: TKickUserFromServerBody}>({
+    ...option,
+    mutationKey: ['kick-user-from-server'],
+    mutationFn: kickUserFromServer,
+    onSuccess: (...args) => {
+      const id = args[1].id;
+      toast.success('Kick From Server successfully');
+      queryClient.invalidateQueries({
+        queryKey: MY_SERVERS_KEY,
+        exact: false
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...SERVER_MEMBERS_KEY, id],
+        exact: false
+      });
+      option?.onSuccess?.(...args);
+    }
+  });
+}
 export function useDeleteServer(option?: Omit<UseMutationOptions<AxiosResponse<TResponse<TDeleteServerResponse>>, Error, {id: string}>, 'mutationFn' | 'mutationKey'>) {
   return useMutation<AxiosResponse<TResponse<TDeleteServerResponse>>, Error, {id: string}>({
     ...option,
@@ -184,6 +205,26 @@ export function useChangeRole(option?: Omit<UseMutationOptions<AxiosResponse<TRe
       toast.success(`Change User Role To ${role} successfully`);
       queryClient.invalidateQueries({
         queryKey: [...SERVER_MEMBERS_KEY, id],
+        exact: false
+      });
+      option?.onSuccess?.(...args);
+    }
+  });
+}
+export function useAddUserToServer(option?: Omit<UseMutationOptions<AxiosResponse<TResponse<TAddUserToServerResponse>>, Error, {id: string}>, 'mutationFn' | 'mutationKey'>) {
+  return useMutation<AxiosResponse<TResponse<TAddUserToServerResponse>>, Error, {id: string}>({
+    ...option,
+    mutationKey: ['add-user-to-server'],
+    mutationFn: addUserToServer,
+    onSuccess: (...args) => {
+      const serverName = args[0].data.data.server.name;
+      toast.success(`Joined ${serverName} successfully`);
+      queryClient.invalidateQueries({
+        queryKey: MY_SERVERS_KEY,
+        exact: false
+      });
+      queryClient.invalidateQueries({
+        queryKey: PUBLIC_SERVERS_KEY,
         exact: false
       });
       option?.onSuccess?.(...args);

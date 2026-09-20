@@ -1,17 +1,19 @@
-import {IconUsers} from '@tabler/icons-react';
+import {IconLock, IconLockOpen, IconUsers} from '@tabler/icons-react';
 
 import {formatText} from '@/lib/utils';
 
 import {Skeleton} from '../ui/skeleton';
+import {Badge} from '../ui/badge';
 
 type ServerInfoProps = {
   name?: string;
   description?: string;
   avatarUrl?: string;
+  isPublic?: boolean;
   isLoading?: boolean;
 };
 
-const ServerInfo = ({name, description, avatarUrl, isLoading = false}: ServerInfoProps) => {
+const ServerInfo = ({name, description, avatarUrl, isPublic = false, isLoading = false}: ServerInfoProps) => {
   return (
     <div className='space-y-5'>
       <div className='flex items-center gap-2'>
@@ -46,7 +48,14 @@ const ServerInfo = ({name, description, avatarUrl, isLoading = false}: ServerInf
             )}
 
             <div className='min-w-0'>
-              <h4 className='truncate text-lg font-semibold'>{name || 'Unnamed Server'}</h4>
+              <div className='flex items-center gap-2'>
+                <h4 className='truncate text-lg font-semibold'>{name || 'Unnamed Server'}</h4>
+
+                <Badge variant='outline' className='shrink-0 gap-1'>
+                  {isPublic ? <IconLockOpen className='size-3' /> : <IconLock className='size-3' />}
+                  {isPublic ? 'Public' : 'Private'}
+                </Badge>
+              </div>
 
               <p className='text-sm text-muted-foreground'>{description || 'No description'}</p>
             </div>

@@ -8,11 +8,15 @@ export type TMyServersResponse = {
     avatar_url?: string;
   };
 };
+export type TPublicServersParams = {
+  search?: string;
+};
 export type TPublicServersResponse = {
   id: string;
   name: string;
   description: string;
   avatar_url?: string;
+  memberCount: number;
 };
 
 export type TServerByIdResponse = {
@@ -77,6 +81,16 @@ export type TLeaveUserFromServerResponse = {
   role: TUserRole;
   createdAt: string;
 };
+export type TKickUserFromServerResponse = {
+  id: string;
+  serverId: string;
+  userId: string;
+  role: TUserRole;
+  createdAt: string;
+};
+export type TKickUserFromServerBody = {
+  memberId: string;
+};
 export type TDeleteServerResponse = {
   id: string;
   name: string;
@@ -93,4 +107,10 @@ export type TChangeRoleResponse = {
   userId: string;
   role: TUserRole;
   createdAt: string;
+};
+export type TAddUserToServerResponse = {
+  createdAt: string;
+  server: {
+    name: string;
+  };
 };
