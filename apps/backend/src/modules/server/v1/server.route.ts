@@ -5,6 +5,7 @@ import {ValidationMiddleware} from '../../../middlewares/validation.middleware.j
 import {CreateServerDtoSchema} from '../dto/create-server.dto.js';
 import {EditServerDtoSchema} from '../dto/edit-server.dto.js';
 import {ChangeRoleDtoSchema} from '../dto/change-role.dto.js';
+import {KickUserFromServerDtoSchema} from '../dto/kick-user-from-server.dto.js';
 
 export class ServerRoute {
   private serverController: ServerController;
@@ -21,6 +22,7 @@ export class ServerRoute {
     this.router.patch('/change-role/:serverId', authMiddleWare, ValidationMiddleware(ChangeRoleDtoSchema), (req, res) => this.serverController.changeRoleInServer(req, res));
     this.router.delete('/delete-server/:serverId', authMiddleWare, (req, res) => this.serverController.deleteServer(req, res));
     this.router.patch('/leave-user-from-server/:serverId', authMiddleWare, (req, res) => this.serverController.leaveUserFromServer(req, res));
+    this.router.patch('/kick-user-from-server/:serverId', authMiddleWare, ValidationMiddleware(KickUserFromServerDtoSchema), (req, res) => this.serverController.kickedUserFromServer(req, res));
     this.router.get('/name/:serverName', authMiddleWare, (req, res) => this.serverController.getServerByName(req, res));
     this.router.get('/:serverId', authMiddleWare, (req, res) => this.serverController.getServerById(req, res));
   }

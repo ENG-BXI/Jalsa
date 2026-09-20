@@ -3,6 +3,7 @@ import type {Contract} from '../../prisma/contract.d.ts';
 import {CreateServerDto} from './dto/create-server.dto.js';
 import {TUserRole} from '../../enum/user.role.js';
 import {EditServerDto} from './dto/edit-server.dto.js';
+import {or} from '@prisma/orm-postgres/orm-client';
 
 export class ServerRepository {
   private db: PostgresClient<Contract>;
@@ -35,8 +36,41 @@ export class ServerRepository {
       })
       .all();
   }
-  async getAllPublicServer() {
-    return await this.db.orm.public.Server.where({isPublic: true}).select('id', 'name', 'description', 'avatar_url').all();
+  async getAllPublicServer(search?: string) {
+    let query = this.db.sql.public.userSever
+      .innerJoin(this.db.sql.public.server, (f, fns) => fns.eq(f.userSever.serverId, f.server.id))
+      .select((f, fns) => ({
+        id: f.server.id,
+        name: f.server.name,
+        description: f.server.description,
+        avatar_url: f.server.avatar_url,
+        memberCount: fns.count(f.userSever.id)
+      }))
+      .where((f, fns) => fns.eq(f.server.isPublic, true));
+    
+    if (search?.trim()) {
+      const value = `%${search.trim()}%`;
+
+      query = query.where((f, fns) =>
+        fns.or(
+          fns.ilike(f.server.name, value),
+          fns.ilike(
+            fns.raw`COALESCE(${f.server.description}, '')`.returns({
+              codecId: 'pg/text@1',
+              nullable: false
+            }),
+            value
+          )
+        )
+      );
+    }
+
+    const builtQuery = query
+      .groupBy(f => f.server.id)
+      .orderBy('memberCount', {direction: 'desc'})
+      .build();
+
+    return await this.db.runtime().query(builtQuery);
   }
   async createServer(userId: string, body: CreateServerDto) {
     //TODO: Implement Avatar Server
