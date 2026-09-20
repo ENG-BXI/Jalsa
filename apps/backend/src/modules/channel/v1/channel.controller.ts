@@ -23,8 +23,10 @@ export class ChannelController {
   }
   async getAllChannelsInServer(req: Request, res: Response) {
     try {
-      const serverId = req.params.serverId as string;
-      const data = await this.channelService.getAllChannelsInServer(serverId);
+      const user = req.user;
+      const serverName = req.params.serverName as string;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.channelService.getAllChannelsInServer(serverName,user.id);
       return res.status(HttpStatus.OK).json({message: 'Get All Channels Successful', data});
     } catch (error) {
       console.log('====================================');
