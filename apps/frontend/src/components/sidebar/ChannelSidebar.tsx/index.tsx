@@ -12,8 +12,6 @@ import ChannelSkeleton from './channel/components/channel-skeleton';
 const ChannelSidebar = () => {
   const {serverName} = useParams<{serverName: string}>();
   const {setChannelSideBar} = useChannelSideBar();
-  // TODO : Make it With channel api get Server Type
-  // GetChannels and GetServerByName ib Same Api
   const {data, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
   const server = data?.server;
   const textChannels: TChannel[] = [];

@@ -20,9 +20,13 @@ export class ChannelService {
     return channel;
   }
 
-  async getAllChannelsInServer(serverId: string) {
-    const channels = await this.channelRepository.getAllChannelsInServer(serverId);
-    return channels;
+  async getAllChannelsInServer(serverName: string, userId: string) {
+    const server = await this.serverRepository.getServerByName(serverName, userId);
+    if (!server) {
+      throw new Error('Server not found');
+    }
+    const channels = await this.channelRepository.getAllChannelsInServer(server.id);
+    return {server, channels};
   }
 
   async createChannel(userId: string, body: CreateChannelDto) {
