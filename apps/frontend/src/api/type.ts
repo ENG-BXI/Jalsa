@@ -4,3 +4,4 @@ export type TResponse<T> = {
 };
 
 export type TUserRole = 'ADMIN' | 'OWNER' | 'MEMBER';
+export type TChannelType = 'TEXT' | 'VOICE';

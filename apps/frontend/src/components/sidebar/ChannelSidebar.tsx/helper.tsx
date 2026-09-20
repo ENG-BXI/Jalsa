@@ -65,30 +65,3 @@ export function GetServerPopoverOptions({role, onClickInvite, onClickEditServer,
     }
   ];
 }
-
-export const dummyTextChannels: TChannel[] = [
-  {id: '1', title: 'general'},
-  {id: '2', title: 'announcements'},
-  {id: '3', title: 'welcome'},
-  {id: '4', title: 'random'},
-  {id: '5', title: 'memes'},
-  {id: '6', title: 'gaming'},
-  {id: '7', title: 'music'},
-  {id: '8', title: 'movies'},
-  {id: '9', title: 'development'},
-  {id: '10', title: 'frontend'},
-  {id: '11', title: 'backend'},
-  {id: '12', title: 'help'},
-  {id: '13', title: 'feedback'}
-];
-
-export const dummyVoiceChannels: TChannel[] = [
-  {id: '14', title: 'General Voice'},
-  {id: '15', title: 'Gaming'},
-  {id: '16', title: 'Chill Zone'},
-  {id: '17', title: 'Music'},
-  {id: '18', title: 'Study Room'},
-  {id: '19', title: 'Meeting Room'},
-  {id: '20', title: 'Lounge'},
-  {id: '21', title: 'AFK'}
-];
