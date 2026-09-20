@@ -15,3 +15,7 @@ export const KICK_USER_FROM_SERVER = 'kick-user-from-server';
 export const DELETE_SERVER = 'delete-server';
 export const CHANGE_ROLE = 'change-role';
 export const ADD_USER_TO_SERVER = 'add-user-to-server';
+export const CHANNEL = 'channel';
+export const CREATE_CHANNEL = 'create-channel';
+export const EDIT_CHANNEL = 'edit-channel';
+export const DELETE_CHANNEL = 'delete-channel';

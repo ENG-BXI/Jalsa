@@ -1,27 +1,36 @@
 import {Separator} from '@/components/ui/separator';
 import ServerNameAndAction from './server-name-and-action';
-import {dummyTextChannels, dummyVoiceChannels} from './helper';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import Channel from './channel/channel';
-import {useServerByName} from '@/api/server/api';
 import {useParams} from 'react-router';
 import {useChannelSideBar} from '@/store/server-store';
 import {useEffect} from 'react';
+import {useGetAllChannel} from '@/api/channel/api';
+import type {TChannel} from './type';
+import ChannelSkeleton from './channel/components/channel-skeleton';
 
 const ChannelSidebar = () => {
   const {serverName} = useParams<{serverName: string}>();
   const {setChannelSideBar} = useChannelSideBar();
   // TODO : Make it With channel api get Server Type
   // GetChannels and GetServerByName ib Same Api
-  const {data, isFetched, isError} = useServerByName(serverName, {select: res => res.data.data});
+  const {data, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
+  const server = data?.server;
+  const textChannels: TChannel[] = [];
+  const voiceChannels: TChannel[] = [];
+  data?.channels?.forEach(channel => {
+    if (channel.type == 'TEXT') {
+      textChannels.push(channel);
+    } else voiceChannels.push(channel);
+  });
   useEffect(() => {
-    if (isFetched && data && !isError) {
+    if (isFetched && server && !isError) {
       setChannelSideBar({
         type: 'server',
-        role: data.userSevers[0].role,
+        role: server.userSevers[0].role,
         channelSideBar: {
-          id: data?.id,
-          name: data.name
+          id: server.id,
+          name: server.name
         }
       });
     } else if (!serverName) {
@@ -39,8 +48,8 @@ const ChannelSidebar = () => {
       <ServerNameAndAction />
       <Separator />
       <ScrollArea className='p-3 h-full'>
-        <Channel type='text' channels={dummyTextChannels} />
-        <Channel type='voice' channels={dummyVoiceChannels} />
+        {isLoading ? <ChannelSkeleton /> : <Channel type='text' channels={textChannels} />}
+        {isLoading ? <ChannelSkeleton /> : voiceChannels.length > 1 && <Channel type='voice' channels={voiceChannels} />}
         <div className='h-10 w-full' />
       </ScrollArea>
     </div>
