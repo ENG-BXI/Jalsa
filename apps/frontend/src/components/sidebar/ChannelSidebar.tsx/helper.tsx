@@ -1,5 +1,5 @@
 import {IconEdit, IconHash, IconLogout, IconSettings2, IconUsersPlus, IconVolume} from '@tabler/icons-react';
-import type {TChannel, TChannelType, TServerPopoverOptions} from './type';
+import type {TChannelType, TServerPopoverOptions} from './type';
 import type {ElementType} from 'react';
 import type {TUserRole} from '@/api/type';
 
