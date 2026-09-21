@@ -47,7 +47,7 @@ const ChannelSidebar = () => {
       <Separator />
       <ScrollArea className='p-3 h-full'>
         {isLoading ? <ChannelSkeleton /> : <Channel type='text' channels={textChannels} />}
-        {isLoading ? <ChannelSkeleton /> : voiceChannels.length > 1 && <Channel type='voice' channels={voiceChannels} />}
+        {isLoading ? <ChannelSkeleton /> : voiceChannels.length > 0 && <Channel type='voice' channels={voiceChannels} />}
         <div className='h-10 w-full' />
       </ScrollArea>
     </div>

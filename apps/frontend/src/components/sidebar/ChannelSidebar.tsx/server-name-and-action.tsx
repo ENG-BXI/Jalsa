@@ -13,6 +13,7 @@ import {useChannelSideBar} from '@/store/server-store';
 import {useLocation, useNavigate} from 'react-router';
 import {useDeleteServer, useLeaveUserFromServer} from '@/api/server/api';
 import ViewServer from '@/components/server/view-server-form';
+import CreateChannelForm from './channel/components/create-channel-form';
 
 const ServerNameAndAction = () => {
   return (
@@ -210,8 +211,44 @@ function ServerNamePopover() {
       }
     });
   }
+  function onClickCreateChannel() {
+    if (!channelSideBar.channelSideBar?.id) return;
 
-  const serverPopoverOptions = GetServerPopoverOptions({role: channelSideBar.role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer});
+    setDialog({
+      title: {
+        title: 'Create Channel',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Create a new channel and choose how members will communicate.',
+        className: 'text-center'
+      },
+
+      content: (
+        <CreateChannelForm
+          serverId={channelSideBar.channelSideBar?.id}
+          onClose={data => {
+            const serverName = channelSideBar.channelSideBar?.name;
+            const channelName = data.name;
+            onClose();
+            navigate(`/server/${serverName}/${channelName}`);
+          }}
+        />
+      ),
+
+      primaryAction: {
+        text: 'Create Channel',
+        formId: 'create-channel-form'
+      },
+
+      secondaryAction: {
+        text: 'Cancel'
+      }
+    });
+  }
+
+  const serverPopoverOptions = GetServerPopoverOptions({role: channelSideBar.role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer, onClickCreateChannel});
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
