@@ -27,15 +27,15 @@ const ChannelSidebar = () => {
         type: 'server',
         role: server.userSevers[0].role,
         channelSideBar: {
-          id: server.id,
-          name: server.name
+          serverId: server.id,
+          serverName: server.name
         }
       });
     } else if (!serverName) {
       setChannelSideBar({
         type: 'direct-message',
         channelSideBar: {
-          name: 'Jalsa'
+          serverName: 'Jalsa'
         }
       });
     }

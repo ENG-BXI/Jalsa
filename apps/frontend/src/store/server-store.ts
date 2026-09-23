@@ -4,8 +4,8 @@ export type TChannelSideBarAndRole = {
   type: 'direct-message' | 'server';
   role?: TUserRole;
   channelSideBar: {
-    id?: string;
-    name: string;
+    serverId?: string;
+    serverName: string;
   } | null;
 };
 type channelSideBarStore = {

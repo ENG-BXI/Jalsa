@@ -1,16 +1,17 @@
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { cn } from "cn"
+import { forwardRef } from "react"
 
 interface scrollBar {
   hasScrollBar?:boolean
 } 
 
-function ScrollArea({
+const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaPrimitive.Root.Props&scrollBar>(({
   className,
   children,
   hasScrollBar = false,
   ...props
-}: ScrollAreaPrimitive.Root.Props&scrollBar) {
+}, ref) => {
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
@@ -18,6 +19,7 @@ function ScrollArea({
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
+        ref={ref}
         data-slot="scroll-area-viewport"
         className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
       >
@@ -27,7 +29,9 @@ function ScrollArea({
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
   )
-}
+})
+
+ScrollArea.displayName = "ScrollArea"
 
 function ScrollBar({
   className,

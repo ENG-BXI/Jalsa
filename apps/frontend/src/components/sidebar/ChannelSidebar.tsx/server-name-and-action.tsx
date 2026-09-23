@@ -91,7 +91,7 @@ function ServerNamePopover() {
     });
   }
   function onClickEditServer() {
-    if (!channelSideBar.channelSideBar?.id) return;
+    if (!channelSideBar.channelSideBar?.serverId) return;
     setDialog({
       title: {
         title: 'Edit Server',
@@ -105,10 +105,10 @@ function ServerNamePopover() {
 
       content: (
         <EditServerForm
-          serverId={channelSideBar.channelSideBar.id}
+          serverId={channelSideBar.channelSideBar.serverId}
           onClose={data => {
             navigate(`server/${data.name}/${path}`);
-            setChannelSideBar({type: 'server', channelSideBar: {name: data.name}});
+            setChannelSideBar({type: 'server', channelSideBar: {serverName: data.name}});
             onClose();
           }}
         />
@@ -125,7 +125,7 @@ function ServerNamePopover() {
     });
   }
   function onClickViewServerSetting() {
-    if (!channelSideBar.channelSideBar?.id) return;
+    if (!channelSideBar.channelSideBar?.serverId) return;
     setDialog({
       title: {
         title: 'Server Information',
@@ -137,7 +137,7 @@ function ServerNamePopover() {
         className: 'text-center'
       },
 
-      content: <ViewServer serverId={channelSideBar.channelSideBar.id} />
+      content: <ViewServer serverId={channelSideBar.channelSideBar.serverId} />
     });
   }
   function onClickLeaveServer() {
@@ -156,9 +156,9 @@ function ServerNamePopover() {
         disabled: isLeaveUserPending,
         className: 'bg-red-500',
         onClick: () => {
-          if (!channelSideBar.channelSideBar?.id) return;
+          if (!channelSideBar.channelSideBar?.serverId) return;
           leaveFromServerMutate(
-            {id: channelSideBar.channelSideBar.id},
+            {id: channelSideBar.channelSideBar.serverId},
             {
               onSuccess: () => {
                 navigate('/');
@@ -193,9 +193,9 @@ function ServerNamePopover() {
         text: 'Delete Server',
         className: 'bg-red-500',
         onClick: () => {
-          if (!channelSideBar.channelSideBar?.id) return;
+          if (!channelSideBar.channelSideBar?.serverId) return;
           deleteServerMutate(
-            {id: channelSideBar.channelSideBar.id},
+            {id: channelSideBar.channelSideBar.serverId},
             {
               onSuccess: () => {
                 navigate('/');
@@ -212,7 +212,7 @@ function ServerNamePopover() {
     });
   }
   function onClickCreateChannel() {
-    if (!channelSideBar.channelSideBar?.id) return;
+    if (!channelSideBar.channelSideBar?.serverId) return;
 
     setDialog({
       title: {
@@ -227,9 +227,9 @@ function ServerNamePopover() {
 
       content: (
         <CreateChannelForm
-          serverId={channelSideBar.channelSideBar?.id}
+          serverId={channelSideBar.channelSideBar?.serverId}
           onClose={data => {
-            const serverName = channelSideBar.channelSideBar?.name;
+            const serverName = channelSideBar.channelSideBar?.serverName;
             const channelName = data.name;
             onClose();
             navigate(`/server/${serverName}/${channelName}`);
@@ -255,7 +255,7 @@ function ServerNamePopover() {
       <PopoverTrigger
         render={
           <Button variant={'ghost'}>
-            {formatText(channelSideBar.channelSideBar!.name, {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
+            {formatText(channelSideBar.channelSideBar!.serverName, {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
           </Button>
         }
       />
