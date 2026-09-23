@@ -1,6 +1,7 @@
 import {PostgresClient} from '@prisma/orm-postgres/runtime';
 import {Contract} from '../../prisma/contract.js';
 import {MessageDto} from './dto/message-dto.dto.js';
+import {Temporal} from 'temporal-polyfill';
 
 export class ChannelMessageRepository {
   private db: PostgresClient<Contract>;
@@ -9,7 +10,13 @@ export class ChannelMessageRepository {
   }
   async getAllMessage(channelId: string) {
     // TODO : add pagination here ....
-    const allMessage = await this.db.orm.public.ChannelMassage.where({channelId}).all();
+    const allMessage = await this.db.orm.public.ChannelMassage.where({channelId})
+      .include('fromUser', c => {
+        return c.select('id', 'name', 'userName');
+      })
+      .orderBy(u => u.createdAt.asc())
+      .select('id', 'from', 'text', 'imageUrl', 'createdAt', 'updatedAt', 'softDelete')
+      .all();
     const allMessageWithoutDeleteMessage = allMessage.map(message => {
       if (message.softDelete) {
         const {text, imageUrl, ...softMessage} = message;
@@ -28,11 +35,11 @@ export class ChannelMessageRepository {
     return sendedMessage;
   }
   async editMessage(userId: string, channelId: string, messageId: string, message: MessageDto) {
-    const editedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).update({text: message.text, imageUrl: message.imageUrl, updatedAt: Date.now()});
+    const editedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).update({text: message.text, imageUrl: message.imageUrl, updatedAt: Temporal.Now.instant()});
     return editedMessage;
   }
   async deleteMessage(userId: string, channelId: string, messageId: string) {
-    const deletedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).delete();
+    const deletedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).update({softDelete: true});
     return deletedMessage;
   }
 }
