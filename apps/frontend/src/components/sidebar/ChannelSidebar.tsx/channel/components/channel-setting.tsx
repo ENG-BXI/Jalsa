@@ -26,7 +26,7 @@ export function ChannelSetting({role, channelId, isOpen}: InviteChannelButtonPro
   const {mutate: deleteChannelMutate} = useDeleteChannel();
 
   function onClickEditChannel() {
-    if (!channelSideBar.channelSideBar?.id) return;
+    if (!channelSideBar.channelSideBar?.serverId) return;
 
     setDialog({
       title: {
@@ -42,10 +42,10 @@ export function ChannelSetting({role, channelId, isOpen}: InviteChannelButtonPro
       content: (
         <EditChannelForm
           channelId={channelId}
-          serverId={channelSideBar.channelSideBar.id}
+          serverId={channelSideBar.channelSideBar.serverId}
           onClose={data => {
             const channelName = data.name;
-            const serverName = channelSideBar.channelSideBar?.name;
+            const serverName = channelSideBar.channelSideBar?.serverName;
             navigate(`/server/${serverName}/${channelName}`);
             onClose();
           }}
@@ -80,13 +80,13 @@ export function ChannelSetting({role, channelId, isOpen}: InviteChannelButtonPro
         text: 'Delete Channel',
         className: 'bg-red-500',
         onClick: () => {
-          if (!channelSideBar.channelSideBar?.id) return;
+          if (!channelSideBar.channelSideBar?.serverId) return;
 
           deleteChannelMutate(
-            {channelId: channelId, serverId: channelSideBar.channelSideBar.id},
+            {channelId: channelId, serverId: channelSideBar.channelSideBar.serverId},
             {
               onSuccess: () => {
-                const serverName = channelSideBar.channelSideBar?.name;
+                const serverName = channelSideBar.channelSideBar?.serverName;
                 navigate(`/server/${serverName}`);
                 onClose();
               }

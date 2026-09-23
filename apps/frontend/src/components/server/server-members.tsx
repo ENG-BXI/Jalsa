@@ -24,7 +24,7 @@ const ServerMembers = ({members = [], isLoading = false, changedUser, isChangeRo
   const userRole = channelSideBar.role;
   const {mutate: kickMember, isPending: isKickPending} = useKickUserFromServer();
   function handleOnKickMember(memberId: string) {
-    const serverId = channelSideBar.channelSideBar?.id;
+    const serverId = channelSideBar.channelSideBar?.serverId;
     if (!serverId) return;
     kickMember({id: serverId, body: {memberId}});
   }

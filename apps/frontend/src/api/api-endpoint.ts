@@ -19,3 +19,5 @@ export const CHANNEL = 'channel';
 export const CREATE_CHANNEL = 'create-channel';
 export const EDIT_CHANNEL = 'edit-channel';
 export const DELETE_CHANNEL = 'delete-channel';
+export const CHANNEL_MESSAGE = 'channel-message';
+export const ALL_MESSAGE = 'all-message';
