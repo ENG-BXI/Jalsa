@@ -3,7 +3,6 @@ import {LayoutProvider} from './context/layout-provider';
 import SideBar from './components/sidebar';
 import {useEffect} from 'react';
 import { AppDialog } from './components/app-dialog';
-import { Toaster } from 'sonner';
 
 function App() {
   const navigate = useNavigate();
@@ -23,7 +22,6 @@ function App() {
             </div>
           </div>
           <AppDialog />
-          <Toaster position='top-right' richColors />
         </div>
       </LayoutProvider>
     </main>
