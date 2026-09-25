@@ -9,6 +9,7 @@ export class DirectMessageRoute {
   constructor(directMessageController: DirectMessageController) {
     this.directMessageController = directMessageController;
     this.router = Router();
+    this.router.get('/dm-members', authMiddleWare, (req, res) => this.directMessageController.getAllDMMembers(req, res));
     this.router.get('/all-message/:receiverId', authMiddleWare, (req, res) => this.directMessageController.getAllMessage(req, res));
     this.router.post('/:receiverId', authMiddleWare, ValidationMiddleware(MessageDtoSchema), (req, res) => this.directMessageController.sendMessage(req, res));
     this.router.patch('/:messageId', authMiddleWare, ValidationMiddleware(MessageDtoSchema), (req, res) => this.directMessageController.editMessage(req, res));
