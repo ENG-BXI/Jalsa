@@ -9,6 +9,10 @@ export class DirectMessageService {
     this.directMessageRepository = directMessageRepository;
     this.userRepository = userRepository;
   }
+  async getAllDMMembers(userId: string) {
+    const dmMembers = await this.directMessageRepository.getAllDMMembers(userId);
+    return dmMembers;
+  }
   async getAllMessages(userId: string, receiverId: string) {
     const existReceiverUser = await this.userRepository.getUserById(receiverId);
 

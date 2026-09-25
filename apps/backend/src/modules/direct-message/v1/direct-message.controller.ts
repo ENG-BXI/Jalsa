@@ -8,6 +8,20 @@ export class DirectMessageController {
   constructor(directMessageService: DirectMessageService) {
     this.directMessageService = directMessageService;
   }
+  async getAllDMMembers(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.directMessageService.getAllDMMembers(user.id);
+      return res.status(HttpStatus.OK).json({message: 'Get All DM Members Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Get All DM Members ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All DM Members Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All DM Members Failed', error: 'Unknown error'});
+    }
+  }
   async getAllMessage(req: Request, res: Response) {
     try {
       const user = req.user;
