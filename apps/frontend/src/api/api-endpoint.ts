@@ -21,3 +21,6 @@ export const EDIT_CHANNEL = 'edit-channel';
 export const DELETE_CHANNEL = 'delete-channel';
 export const CHANNEL_MESSAGE = 'channel-message';
 export const ALL_MESSAGE = 'all-message';
+export const DIRECT_MESSAGE = 'direct-message';
+export const DM_MEMBERS = 'dm-members';
+export const ALL_MESSAGE_FOR_DM = 'all-message';
