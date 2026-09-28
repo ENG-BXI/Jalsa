@@ -1,3 +1,4 @@
+import {useUserByUserName} from '@/api/auth/api';
 import {useDeleteDMMessage, useEditDMMessage, useGetAllDMMessage, useSendDMMessage} from '@/api/direct-message/api';
 import ChannelTextInput from '@/components/server/channel/channel-text-input';
 import AllMessage from '@/feature/server/components/message';
@@ -14,12 +15,13 @@ const ReceiverMember = () => {
   const title = params.receiverMemberUserName || '';
   const {setHeader} = useHeader();
   const {data: messages} = useGetAllDMMessage(title, {select: res => res.data.data, enabled: !!title});
-  const {Dm} = useDm();
+  const {Dm, setDm} = useDm();
   const {mutate: sendMessage, isPending} = useSendDMMessage();
   const {setMessage} = useMessage();
   const {setDialog, onClose} = useAppDialog();
   const {mutate: editMessage, isPaused: isEditLoading} = useEditDMMessage();
   const {mutate: deleteMessage, isPending: isDeleteDMMessagePending} = useDeleteDMMessage();
+  const {data: receiverUser, isLoading: isReceiverUserLoading, isFetched: isReceiverUserFetched} = useUserByUserName(params.receiverMemberUserName || '', {enabled: !!params.receiverMemberUserName, select: res => res.data.data});
 
   function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>) {
     e.preventDefault();
@@ -98,7 +100,14 @@ const ReceiverMember = () => {
     },
     [Dm.id, deleteMessage, onClose, setDialog]
   );
-
+  useEffect(() => {
+    if (!isReceiverUserLoading && isReceiverUserFetched && receiverUser) {
+      setDm({
+        id: receiverUser.id,
+        name: receiverUser.name
+      });
+    }
+  }, [isReceiverUserFetched, isReceiverUserLoading, receiverUser, setDm]);
   useEffect(() => {
     setMessage({onEditMessage: handleEditMessage, onDelete: handleDeleteClick, isDeleteMessageLoading: isDeleteDMMessagePending, isEditMessageLoading: isEditLoading});
   }, [handleDeleteClick, handleEditMessage, isDeleteDMMessagePending, isEditLoading, setMessage]);

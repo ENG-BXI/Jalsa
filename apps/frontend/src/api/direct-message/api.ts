@@ -64,7 +64,7 @@ export function useSendDMMessage(option?: Omit<UseMutationOptions<AxiosResponse<
       const membersIds = cachedMembers?.data.data.map(member => member.id);
       const members = new Set(membersIds);
       const memberExists = members.has(receiverId);
-      if (memberExists)
+      if (!memberExists)
         queryClient.invalidateQueries({
           queryKey: DIRECT_MEMBER_KEY,
           exact: false

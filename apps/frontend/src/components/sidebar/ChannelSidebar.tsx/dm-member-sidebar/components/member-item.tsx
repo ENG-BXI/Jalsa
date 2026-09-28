@@ -2,8 +2,6 @@ import {Button} from '@/components/ui/button';
 import type {TMember} from '..';
 import {useNavigate} from 'react-router';
 import {cn} from 'cn';
-import {useDm} from '@/store/use-dm.store';
-import {useEffect} from 'react';
 
 interface MemberItemProps {
   isActive?: boolean;
@@ -12,19 +10,9 @@ interface MemberItemProps {
 
 const MemberItem = ({isActive = false, member}: MemberItemProps) => {
   const navigate = useNavigate();
-  const {Dm, setDm} = useDm();
-  useEffect(() => {
-    if (!Dm.id) {
-      if (isActive) setDm({id: member.id, name: member.name});
-    }
-  }, [Dm.id, isActive, member.id, member.name, setDm]);
 
   function handleClick() {
     navigate(`/direct-message/${member.userName}`);
-    setDm({
-      id: member.id,
-      name: member.name
-    });
   }
   return (
     <Button onClick={handleClick} variant='ghost' size='lg' className={cn('group select-none text-text-1 justify-start p-2 text-sm', isActive && 'bg-primary-1')}>

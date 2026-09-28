@@ -24,3 +24,4 @@ export const ALL_MESSAGE = 'all-message';
 export const DIRECT_MESSAGE = 'direct-message';
 export const DM_MEMBERS = 'dm-members';
 export const ALL_MESSAGE_FOR_DM = 'all-message';
+export const USER = 'user';
