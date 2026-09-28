@@ -7,6 +7,14 @@ class UserService {
   constructor(userRepository: UserRepository) {
     this.userRepository = userRepository;
   }
+  async getUserByUserName(userName: string) {
+    const user = await this.userRepository.getUserByUserName(userName);
+    return {
+      id: user?.id,
+      name: user?.name,
+      userName: user?.userName
+    };
+  }
   async editUser(id: string, user: UserPayload, body: EditUserDto) {
     const findUser = await this.userRepository.getUserById(id);
     if (!findUser) throw new Error('User Not Found');
@@ -37,7 +45,7 @@ class UserService {
     const findUser = await this.userRepository.getUserById(id);
     if (!findUser) throw new Error('User Not Found');
     const deletedUser = await this.userRepository.deleteUser(id);
-    return deletedUser
+    return deletedUser;
   }
 }
 export default UserService;
