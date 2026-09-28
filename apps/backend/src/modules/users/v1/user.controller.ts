@@ -8,6 +8,21 @@ class UserController {
   constructor(userService: UserService) {
     this.userService = userService;
   }
+  async getUserByUserName(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const userName = req.params.userName as string;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.userService.getUserByUserName(userName);
+      return res.status(HttpStatus.OK).json({message: 'Get User By UserName Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Get User By UserName ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get User By UserName Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get User By UserName Failed', error: 'Unknown error'});
+    }
+  }
   async editUser(req: Request, res: Response) {
     try {
       const body = req.body as EditUserDto;
