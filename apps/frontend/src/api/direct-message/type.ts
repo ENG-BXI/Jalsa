@@ -1,7 +1,7 @@
 export type TGetAllDMMessage = {
   id: string;
   text?: string;
-  imageUrl?: null;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
   softDelete: boolean;
@@ -9,12 +9,14 @@ export type TGetAllDMMessage = {
     id: string;
     name: string;
     userName: string;
+    jointAt: string;
   };
 };
 
 export type TGetAllDMMember = {
   id: string;
   name: string;
+  userName: string;
 };
 
 export type TSendDMMessageBody = {

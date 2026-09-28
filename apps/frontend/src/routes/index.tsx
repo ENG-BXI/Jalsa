@@ -37,10 +37,22 @@ const Routers = createBrowserRouter([
               },
               {
                 path: 'direct-message',
-                lazy: async () => {
-                  const {default: Component} = await import('@/feature/direct-message');
-                  return {Component};
-                }
+                children: [
+                  {
+                    index: true,
+                    lazy: async () => {
+                      const {default: Component} = await import('@/feature/direct-message');
+                      return {Component};
+                    }
+                  },
+                  {
+                    path: ':receiverMemberUserName',
+                    lazy: async () => {
+                      const {default: Component} = await import('@/feature/direct-message/receiver-member');
+                      return {Component};
+                    }
+                  }
+                ]
               }
             ]
           },

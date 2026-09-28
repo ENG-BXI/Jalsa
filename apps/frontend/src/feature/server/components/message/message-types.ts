@@ -12,6 +12,7 @@ export interface TMessageUser {
   id: string;
   name: string;
   userName: string;
+  jointAt: string;
 }
 
 export interface TMessageWithUser extends TMessage {

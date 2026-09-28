@@ -4,12 +4,21 @@ import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
 import type {TDeleteDMMessageResponse, TEditDMMessageBody, TEditDMMessageResponse, TGetAllDMMember, TGetAllDMMessage, TSendDMMessageBody, TSendDMMessageResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
+import {transformDMMessageWithUserFromDto} from './transform';
+import type {TMessageWithUser} from '@/feature/server/components/message/message-types';
 
 export const DIRECT_MESSAGE_KEY = ['direct-message'];
 export const DIRECT_MEMBER_KEY = ['direct-member'];
 
 async function getAllDMMessage(receiverId: string) {
-  return await api.get<TResponse<TGetAllDMMessage[]>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${ALL_MESSAGE_FOR_DM}/${receiverId}`);
+  const response = await api.get<TResponse<TGetAllDMMessage[]>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${ALL_MESSAGE_FOR_DM}/${receiverId}`);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      data: transformDMMessageWithUserFromDto(response.data.data)
+    }
+  };
 }
 async function getAllDMMember() {
   return await api.get<TResponse<TGetAllDMMember[]>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${DM_MEMBERS}`);
@@ -21,12 +30,12 @@ async function editDMMessage({messageId, message}: {messageId: string; message: 
   return await api.patch<TResponse<TEditDMMessageResponse>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${messageId}`, message);
 }
 async function deleteDMMessage({messageId}: {messageId: string}) {
-  return await api.patch<TResponse<TDeleteDMMessageResponse>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${messageId}`);
+  return await api.delete<TResponse<TDeleteDMMessageResponse>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${messageId}`);
 }
 
 // hooks...
-export function useGetAllDMMessage<TData = AxiosResponse<TResponse<TGetAllDMMessage[]>>>(receiverId: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TGetAllDMMessage[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
-  return useQuery<AxiosResponse<TResponse<TGetAllDMMessage[]>>, Error, TData>({
+export function useGetAllDMMessage<TData = AxiosResponse<TResponse<TMessageWithUser[]>>>(receiverId: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TMessageWithUser[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
+  return useQuery<AxiosResponse<TResponse<TMessageWithUser[]>>, Error, TData>({
     ...queryOption,
     queryKey: [...DIRECT_MESSAGE_KEY, receiverId],
     queryFn: () => getAllDMMessage(receiverId),
