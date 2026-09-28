@@ -25,9 +25,9 @@ export class DirectMessageController {
   async getAllMessage(req: Request, res: Response) {
     try {
       const user = req.user;
-      const receiverId = req.params.receiverId as string;
+      const receiverUserName = req.params.receiverUserName as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.directMessageService.getAllMessages(user.id, receiverId);
+      const data = await this.directMessageService.getAllMessages(user.id, receiverUserName);
       return res.status(HttpStatus.OK).json({message: 'Get All Message Successful', data});
     } catch (error) {
       console.log('====================================');

@@ -16,6 +16,10 @@
       "model": "DirectMassage",
       "namespace": "public"
     },
+    "dmMembers": {
+      "model": "DmMembers",
+      "namespace": "public"
+    },
     "server": {
       "model": "Server",
       "namespace": "public"
@@ -412,6 +416,80 @@
               "table": "directMassage"
             }
           },
+          "DmMembers": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "receiverId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "senderId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "receiverUser": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "receiverId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "senderUser": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "senderId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "receiverId": {
+                  "column": "receiverId"
+                },
+                "senderId": {
+                  "column": "senderId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "dmMembers"
+            }
+          },
           "Server": {
             "fields": {
               "avatar_url": {
@@ -643,6 +721,36 @@
                 },
                 "to": {
                   "model": "DirectMassage",
+                  "namespace": "public"
+                }
+              },
+              "receiverUser": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "receiverId"
+                  ]
+                },
+                "to": {
+                  "model": "DmMembers",
+                  "namespace": "public"
+                }
+              },
+              "senderUser": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "senderId"
+                  ]
+                },
+                "to": {
+                  "model": "DmMembers",
                   "namespace": "public"
                 }
               },
@@ -1113,6 +1221,99 @@
               },
               "uniques": []
             },
+            "dmMembers": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "receiverId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "senderId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "senderId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "dmMembers"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "receiverId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "dmMembers"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "receiverId"
+                  ],
+                  "name": "dmMembers_receiverId_idx_fe124f44",
+                  "prefix": "dmMembers_receiverId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "senderId"
+                  ],
+                  "name": "dmMembers_senderId_idx_4689c490",
+                  "prefix": "dmMembers_senderId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "senderId",
+                    "receiverId"
+                  ],
+                  "name": "dmMembers_senderId_receiverId_idx_e948b8bd",
+                  "prefix": "dmMembers_senderId_receiverId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "senderId",
+                    "receiverId"
+                  ]
+                }
+              ]
+            },
             "server": {
               "columns": {
                 "avatar_url": {
@@ -1398,10 +1599,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "220d672b24fc7e149173039158f74321d18f270cba36d9b5f158bb25af71c951"
+    "storageHash": "aaa3566565efa0aa316cf8fd7e3d4082f4754379f4de4ba38b86335760e689f3"
   },
   "execution": {
-    "executionHash": "0db59b66d9a273682c48e7e0722ab57775c57d735e3202df03a78a92536f23cf",
+    "executionHash": "3e0034266aa6a6471bd74c702c2849eeeac5ce957cd3dd1090f9910f59317476",
     "mutations": {
       "defaults": [
         {
@@ -1435,6 +1636,17 @@
             "column": "id",
             "namespace": "public",
             "table": "directMassage"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "dmMembers"
           }
         },
         {
