@@ -2,7 +2,7 @@ import type {PostgresClient} from '@prisma/orm-postgres/runtime';
 import type {Contract} from '../../prisma/contract.d.ts';
 import {MessageDto} from './dto/message-dto.dto.js';
 import {and, or} from '@prisma/orm-postgres/orm-client';
-import { Temporal } from 'temporal-polyfill';
+import {Temporal} from 'temporal-polyfill';
 
 export class DirectMessageRepository {
   private db: PostgresClient<Contract>;

@@ -8,7 +8,8 @@ export function transformMessageWithUserFromDto(data: TAllChannelMessageResponse
       user: {
         id: fromUser.id,
         name: fromUser.name,
-        userName: fromUser.userName
+        userName: fromUser.userName,
+        jointAt: fromUser.jointAt
       }
     };
   });

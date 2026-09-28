@@ -2,6 +2,7 @@ type TFromUser = {
   id: string;
   name: string;
   userName: string;
+  jointAt: string;
 };
 export type TAllChannelMessageResponse = {
   id: string;

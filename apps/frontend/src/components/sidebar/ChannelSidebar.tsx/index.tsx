@@ -8,15 +8,18 @@ import {useEffect} from 'react';
 import {useGetAllChannel} from '@/api/channel/api';
 import type {TChannel} from './type';
 import ChannelSkeleton from './channel/components/channel-skeleton';
+import {useGetAllDMMember} from '@/api/direct-message/api';
+import Members from './dm-member-sidebar';
 
 const ChannelSidebar = () => {
   const {serverName} = useParams<{serverName: string}>();
   const {setChannelSideBar} = useChannelSideBar();
-  const {data, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
-  const server = data?.server;
+  const {data: channelsData, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
+  const {data: dmMembers, isLoading: isDmMemberLoading} = useGetAllDMMember({enabled: !serverName, select: res => res.data.data});
+  const server = channelsData?.server;
   const textChannels: TChannel[] = [];
   const voiceChannels: TChannel[] = [];
-  data?.channels?.forEach(channel => {
+  channelsData?.channels?.forEach(channel => {
     if (channel.type == 'TEXT') {
       textChannels.push(channel);
     } else voiceChannels.push(channel);
@@ -39,15 +42,20 @@ const ChannelSidebar = () => {
         }
       });
     }
-  }, [data, isError, isFetched, serverName, setChannelSideBar]);
+  }, [channelsData, isError, isFetched, serverName, setChannelSideBar]);
 
   return (
     <div className='w-50 h-full flex flex-col bg-primary-2'>
       <ServerNameAndAction />
       <Separator />
       <ScrollArea className='p-3 h-full'>
-        {isLoading ? <ChannelSkeleton /> : <Channel type='text' channels={textChannels} />}
-        {isLoading ? <ChannelSkeleton /> : voiceChannels.length > 0 && <Channel type='voice' channels={voiceChannels} />}
+        {serverName && (
+          <>
+            {isLoading ? <ChannelSkeleton /> : <Channel type='text' channels={textChannels} />}
+            {isLoading ? <ChannelSkeleton /> : voiceChannels.length > 0 && <Channel type='voice' channels={voiceChannels} />}
+          </>
+        )}
+        {!serverName && <>{isDmMemberLoading ? <ChannelSkeleton /> : <Members members={dmMembers || []} />}</>}
         <div className='h-10 w-full' />
       </ScrollArea>
     </div>
