@@ -13,6 +13,19 @@ model User {
   receiverMessage DirectMassage[]  @relation(name: "receiver")
   channelMassages ChannelMassage[] @relation(name: "ChannelMassageSender")
   jointAt         DateTime         @default(now())
+  senderUser      DmMembers[]      @relation(name: "senderUser")
+  receiverUser    DmMembers[]      @relation(name: "receiverUser")
+}
+
+model DmMembers {
+  id           String @id @default(uuid())
+  senderId     String
+  senderUser   User   @relation(fields: [senderId], references: [id], name: "senderUser")
+  receiverId   String
+  receiverUser User   @relation(fields: [receiverId], references: [id], name: "receiverUser")
+
+  @@unique([senderId, receiverId])
+  @@index([senderId, receiverId])
 }
 
 model Server {

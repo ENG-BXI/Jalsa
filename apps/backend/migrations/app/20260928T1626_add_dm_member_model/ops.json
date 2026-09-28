@@ -1,0 +1,284 @@
+[
+  {
+    "id": "table.dmMembers",
+    "label": "Create table \"dmMembers\"",
+    "summary": "Creates table \"dmMembers\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"dmMembers\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"dmMembers\"",
+        "sql": "CREATE TABLE \"public\".\"dmMembers\" (\n  \"id\" text NOT NULL,\n  \"receiverId\" text NOT NULL,\n  \"senderId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"dmMembers\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.dmMembers.dmMembers_senderId_receiverId_key",
+    "label": "Add unique constraint on \"dmMembers\" (senderId, receiverId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "dmMembers_senderId_receiverId_key",
+        "table": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"dmMembers_senderId_receiverId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "dmMembers_senderId_receiverId_key",
+          "public",
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"dmMembers_senderId_receiverId_key\"",
+        "sql": "ALTER TABLE \"public\".\"dmMembers\" ADD CONSTRAINT \"dmMembers_senderId_receiverId_key\" UNIQUE (\"senderId\", \"receiverId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"dmMembers_senderId_receiverId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "dmMembers_senderId_receiverId_key",
+          "public",
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.dmMembers.dmMembers_receiverId_idx_fe124f44",
+    "label": "Create index \"dmMembers_receiverId_idx_fe124f44\" on \"dmMembers\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "dmMembers_receiverId_idx_fe124f44",
+        "table": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"dmMembers_receiverId_idx_fe124f44\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers_receiverId_idx_fe124f44\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"dmMembers_receiverId_idx_fe124f44\"",
+        "sql": "CREATE INDEX \"dmMembers_receiverId_idx_fe124f44\" ON \"public\".\"dmMembers\" (\"receiverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"dmMembers_receiverId_idx_fe124f44\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers_receiverId_idx_fe124f44\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.dmMembers.dmMembers_senderId_idx_4689c490",
+    "label": "Create index \"dmMembers_senderId_idx_4689c490\" on \"dmMembers\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "dmMembers_senderId_idx_4689c490",
+        "table": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"dmMembers_senderId_idx_4689c490\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers_senderId_idx_4689c490\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"dmMembers_senderId_idx_4689c490\"",
+        "sql": "CREATE INDEX \"dmMembers_senderId_idx_4689c490\" ON \"public\".\"dmMembers\" (\"senderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"dmMembers_senderId_idx_4689c490\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers_senderId_idx_4689c490\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.dmMembers.dmMembers_senderId_receiverId_idx_e948b8bd",
+    "label": "Create index \"dmMembers_senderId_receiverId_idx_e948b8bd\" on \"dmMembers\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "dmMembers_senderId_receiverId_idx_e948b8bd",
+        "table": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"dmMembers_senderId_receiverId_idx_e948b8bd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers_senderId_receiverId_idx_e948b8bd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"dmMembers_senderId_receiverId_idx_e948b8bd\"",
+        "sql": "CREATE INDEX \"dmMembers_senderId_receiverId_idx_e948b8bd\" ON \"public\".\"dmMembers\" (\"senderId\", \"receiverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"dmMembers_senderId_receiverId_idx_e948b8bd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"dmMembers_senderId_receiverId_idx_e948b8bd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.dmMembers.dmMembers_senderId_fkey",
+    "label": "Add foreign key \"dmMembers_senderId_fkey\" on \"dmMembers\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "dmMembers_senderId_fkey",
+        "table": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"dmMembers_senderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "dmMembers_senderId_fkey",
+          "public",
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"dmMembers_senderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"dmMembers\"\nADD CONSTRAINT \"dmMembers_senderId_fkey\"\nFOREIGN KEY (\"senderId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"dmMembers_senderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "dmMembers_senderId_fkey",
+          "public",
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.dmMembers.dmMembers_receiverId_fkey",
+    "label": "Add foreign key \"dmMembers_receiverId_fkey\" on \"dmMembers\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "dmMembers_receiverId_fkey",
+        "table": "dmMembers"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"dmMembers_receiverId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "dmMembers_receiverId_fkey",
+          "public",
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"dmMembers_receiverId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"dmMembers\"\nADD CONSTRAINT \"dmMembers_receiverId_fkey\"\nFOREIGN KEY (\"receiverId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"dmMembers_receiverId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "dmMembers_receiverId_fkey",
+          "public",
+          "\"public\".\"dmMembers\""
+        ]
+      }
+    ]
+  }
+]

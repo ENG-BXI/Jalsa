@@ -12,7 +12,7 @@ export class ChannelMessageRepository {
     // TODO : add pagination here ....
     const allMessage = await this.db.orm.public.ChannelMassage.where({channelId})
       .include('fromUser', c => {
-        return c.select('id', 'name', 'userName');
+        return c.select('id', 'name', 'userName', 'jointAt');
       })
       .orderBy(u => u.createdAt.asc())
       .select('id', 'from', 'text', 'imageUrl', 'createdAt', 'updatedAt', 'softDelete')

@@ -13,18 +13,20 @@ export class DirectMessageService {
     const dmMembers = await this.directMessageRepository.getAllDMMembers(userId);
     return dmMembers;
   }
-  async getAllMessages(userId: string, receiverId: string) {
-    const existReceiverUser = await this.userRepository.getUserById(receiverId);
-
+  async getAllMessages(userId: string, receiverUserName: string) {
+    const existReceiverUser = await this.userRepository.getUserByUserName(receiverUserName);
     if (!existReceiverUser) {
       throw new Error('Receiver user not found');
     }
-    const allMessage = await this.directMessageRepository.getAllMessages(userId, receiverId);
+    const allMessage = await this.directMessageRepository.getAllMessages(userId, existReceiverUser.id);
     return allMessage;
   }
   async sendMessage(userId: string, receiverId: string, message: MessageDto) {
     const existReceiverUser = await this.userRepository.getUserById(receiverId);
-
+    const isSenderAndReceiverIsHasRelation = await this.directMessageRepository.isSenderAndReceiverIsHasRelation(userId, receiverId);
+    if (!isSenderAndReceiverIsHasRelation) {
+      await this.directMessageRepository.makeARelationBetweenSenderAndReceiver(userId, receiverId);
+    }
     if (!existReceiverUser) {
       throw new Error('Receiver user not found');
     }

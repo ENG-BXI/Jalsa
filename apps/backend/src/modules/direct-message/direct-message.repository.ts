@@ -9,23 +9,28 @@ export class DirectMessageRepository {
   constructor(db: PostgresClient<Contract>) {
     this.db = db;
   }
+  async isSenderAndReceiverIsHasRelation(senderId: string, receiverId: string) {
+    const isHasRelation = await this.db.orm.public.DmMembers.where(col => or(and(col.senderId.eq(senderId), col.receiverId.eq(receiverId)), and(col.senderId.eq(receiverId), col.receiverId.eq(senderId)))).first();
+    return !!isHasRelation;
+  }
+  async makeARelationBetweenSenderAndReceiver(senderId: string, receiverId: string) {
+    return await this.db.orm.public.DmMembers.create({senderId, receiverId});
+  }
   async getAllDMMembers(userId: string) {
-    const dmMembers = await this.db.orm.public.DirectMassage.where(dm => or(dm.from.eq(userId), dm.to.eq(userId)))
-      .include('fromUser', col => {
-        return col.select('id', 'name');
-      })
-      .include('toUser', col => {
-        return col.select('id', 'name');
-      })
+    const dmMembers = await this.db.orm.public.DmMembers.where(col => or(col.senderId.eq(userId), col.receiverId.eq(userId)))
+      .include('senderUser', col => col.select('id', 'name', 'userName'))
+      .include('receiverUser', col => col.select('id', 'name', 'userName'))
+      .select('senderId', 'receiverId')
       .all();
-    const contacts = dmMembers.map(dm => (dm.from === userId ? dm.toUser : dm.fromUser));
+    const contacts = dmMembers.map(dm => (dm.senderId === userId ? dm.receiverUser : dm.senderUser));
+
     return contacts;
   }
   async getAllMessages(userId: string, receiverId: string) {
     // TODO: add pagination here ....
     const allMessage = await this.db.orm.public.DirectMassage.where(message => or(and(message.from.eq(userId), message.to.eq(receiverId)), and(message.from.eq(receiverId), message.to.eq(userId))))
       .include('fromUser', c => {
-        return c.select('id', 'name', 'userName');
+        return c.select('id', 'name', 'userName', 'jointAt');
       })
       .orderBy(u => u.createdAt.asc())
       .select('id', 'text', 'imageUrl', 'createdAt', 'updatedAt', 'softDelete')
