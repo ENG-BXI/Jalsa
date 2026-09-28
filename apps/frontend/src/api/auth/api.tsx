@@ -1,15 +1,19 @@
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
-import {AUTH, IS_USER_NAME_AVAILABLE, LOGIN, ME, REGISTER} from '../api-endpoint';
+import {AUTH, IS_USER_NAME_AVAILABLE, LOGIN, ME, REGISTER, USER} from '../api-endpoint';
 import {api, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
 import type {AxiosResponse} from 'axios';
-import type {TIsUserNameAvailableBody, TIsUserNameAvailableResponse, TLoginBody, TLoginResponse, TMe, TRegisterBody, TRegisterResponse} from './type';
+import type {TGetUserByUserNameResponse, TIsUserNameAvailableBody, TIsUserNameAvailableResponse, TLoginBody, TLoginResponse, TMe, TRegisterBody, TRegisterResponse} from './type';
 import {toast} from 'sonner';
 import Cookies from 'universal-cookie';
 
 export const ME_KEY = ['me'];
+export const USER_KEY = ['user'];
 const cookie = new Cookies();
 // Api Function
+async function getUserByUserName(userName: string) {
+  return await api.get<TResponse<TGetUserByUserNameResponse>>(`/${VERSION_ONE}/${USER}/${userName}`);
+}
 async function getMe() {
   return await api.get<TResponse<TMe>>(`/${VERSION_ONE}/${AUTH}/${ME}`);
 }
@@ -23,6 +27,13 @@ async function isUserNameAvailable(data: TIsUserNameAvailableBody) {
   return api.post<TResponse<TIsUserNameAvailableResponse>>(`${VERSION_ONE}/${AUTH}/${IS_USER_NAME_AVAILABLE}`, data);
 }
 // hook ...
+export function useUserByUserName<TData = AxiosResponse<TResponse<TGetUserByUserNameResponse>>>(userName: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TGetUserByUserNameResponse>>, Error, TData>, 'queryKey' | 'queryFn'>) {
+  return useQuery<AxiosResponse<TResponse<TGetUserByUserNameResponse>>, Error, TData>({
+    ...queryOption,
+    queryKey: USER_KEY,
+    queryFn: () => getUserByUserName(userName)
+  });
+}
 export function useMe<TData = AxiosResponse<TResponse<TMe>>>(queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TMe>>, Error, TData>, 'queryKey' | 'queryFn'>) {
   return useQuery<AxiosResponse<TResponse<TMe>>, Error, TData>({
     ...queryOption,

@@ -10,7 +10,8 @@ import {useAppDialog} from '@/store/dialog-store';
 import {useMessage} from '@/store/use-message.store';
 import UserProfileDialog from './user-profile-dialog';
 import {useNavigate} from 'react-router';
-import { useUser } from '@/store/user-info-store';
+import {useUser} from '@/store/user-info-store';
+import {useDm} from '@/store/use-dm.store';
 interface MessageItemProps {
   message: TMessageWithUser;
   grouped?: boolean;
@@ -22,7 +23,8 @@ const MessageItem = ({message, grouped = false}: MessageItemProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [editMessageText, setEditMessageText] = useState(message.text || '');
   const navigate = useNavigate();
-  const {user:currentUser} = useUser()
+  const {user: currentUser} = useUser();
+  const {setDm} = useDm();
   const {
     message: {onEditMessage, onDelete, isDeleteMessageLoading}
   } = useMessage();
@@ -81,6 +83,7 @@ const MessageItem = ({message, grouped = false}: MessageItemProps) => {
           user={{name: message.user.name, userName: message.user.userName, jointAt: message.user.jointAt}}
           onMessage={() => {
             onClose();
+            setDm({id: message.user.id, name: message.user.name});
             navigate(`/direct-message/${user.userName}`);
           }}
         />
