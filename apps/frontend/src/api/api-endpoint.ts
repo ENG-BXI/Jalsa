@@ -25,3 +25,5 @@ export const DIRECT_MESSAGE = 'direct-message';
 export const DM_MEMBERS = 'dm-members';
 export const ALL_MESSAGE_FOR_DM = 'all-message';
 export const USER = 'user';
+export const EDIT_USER = 'edit-user';
+export const DELETE_USER = 'delete-user';

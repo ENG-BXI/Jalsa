@@ -1,5 +1,5 @@
-import {useUserByUserName} from '@/api/auth/api';
 import {useDeleteDMMessage, useEditDMMessage, useGetAllDMMessage, useSendDMMessage} from '@/api/direct-message/api';
+import { useUserByUserName } from '@/api/user/api';
 import ChannelTextInput from '@/components/server/channel/channel-text-input';
 import AllMessage from '@/feature/server/components/message';
 import type {TMessageWithUser} from '@/feature/server/components/message/message-types';
