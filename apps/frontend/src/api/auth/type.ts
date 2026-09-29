@@ -6,11 +6,6 @@ export type TMe = {
   jointAt: string;
 };
 
-export type TGetUserByUserNameResponse = {
-  id: string;
-  name: string;
-  userName: string;
-};
 export type TLoginBody = {
   email: string;
   password: string;

@@ -14,6 +14,9 @@ import {useLocation, useNavigate} from 'react-router';
 import {useDeleteServer, useLeaveUserFromServer} from '@/api/server/api';
 import ViewServer from '@/components/server/view-server-form';
 import CreateChannelForm from './channel/components/create-channel-form';
+import {useDeleteUser} from '@/api/user/api';
+import EditUserForm from '../../../feature/user/edit-user';
+import Cookies from 'universal-cookie';
 
 const ServerNameAndAction = () => {
   return (
@@ -31,11 +34,14 @@ function ServerNamePopover() {
   const {dialog, setDialog, onClose} = useAppDialog();
   const {mutate: leaveFromServerMutate, isPending: isLeaveUserPending} = useLeaveUserFromServer();
   const {mutate: deleteServerMutate, isPending: isDeleteServerPending} = useDeleteServer();
+  const {mutate: deleteUserMutate, isPending: isDeleteUserPending} = useDeleteUser();
   const navigate = useNavigate();
   const locale = useLocation();
   const path = locale.pathname.split('/').slice(3);
   const inviteLink = 'https://jalsa-domain/invite/abc123';
   const {channelSideBar, setChannelSideBar} = useChannelSideBar();
+  const cookie = new Cookies();
+
   // Delete Server
   useEffect(() => {
     if (isDeleteServerPending && dialog) {
@@ -247,8 +253,130 @@ function ServerNamePopover() {
       }
     });
   }
+  // Dm
+  function onClickEditUser() {
+    setDialog({
+      title: {
+        title: 'Edit Profile',
+        className: 'text-center'
+      },
 
-  const serverPopoverOptions = GetServerPopoverOptions({role: channelSideBar.role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer, onClickCreateChannel});
+      description: {
+        description: 'Update your name and username.',
+        className: 'text-center'
+      },
+
+      content: (
+        <EditUserForm
+          onClose={() => {
+            onClose();
+            location.reload();
+          }}
+        />
+      ),
+
+      primaryAction: {
+        text: 'Save Changes',
+        formId: 'edit-user-form'
+      },
+
+      secondaryAction: {
+        text: 'Cancel'
+      }
+    });
+  }
+  function onClickLogout() {
+    setDialog({
+      title: {
+        title: 'Logout',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Are you sure you want to logout from your account?',
+        className: 'text-center'
+      },
+
+      content: null,
+
+      primaryAction: {
+        text: 'Logout',
+        className: 'bg-red-500',
+        onClick: () => {
+          cookie.remove('token');
+          navigate('/login');
+          onClose();
+        }
+      },
+
+      secondaryAction: {
+        text: 'Cancel'
+      }
+    });
+  }
+  function onDeleteAccount() {
+    setDialog({
+      title: {
+        title: 'Delete Account',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Are you sure you want to permanently delete your account? This action cannot be undone.',
+        className: 'text-center'
+      },
+
+      content: null,
+
+      primaryAction: {
+        text: isDeleteUserPending ? 'Deleting Account' : 'Delete Account',
+        className: 'bg-red-500',
+        disabled: isDeleteUserPending,
+        onClick: () => {
+          deleteUserMutate(undefined, {
+            onSuccess: () => {
+              onClose();
+            }
+          });
+        }
+      },
+
+      secondaryAction: {
+        text: 'Cancel',
+        disabled: isDeleteUserPending
+      }
+    });
+  }
+  function onShareWithFriends() {
+    setDialog({
+      title: {
+        title: 'Share Your Profile',
+        className: 'text-center'
+      },
+
+      description: {
+        description: 'Share your profile with friends so they can find you and send you a message on Jalsa.',
+        className: 'text-center'
+      },
+
+      content: <InviteFriendDialog inviteLink={inviteLink} />
+    });
+  }
+
+  const serverPopoverOptions = GetServerPopoverOptions({
+    isDm: channelSideBar.type == 'direct-message',
+    role: channelSideBar.role,
+    onClickInvite,
+    onClickEditServer,
+    onClickViewServerSetting,
+    onClickLeaveServer,
+    onClickDeleteServer,
+    onClickCreateChannel,
+    onClickEditUser,
+    onClickLogout,
+    onDeleteAccount,
+    onShareWithFriends
+  });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
