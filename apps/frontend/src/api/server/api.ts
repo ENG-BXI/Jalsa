@@ -1,8 +1,8 @@
 import type {AxiosResponse} from 'axios';
-import {ADD_USER_TO_SERVER, ALL_MEMBERS, CHANGE_ROLE, CREATE_SERVER, DELETE_SERVER, EDIT_SERVER, KICK_USER_FROM_SERVER, LEAVE_USER_FROM_SERVER, MY_SERVERS, NAME, PUBLIC_SERVER, SERVER} from '../api-endpoint';
+import {ADD_USER_TO_PRIVATE_SERVER, ADD_USER_TO_SERVER, ALL_MEMBERS, CHANGE_ROLE, CREATE_SERVER, DELETE_SERVER, EDIT_SERVER, GENERATE_INVITE_CODE, KICK_USER_FROM_SERVER, LEAVE_USER_FROM_SERVER, MY_SERVERS, NAME, NUMBER_OF_MEMBERS, PUBLIC_SERVER, SERVER} from '../api-endpoint';
 import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
-import type {TAddUserToServerResponse, TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TKickUserFromServerBody, TKickUserFromServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersParams, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
+import type {TAddUserToPrivateServerResponse, TAddUserToServerResponse, TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TGenerateInviteCodeBody, TGenerateInviteCodeResponse, TGetNumberOfMembersInServerResponse, TKickUserFromServerBody, TKickUserFromServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersParams, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
 import {transformMyServersFromDto} from './transform';
 import type {TSideBardServer} from '@/components/sidebar/type';
@@ -56,6 +56,15 @@ async function changeRole({id, body}: {id: string; body: TChangeRoleBody}) {
 }
 async function addUserToServer({id}: {id: string}) {
   return await api.post<TResponse<TAddUserToServerResponse>>(`${VERSION_ONE}/${SERVER}/${ADD_USER_TO_SERVER}/${id}`);
+}
+async function addUserToPrivateServer({serverId, inviteCode}: {serverId: string; inviteCode: string}) {
+  return await api.post<TResponse<TAddUserToPrivateServerResponse>>(`${VERSION_ONE}/${SERVER}/${ADD_USER_TO_PRIVATE_SERVER}/${serverId}/${inviteCode}`);
+}
+async function generateInviteLink({serverId, body}: {serverId: string; body: TGenerateInviteCodeBody}) {
+  return await api.post<TResponse<TGenerateInviteCodeResponse>>(`${VERSION_ONE}/${SERVER}/${GENERATE_INVITE_CODE}/${serverId}`, body);
+}
+async function getNumberOfMembersInServer({serverId}: {serverId: string}) {
+  return await api.get<TResponse<TGetNumberOfMembersInServerResponse>>(`${VERSION_ONE}/${SERVER}/${NUMBER_OF_MEMBERS}/${serverId}`);
 }
 // hook ...
 export function useMyServers<TData = AxiosResponse<TResponse<TSideBardServer[]>>>(queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TSideBardServer[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
@@ -229,5 +238,40 @@ export function useAddUserToServer(option?: Omit<UseMutationOptions<AxiosRespons
       });
       option?.onSuccess?.(...args);
     }
+  });
+}
+export function useAddUserToPrivateServer(option?: Omit<UseMutationOptions<AxiosResponse<TResponse<TAddUserToPrivateServerResponse>>, Error, {serverId: string; inviteCode: string}>, 'mutationFn' | 'mutationKey'>) {
+  return useMutation<AxiosResponse<TResponse<TAddUserToPrivateServerResponse>>, Error, {serverId: string; inviteCode: string}>({
+    ...option,
+    mutationKey: ['add-user-to-private-server'],
+    mutationFn: addUserToPrivateServer,
+    onSuccess: (...args) => {
+      const serverName = args[0].data.data.server.name;
+      toast.success(`Joined ${serverName} successfully`);
+      queryClient.invalidateQueries({
+        queryKey: MY_SERVERS_KEY,
+        exact: false
+      });
+      option?.onSuccess?.(...args);
+    }
+  });
+}
+export function useGenerateInviteLink(option?: Omit<UseMutationOptions<AxiosResponse<TResponse<TGenerateInviteCodeResponse>>, Error, {serverId: string; body: TGenerateInviteCodeBody}>, 'mutationFn' | 'mutationKey'>) {
+  return useMutation<AxiosResponse<TResponse<TGenerateInviteCodeResponse>>, Error, {serverId: string; body: TGenerateInviteCodeBody}>({
+    ...option,
+    mutationKey: ['generate-invite-link'],
+    mutationFn: generateInviteLink,
+    onSuccess: (...args) => {
+      toast.success(`Invite Link Generated successfully`);
+      option?.onSuccess?.(...args);
+    }
+  });
+}
+
+export function useNumberOfMembersInServer<TData = AxiosResponse<TResponse<TGetNumberOfMembersInServerResponse>>>(serverId?: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TGetNumberOfMembersInServerResponse>>, Error, TData>, 'queryKey' | 'queryFn'>) {
+  return useQuery<AxiosResponse<TResponse<TGetNumberOfMembersInServerResponse>>, Error, TData>({
+    ...queryOption,
+    queryKey: [...NUMBER_OF_MEMBERS, serverId],
+    queryFn: () => getNumberOfMembersInServer({serverId: serverId!})
   });
 }
