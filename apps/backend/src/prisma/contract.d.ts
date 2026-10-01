@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'aaa3566565efa0aa316cf8fd7e3d4082f4754379f4de4ba38b86335760e689f3'>;
+  StorageHashBase<'39a82d415852666a0384f35b9e48eb3931fd48681d8148ef5da632f5179f3c53'>;
 export type ExecutionHash =
-  ExecutionHashBase<'3e0034266aa6a6471bd74c702c2849eeeac5ce957cd3dd1090f9910f59317476'>;
+  ExecutionHashBase<'f537461ee8bb75277a35622c71d2a125d07a45e2d4fb24d6f1050a6985eb8079'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -283,6 +283,15 @@ export type FieldOutputTypes = {
       readonly isPublic: CodecTypes['pg/bool@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
+    readonly ServerInvite: {
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly code: CodecTypes['pg/text@1']['output'];
+      readonly serverId: CodecTypes['pg/text@1']['output'];
+      readonly usedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly expiresAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly isMultiple: CodecTypes['pg/bool@1']['output'];
+    };
     readonly User: {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -342,6 +351,15 @@ export type FieldInputTypes = {
       readonly owner_id: CodecTypes['pg/text@1']['input'];
       readonly isPublic: CodecTypes['pg/bool@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
+    readonly ServerInvite: {
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly code: CodecTypes['pg/text@1']['input'];
+      readonly serverId: CodecTypes['pg/text@1']['input'];
+      readonly usedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly expiresAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly isMultiple: CodecTypes['pg/bool@1']['input'];
     };
     readonly User: {
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -403,6 +421,15 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly owner_id: CodecTypes['pg/text@1']['output'];
     };
+    readonly serverInvite: {
+      readonly code: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly isMultiple: CodecTypes['pg/bool@1']['output'];
+      readonly serverId: CodecTypes['pg/text@1']['output'];
+      readonly usedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+    };
     readonly user: {
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -462,6 +489,15 @@ export type StorageColumnInputTypes = {
       readonly isPublic: CodecTypes['pg/bool@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly owner_id: CodecTypes['pg/text@1']['input'];
+    };
+    readonly serverInvite: {
+      readonly code: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly isMultiple: CodecTypes['pg/bool@1']['input'];
+      readonly serverId: CodecTypes['pg/text@1']['input'];
+      readonly usedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
     };
     readonly user: {
       readonly email: CodecTypes['pg/text@1']['input'];
@@ -526,6 +562,17 @@ export namespace Models {
     userSevers: public_UserSever[];
     readonly [RelationKeys]?: 'channels' | 'owner' | 'userSevers';
   };
+  export type public_ServerInvite = {
+    id: CodecTypes['pg/text@1']['output'];
+    code: CodecTypes['pg/text@1']['output'];
+    serverId: CodecTypes['pg/text@1']['output'];
+    usedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+    expiresAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    isMultiple: CodecTypes['pg/bool@1']['output'];
+    server: public_Server;
+    readonly [RelationKeys]?: 'server';
+  };
   export type public_UserSever = {
     id: CodecTypes['pg/text@1']['output'];
     serverId: CodecTypes['pg/text@1']['output'];
@@ -579,6 +626,7 @@ export declare const models: {
     User: Models.public_User;
     DmMembers: Models.public_DmMembers;
     Server: Models.public_Server;
+    ServerInvite: Models.public_ServerInvite;
     UserSever: Models.public_UserSever;
     Channel: Models.public_Channel;
     DirectMassage: Models.public_DirectMassage;
@@ -981,6 +1029,74 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly serverInvite: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly code: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly serverId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly usedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: true;
+                };
+                readonly expiresAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly isMultiple: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['code'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'serverInvite_serverId_idx_cfc44675';
+                  readonly prefix: 'serverInvite_serverId_idx';
+                  readonly columns: readonly ['serverId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'serverInvite';
+                    readonly columns: readonly ['serverId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'server';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly user: {
               columns: {
                 readonly id: {
@@ -1123,6 +1239,10 @@ type ContractBase = Omit<
     readonly user: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
     readonly dmMembers: { readonly namespace: 'public' & NamespaceId; readonly model: 'DmMembers' };
     readonly server: { readonly namespace: 'public' & NamespaceId; readonly model: 'Server' };
+    readonly serverInvite: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ServerInvite';
+    };
     readonly userSever: { readonly namespace: 'public' & NamespaceId; readonly model: 'UserSever' };
     readonly channel: { readonly namespace: 'public' & NamespaceId; readonly model: 'Channel' };
     readonly directMassage: {
@@ -1482,6 +1602,74 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly ServerInvite: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly code: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly serverId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly usedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly expiresAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly isMultiple: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+            };
+            readonly relations: {
+              readonly server: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Server';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['serverId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'serverInvite';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly code: { readonly column: 'code' };
+                readonly serverId: { readonly column: 'serverId' };
+                readonly usedAt: { readonly column: 'usedAt' };
+                readonly expiresAt: { readonly column: 'expiresAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly isMultiple: { readonly column: 'isMultiple' };
+              };
+            };
+          };
           readonly User: {
             readonly fields: {
               readonly id: {
@@ -1745,6 +1933,14 @@ type ContractBase = Omit<
           readonly ref: {
             readonly namespace: 'public';
             readonly table: 'server';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'serverInvite';
             readonly column: 'id';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
