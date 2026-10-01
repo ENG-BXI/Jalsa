@@ -91,6 +91,10 @@ function ServerNamePopover() {
         description: 'Invite your friends to join your server and grow your community.',
         className: 'text-center'
       },
+      primaryAction: {
+        text: 'Generate Invite Link',
+        formId: 'generate-invite-link-form'
+      },
 
       content: <InviteFriendDialog />
     });

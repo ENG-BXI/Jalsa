@@ -15,7 +15,7 @@ const InviteFriendDialog = () => {
   const {user} = useUser();
   const {mutate: generateInviteLink, data: generateInviteLinkData, isPending: isGenerateInviteLinkPending} = useGenerateInviteLink();
   const userName = user?.userName;
-  const isNull = !generateInviteLinkData?.data.data.code;
+  const isNull = !generateInviteLinkData?.data.data.code && channelSideBar.type !== 'direct-message';
   const generatedInvite = `${location.origin}/invite/${channelSideBar.channelSideBar?.serverName}/${generateInviteLinkData?.data.data.code}`;
   const inviteLink = channelSideBar.type == 'direct-message' ? `${location.href}/${userName}` : isNull ? 'Generate Invite Link' : generatedInvite;
   const handleCopy = async () => {
@@ -50,12 +50,7 @@ const InviteFriendDialog = () => {
           </label>
           <span className='text-xs text-zinc-500 leading-relaxed max-w-62.5'>Allow multiple people to use this invitation link to join the server.</span>
         </div>
-        <Switch
-          id='multiple-invite-switch'
-          checked={isMultiple}
-          onCheckedChange={setIsMultiple}
-          className='data-[state=checked]:bg-zinc-100'
-        />
+        <Switch id='multiple-invite-switch' checked={isMultiple} onCheckedChange={setIsMultiple} className='data-[state=checked]:bg-zinc-100' />
       </div>
 
       <form id='generate-invite-link-form' onSubmit={handleGenerateInviteLink}></form>
