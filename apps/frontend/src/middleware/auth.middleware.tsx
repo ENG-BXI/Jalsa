@@ -2,6 +2,7 @@ import {Navigate, Outlet} from 'react-router';
 import {useMe} from '../api/auth/api';
 import {useUser} from '@/store/user-info-store';
 import Cookies from 'universal-cookie';
+import AuthLoadingPage from '@/components/auth-loading-page';
 const AuthMiddleware = () => {
   const cookie = new Cookies();
   const token = cookie.get('token');
@@ -11,7 +12,7 @@ const AuthMiddleware = () => {
     return <Navigate to='/login' replace />;
   }
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <AuthLoadingPage />;
   }
   if (!res) {
     return <Navigate to='/login' replace />;
