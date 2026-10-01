@@ -41,6 +41,20 @@ model Server {
   createdAt   DateTime    @default(now())
 }
 
+model ServerInvite {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  serverId  String
+  usedAt    DateTime?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  isMultiple Boolean   @default(false)
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([serverId])
+}
+
 enum enServerRole {
   OWNER
   ADMIN

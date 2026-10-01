@@ -1,3 +1,4 @@
+import {Temporal} from 'temporal-polyfill';
 import {TUserRole} from '../../enum/user.role.js';
 import {ChannelRepository} from '../channel/channel.repository.js';
 import {CreateServerDto} from './dto/create-server.dto.js';
@@ -48,9 +49,13 @@ export class ServerService {
     const AllMember = await this.serverRepository.getAllMemberInMyServer(serverId);
     return AllMember;
   }
-  async getAllPublicServer(search?:string) {
+  async getAllPublicServer(search?: string) {
     const allServer = await this.serverRepository.getAllPublicServer(search);
     return allServer;
+  }
+  async getNumberOfMembersInServer(serverId: string) {
+    const count = await this.serverRepository.getNumberOfMembersInServer(serverId);
+    return count;
   }
   async createServer(userId: string, body: CreateServerDto) {
     const isServerExist = await this.serverRepository.getServerByName(body.name, userId);
@@ -66,12 +71,52 @@ export class ServerService {
   async addUserToServer(userId: string, serverId: string) {
     const isServerExist = await this.serverRepository.getServerById(serverId);
     if (!isServerExist) throw new Error('Server not found');
+    if (!isServerExist.isPublic) throw new Error('Cannot add user to private server');
     const isUserInServer = await this.serverRepository.isUserInServer(serverId, userId);
     if (isUserInServer) {
       throw new Error('User is already a member of this server');
     }
     const addedUserToServer = await this.serverRepository.addUserToServer(userId, serverId, 'MEMBER');
     return addedUserToServer;
+  }
+  async generateInviteCode(userId: string, serverId: string, isMultiple: boolean = false) {
+    const isServerExist = await this.serverRepository.getServerById(serverId);
+    if (!isServerExist) throw new Error('Server not found');
+    const isUserAdmin = await this.serverRepository.isUserIsAdminOrAdminOfServer(userId, serverId);
+    if (!isUserAdmin) throw new Error('Only the server (admin| owner) can generate invite link');
+
+    const isServerHasInviteCodeAvailable = await this.serverRepository.isServerHasInviteCodeAvailable(serverId, isMultiple);
+    if (isServerHasInviteCodeAvailable) {
+      return isServerHasInviteCodeAvailable;
+    }
+    const inviteCode = await this.serverRepository.generateInviteCode(serverId, isMultiple);
+    return inviteCode;
+  }
+  async addUserToPrivateServerByInvite(userId: string, inviteCode: string, serverId: string) {
+    const isServerExist = await this.serverRepository.getServerById(serverId);
+    // check if user is Exist
+    if (!isServerExist) throw new Error('Server not found');
+    // get Invite By Sending InviteCode From User
+    const invite = await this.serverRepository.getInviteCode(inviteCode, serverId);
+    // check if invite is Exist
+    if (!invite) throw new Error('Invite Not Exist');
+    // check if invite is Expire
+    const now = Temporal.Now.instant();
+    if (Temporal.Instant.compare(invite.expiresAt, now) <= 0 || (invite.usedAt && Temporal.Instant.compare(invite.usedAt, now) <= 0)) {
+      throw new Error('Invite code has expired');
+    }
+    // check if user is already in server
+    const isUserInServer = await this.serverRepository.isUserInServer(serverId, userId);
+    if (isUserInServer) {
+      throw new Error('you are already a member of this server');
+    }
+    // Add User To Server
+    const user = await this.serverRepository.addUserToServer(userId, serverId, 'MEMBER');
+    // check if invite link is for single invite make it invalid
+    if (!invite.isMultiple) {
+      await this.serverRepository.inValidInvite(inviteCode);
+    }
+    return user;
   }
   async editServer(userId: string, serverId: string, body: EditServerDto) {
     const server = await this.serverRepository.getServerById(serverId);

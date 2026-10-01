@@ -24,6 +24,10 @@
       "model": "Server",
       "namespace": "public"
     },
+    "serverInvite": {
+      "model": "ServerInvite",
+      "namespace": "public"
+    },
     "user": {
       "model": "User",
       "namespace": "public"
@@ -616,6 +620,104 @@
               },
               "namespaceId": "public",
               "table": "server"
+            }
+          },
+          "ServerInvite": {
+            "fields": {
+              "code": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "isMultiple": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "serverId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "usedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "server": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "serverId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Server",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "code": {
+                  "column": "code"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isMultiple": {
+                  "column": "isMultiple"
+                },
+                "serverId": {
+                  "column": "serverId"
+                },
+                "usedAt": {
+                  "column": "usedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "serverInvite"
             }
           },
           "User": {
@@ -1402,6 +1504,94 @@
                 }
               ]
             },
+            "serverInvite": {
+              "columns": {
+                "code": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "isMultiple": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "serverId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "usedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "serverId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "serverInvite"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "server"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "serverId"
+                  ],
+                  "name": "serverInvite_serverId_idx_cfc44675",
+                  "prefix": "serverInvite_serverId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "code"
+                  ]
+                }
+              ]
+            },
             "user": {
               "columns": {
                 "email": {
@@ -1599,10 +1789,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "aaa3566565efa0aa316cf8fd7e3d4082f4754379f4de4ba38b86335760e689f3"
+    "storageHash": "39a82d415852666a0384f35b9e48eb3931fd48681d8148ef5da632f5179f3c53"
   },
   "execution": {
-    "executionHash": "3e0034266aa6a6471bd74c702c2849eeeac5ce957cd3dd1090f9910f59317476",
+    "executionHash": "f537461ee8bb75277a35622c71d2a125d07a45e2d4fb24d6f1050a6985eb8079",
     "mutations": {
       "defaults": [
         {
@@ -1658,6 +1848,17 @@
             "column": "id",
             "namespace": "public",
             "table": "server"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "serverInvite"
           }
         },
         {

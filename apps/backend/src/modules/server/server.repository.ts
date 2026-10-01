@@ -4,7 +4,7 @@ import {CreateServerDto} from './dto/create-server.dto.js';
 import {TUserRole} from '../../enum/user.role.js';
 import {EditServerDto} from './dto/edit-server.dto.js';
 import {or} from '@prisma/orm-postgres/orm-client';
-
+import {Temporal} from 'temporal-polyfill';
 export class ServerRepository {
   private db: PostgresClient<Contract>;
   constructor(db: PostgresClient<Contract>) {
@@ -47,7 +47,7 @@ export class ServerRepository {
         memberCount: fns.count(f.userSever.id)
       }))
       .where((f, fns) => fns.eq(f.server.isPublic, true));
-    
+
     if (search?.trim()) {
       const value = `%${search.trim()}%`;
 
@@ -85,6 +85,35 @@ export class ServerRepository {
       .include('server', c => c.select('name'))
       .create({userId, serverId, role: role});
     return addedUserToServer;
+  }
+  async getNumberOfMembersInServer(serverId: string) {
+    const count = await this.db.orm.public.Server.where({id: serverId}).include('userSevers',c => c.select('id').count()).select('id').first();
+    return count;
+  }
+  async isServerHasInviteCodeAvailable(serverId: string, isMultiple: boolean = false) {
+    const invite = await this.db.orm.public.ServerInvite.where(p => p.serverId.eq(serverId))
+      .where(p => p.expiresAt.gt(Temporal.Now.instant()))
+      .where(p => p.isMultiple.eq(isMultiple))
+      .where(p => p.usedAt.isNull())
+      .select('code', 'expiresAt', 'isMultiple')
+      .first();
+    return invite;
+  }
+  async generateInviteCode(serverId: string, isMultiple: boolean = false) {
+    const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const expiresAt = Temporal.Now.instant().add({
+      hours: 7 * 24 // add 7 days to the current date
+    });
+    const newInvite = await this.db.orm.public.ServerInvite.select('code', 'expiresAt', 'isMultiple').create({code: inviteCode, serverId, expiresAt, isMultiple});
+    return newInvite;
+  }
+  async getInviteCode(inviteCode: string, serverId: string) {
+    const invite = await this.db.orm.public.ServerInvite.where({code: inviteCode, serverId}).first();
+    return invite;
+  }
+  async inValidInvite(inviteCode: string) {
+    const invite = await this.db.orm.public.ServerInvite.where({code: inviteCode}).update({usedAt: Temporal.Now, expiresAt: Temporal.Now});
+    return invite;
   }
   async editServer(serverId: string, editServerDto: EditServerDto) {
     const editedServer = await this.db.orm.public.Server.where({id: serverId}).select('id', 'name', 'description', 'isPublic').update(editServerDto);

@@ -83,6 +83,20 @@ export class ServerController {
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get All Public Server Failed', error: 'Unknown error'});
     }
   }
+  async getNumberOfMembersInServer(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.getNumberOfMembersInServer(req.params.serverId as string);
+      return res.status(HttpStatus.OK).json({ message: 'Get Number of Member In Server Successful', data });
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Get Number of Member In Server ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Number of Member In Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Number of Member In Server Failed', error: 'Unknown error'});
+    }
+  }
   async createServer(req: Request, res: Response) {
     try {
       const user = req.user;
@@ -113,6 +127,40 @@ export class ServerController {
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Add User to Server Failed', error: 'Unknown error'});
     }
   }
+  async addUserToPrivateServerByInvite(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const serverId = req.params.serverId as string;
+      const inviteCode = req.params.inviteCode as string;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.addUserToPrivateServerByInvite(user.id, inviteCode, serverId);
+      return res.status(HttpStatus.OK).json({message: 'Add User to Private Server Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Add User to Private Server ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Add User to Private Server Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Add User to Private Server Failed', error: 'Unknown error'});
+    }
+  }
+
+  async generateInviteCode(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const serverId = req.params.serverId as string;
+      const isMultiple = !!req.body.isMultiple;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
+      const data = await this.serverService.generateInviteCode(user.id, serverId, isMultiple);
+      return res.status(HttpStatus.OK).json({message: 'Generate Invite Code Successful', data});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Generate Invite Code ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Generate Invite Code Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Generate Invite Code Failed', error: 'Unknown error'});
+    }
+  }
+
   async editServer(req: Request, res: Response) {
     try {
       const user = req.user;

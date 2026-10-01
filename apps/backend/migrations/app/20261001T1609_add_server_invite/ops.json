@@ -1,0 +1,164 @@
+[
+  {
+    "id": "table.serverInvite",
+    "label": "Create table \"serverInvite\"",
+    "summary": "Creates table \"serverInvite\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "serverInvite"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"serverInvite\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"serverInvite\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"serverInvite\"",
+        "sql": "CREATE TABLE \"public\".\"serverInvite\" (\n  \"code\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamptz,\n  \"id\" text NOT NULL,\n  \"isMultiple\" bool DEFAULT false NOT NULL,\n  \"serverId\" text NOT NULL,\n  \"usedAt\" timestamptz,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"serverInvite\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"serverInvite\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.serverInvite.serverInvite_code_key",
+    "label": "Add unique constraint on \"serverInvite\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "serverInvite_code_key",
+        "table": "serverInvite"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"serverInvite_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "serverInvite_code_key",
+          "public",
+          "\"public\".\"serverInvite\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"serverInvite_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"serverInvite\" ADD CONSTRAINT \"serverInvite_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"serverInvite_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "serverInvite_code_key",
+          "public",
+          "\"public\".\"serverInvite\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.serverInvite.serverInvite_serverId_idx_cfc44675",
+    "label": "Create index \"serverInvite_serverId_idx_cfc44675\" on \"serverInvite\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "serverInvite_serverId_idx_cfc44675",
+        "table": "serverInvite"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"serverInvite_serverId_idx_cfc44675\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"serverInvite_serverId_idx_cfc44675\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"serverInvite_serverId_idx_cfc44675\"",
+        "sql": "CREATE INDEX \"serverInvite_serverId_idx_cfc44675\" ON \"public\".\"serverInvite\" (\"serverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"serverInvite_serverId_idx_cfc44675\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"serverInvite_serverId_idx_cfc44675\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.serverInvite.serverInvite_serverId_fkey",
+    "label": "Add foreign key \"serverInvite_serverId_fkey\" on \"serverInvite\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "serverInvite_serverId_fkey",
+        "table": "serverInvite"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"serverInvite_serverId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "serverInvite_serverId_fkey",
+          "public",
+          "\"public\".\"serverInvite\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"serverInvite_serverId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"serverInvite\"\nADD CONSTRAINT \"serverInvite_serverId_fkey\"\nFOREIGN KEY (\"serverId\")\nREFERENCES \"public\".\"server\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"serverInvite_serverId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "serverInvite_serverId_fkey",
+          "public",
+          "\"public\".\"serverInvite\""
+        ]
+      }
+    ]
+  }
+]
