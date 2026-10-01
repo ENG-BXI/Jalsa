@@ -114,3 +114,18 @@ export type TAddUserToServerResponse = {
     name: string;
   };
 };
+export type TAddUserToPrivateServerResponse = TAddUserToServerResponse;
+
+export type TGenerateInviteCodeResponse = {
+  code: string;
+  expiresAt: string;
+  isMultiple: boolean;
+};
+export type TGenerateInviteCodeBody = {
+  isMultiple?: boolean;
+};
+
+export type TGetNumberOfMembersInServerResponse = {
+  id: string;
+  userSevers: number;
+};

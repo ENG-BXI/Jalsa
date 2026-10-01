@@ -19,10 +19,11 @@ import EditUserForm from '../../../feature/user/edit-user';
 import Cookies from 'universal-cookie';
 
 const ServerNameAndAction = () => {
+  const {channelSideBar} = useChannelSideBar();
   return (
     <div className='py-2 px-3 min-h-12! flex justify-between items-center'>
       <ServerNamePopover />
-      <InviteFriend />
+      {channelSideBar.role !== 'MEMBER' && <InviteFriend />}
     </div>
   );
 };
@@ -38,7 +39,6 @@ function ServerNamePopover() {
   const navigate = useNavigate();
   const locale = useLocation();
   const path = locale.pathname.split('/').slice(3);
-  const inviteLink = 'https://jalsa-domain/invite/abc123';
   const {channelSideBar, setChannelSideBar} = useChannelSideBar();
   const cookie = new Cookies();
 
@@ -80,7 +80,6 @@ function ServerNamePopover() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLeaveUserPending]);
-  if (!channelSideBar || !channelSideBar.channelSideBar) return;
   function onClickInvite() {
     setDialog({
       title: {
@@ -93,7 +92,7 @@ function ServerNamePopover() {
         className: 'text-center'
       },
 
-      content: <InviteFriendDialog inviteLink={inviteLink} />
+      content: <InviteFriendDialog />
     });
   }
   function onClickEditServer() {
@@ -359,7 +358,7 @@ function ServerNamePopover() {
         className: 'text-center'
       },
 
-      content: <InviteFriendDialog inviteLink={inviteLink} />
+      content: <InviteFriendDialog />
     });
   }
 
@@ -383,7 +382,7 @@ function ServerNamePopover() {
       <PopoverTrigger
         render={
           <Button variant={'ghost'}>
-            {formatText(channelSideBar.channelSideBar!.serverName, {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
+            {formatText(channelSideBar.channelSideBar?.serverName || '', {numOfLetter: 9})} <IconChevronDown stroke={2} className={cn(open && 'rotate-180')} />
           </Button>
         }
       />
@@ -405,11 +404,8 @@ function ServerNamePopover() {
     </Popover>
   );
 }
-
 function InviteFriend() {
   const {setDialog} = useAppDialog();
-  const inviteLink = 'https://jalsa-domain/invite/abc123';
-
   function onClick() {
     setDialog({
       title: {
@@ -421,8 +417,12 @@ function InviteFriend() {
         description: 'Invite your friends to join your server and grow your community.',
         className: 'text-center'
       },
+      primaryAction: {
+        text: 'Generate Invite Link',
+        formId: 'generate-invite-link-form'
+      },
 
-      content: <InviteFriendDialog inviteLink={inviteLink} />
+      content: <InviteFriendDialog />
     });
   }
 

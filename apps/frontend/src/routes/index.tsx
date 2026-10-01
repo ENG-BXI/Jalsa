@@ -62,6 +62,13 @@ const Routers = createBrowserRouter([
               const {default: Component} = await import('@/feature/community');
               return {Component};
             }
+          },
+          {
+            path: 'invite/:serverName/:inviteCode',
+            lazy: async () => {
+              const {default: Component} = await import('@/feature/server/invite');
+              return {Component};
+            }
           }
         ]
       }

@@ -28,20 +28,7 @@ interface TGetServerPopoverOptions {
   onClickLogout: () => void;
   onDeleteAccount: () => void;
 }
-export function GetServerPopoverOptions({
-  isDm,
-  role,
-  onClickInvite,
-  onClickEditServer,
-  onClickViewServerSetting,
-  onClickLeaveServer,
-  onClickDeleteServer,
-  onClickCreateChannel,
-  onShareWithFriends,
-  onClickEditUser,
-  onClickLogout,
-  onDeleteAccount,
-}: TGetServerPopoverOptions): TPopoverOptions[] {
+export function GetServerPopoverOptions({isDm, role, onClickInvite, onClickEditServer, onClickViewServerSetting, onClickLeaveServer, onClickDeleteServer, onClickCreateChannel, onShareWithFriends, onClickEditUser, onClickLogout, onDeleteAccount}: TGetServerPopoverOptions): TPopoverOptions[] {
   if (isDm)
     return [
       {
@@ -79,11 +66,15 @@ export function GetServerPopoverOptions({
     return [
       {
         group: [
-          {
-            icon: IconUsersPlus,
-            title: 'Invite to Server',
-            onClick: onClickInvite
-          },
+          ...(role !== 'MEMBER'
+            ? [
+                {
+                  icon: IconUsersPlus,
+                  title: 'Invite to Server',
+                  onClick: onClickInvite
+                }
+              ]
+            : []),
           ...(role == 'OWNER' || role == 'ADMIN'
             ? [
                 {
