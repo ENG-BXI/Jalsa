@@ -56,6 +56,7 @@ export type TCreateServerBody = {
   name: string;
   description?: string;
   isPublic: boolean;
+  serverImage?:File
 };
 export type TCreateServerResponse = {
   id: string;
@@ -67,6 +68,7 @@ export type TEditServerBody = {
   name?: string;
   description?: string;
   isPublic?: boolean;
+  serverImage?: File;
 };
 export type TEditServerResponse = {
   id: string;

@@ -23,3 +23,20 @@ export function formatText(text: string, option?: IFormatOption) {
   if (text.length > numOfLetter) return `${text.slice(0, numOfLetter)}..`;
   return text;
 }
+
+export const urlToFile = async (url?: string, fallbackName = 'file'): Promise<File> => {
+  if (!url) return new File([], fallbackName, {});
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch file: ${response.statusText}`);
+  }
+
+  const blob = await response.blob();
+
+  const fileName = url.split('/').pop()?.split('?')[0] || fallbackName;
+
+  return new File([blob], fileName, {
+    type: blob.type
+  });
+};

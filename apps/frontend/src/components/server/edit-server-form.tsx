@@ -14,28 +14,25 @@ import FileUploadField from '../form/upload-file';
 import {useEditServer, useServerById} from '@/api/server/api';
 
 import {useEffect} from 'react';
+import {urlToFile} from '@/lib/utils';
 
 const editServerSchema = z.object({
   name: z.string().trim().min(2, 'Server name must be at least 2 characters.').max(50, 'Server name must be at most 50 characters.'),
-
   description: z.string().trim().max(200, 'Description must be at most 200 characters.').optional(),
-
   image: z
     .instanceof(File, {
       message: 'Please select a server image.'
     })
     .optional(),
-
-  isPublic: z.boolean()
+  isPublic: z.coerce.boolean<boolean>()
 });
 
 export type EditServerFormValues = z.infer<typeof editServerSchema>;
 
 const EditServerForm = ({serverId, onClose}: {serverId: string; onClose: (data: EditServerFormValues) => void}) => {
   const {data, isLoading, isFetched, isError} = useServerById(serverId, {select: res => res.data.data});
-
   const {mutate: editServer, isPending} = useEditServer();
-
+  const serverImage = data?.avatar_url;
   const form = useForm<EditServerFormValues>({
     resolver: zodResolver(editServerSchema),
 
@@ -52,15 +49,24 @@ const EditServerForm = ({serverId, onClose}: {serverId: string; onClose: (data: 
       form.setValue('name', data.name);
       form.setValue('description', data.description ?? '');
       form.setValue('isPublic', data.isPublic);
-      form.setValue('image', undefined);
+      if (serverImage) {
+        urlToFile(serverImage, 'server-image').then(file => {
+          form.setValue('image', file);
+        });
+      }
     }
-  }, [data, form, isError, isFetched]);
+  }, [data, form, isError, isFetched, serverImage]);
 
   function handleSubmit(data: EditServerFormValues) {
     editServer(
       {
         id: serverId,
-        body: data
+        body: {
+          name: data.name,
+          description: data.description,
+          isPublic: data.isPublic,
+          serverImage: data.image
+        }
       },
       {
         onSuccess: () => {

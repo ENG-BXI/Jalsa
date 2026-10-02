@@ -55,7 +55,8 @@ const CreateServerForm = ({onClose}: CreateServerFormProps) => {
       {
         name: data.name,
         description: data.description,
-        isPublic: data.isPublic
+        isPublic: data.isPublic,
+        serverImage: data.image
       },
       {
         onSuccess: ({data}) => {

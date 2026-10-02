@@ -4,7 +4,7 @@ import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
 import type {TAddUserToPrivateServerResponse, TAddUserToServerResponse, TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TGenerateInviteCodeBody, TGenerateInviteCodeResponse, TGetNumberOfMembersInServerResponse, TKickUserFromServerBody, TKickUserFromServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersParams, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
-import {transformMyServersFromDto} from './transform';
+import {transformMyServersFromDto, transformPublicServersFromDto, transformServerByIdFromDto} from './transform';
 import type {TSideBardServer} from '@/components/sidebar/type';
 import {toast} from 'sonner';
 
@@ -25,10 +25,24 @@ async function getMyServers() {
 }
 
 async function getPublicServers(params: TPublicServersParams) {
-  return await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
+  const response = await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      data: transformPublicServersFromDto(response.data.data)
+    }
+  };
 }
 async function getServerById(id: string) {
-  return await api.get<TResponse<TServerByIdResponse>>(`${VERSION_ONE}/${SERVER}/${id}`);
+  const response = await api.get<TResponse<TServerByIdResponse>>(`${VERSION_ONE}/${SERVER}/${id}`);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      data: transformServerByIdFromDto(response.data.data)
+    }
+  };
 }
 async function getServerByName(name: string) {
   return await api.get<TResponse<TServerByNameResponse>>(`${VERSION_ONE}/${SERVER}/${NAME}/${name}`);
@@ -37,10 +51,24 @@ async function getAllMembersInServer(id: string) {
   return await api.get<TResponse<TAllMembersResponse[]>>(`${VERSION_ONE}/${SERVER}/${ALL_MEMBERS}/${id}`);
 }
 async function createServer(body: TCreateServerBody) {
-  return await api.post<TResponse<TCreateServerResponse>>(`${VERSION_ONE}/${SERVER}/${CREATE_SERVER}`, body);
+  const formData = new FormData();
+  formData.append('name', body.name);
+  if (body.description) formData.append('description', body.description);
+  formData.append('isPublic', body.isPublic.toString());
+  if (body.serverImage) {
+    formData.append('serverImage', body.serverImage);
+  }
+  return await api.post<TResponse<TCreateServerResponse>>(`${VERSION_ONE}/${SERVER}/${CREATE_SERVER}`, formData);
 }
 async function editServer({id, body}: {id: string; body: TEditServerBody}) {
-  return await api.patch<TResponse<TEditServerResponse>>(`${VERSION_ONE}/${SERVER}/${EDIT_SERVER}/${id}`, body);
+  const formData = new FormData();
+  if (body.name) formData.append('name', body.name);
+  if (body.description) formData.append('description', body.description);
+  if (body.isPublic) formData.append('isPublic', body.isPublic.toString());
+  if (body.serverImage) {
+    formData.append('serverImage', body.serverImage);
+  }
+  return await api.patch<TResponse<TEditServerResponse>>(`${VERSION_ONE}/${SERVER}/${EDIT_SERVER}/${id}`, formData);
 }
 async function leaveUserFromServer({id}: {id: string}) {
   return await api.patch<TResponse<TLeaveUserFromServerResponse>>(`${VERSION_ONE}/${SERVER}/${LEAVE_USER_FROM_SERVER}/${id}`);

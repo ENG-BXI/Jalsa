@@ -63,22 +63,25 @@ function FileUploadField<T extends FieldValues>({label, labelClassName, inputCla
 
                 <input {...props} id={props?.id} type='file' accept={accept} multiple={multiple} onChange={handleChange} className='hidden' />
               </label>
-
               {files.length > 0 && (
                 <div className='mt-4 space-y-2'>
-                  {files.map((file, index) => (
-                    <div key={`${file.name}-${index}`} className='flex items-center justify-between rounded-md border p-2'>
-                      <div className='min-w-0'>
-                        <p className='truncate text-sm font-medium'>{file.name}</p>
-
-                        <p className='text-xs text-muted-foreground'>{(file.size / 1024).toFixed(1)} KB</p>
+                  {files.map((file, index) => {
+                    const previewUrl = URL.createObjectURL(file);
+                    return (
+                      <div key={`${file.name}-${index}`} className='relative overflow-hidden rounded-md border'>
+                        {file.type.startsWith('image/') && <img src={previewUrl} alt={file.name} className='h-48 w-full object-cover' />}
+                        <div className='flex items-center justify-between p-2'>
+                          <div className='min-w-0'>
+                            <p className='truncate text-sm font-medium'>{file.name}</p>
+                            <p className='text-xs text-muted-foreground'>{(file.size / 1024).toFixed(1)} KB</p>
+                          </div>
+                          <Button type='button' variant='ghost' size='icon' onClick={() => removeFile(index)}>
+                            <IconX className='size-4' />
+                          </Button>
+                        </div>
                       </div>
-
-                      <Button type='button' variant='ghost' size='icon' onClick={() => removeFile(index)}>
-                        <IconX className='size-4' />
-                      </Button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
