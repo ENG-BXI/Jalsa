@@ -4,7 +4,7 @@ export const EditServerDtoSchema = z
   .object({
     name: z.string().min(1, 'Name is required'),
     description: z.string().optional(),
-    isPublic: z.boolean().default(false)
+    isPublic: z.coerce.boolean<boolean>().default(false)
   })
   .partial();
 
