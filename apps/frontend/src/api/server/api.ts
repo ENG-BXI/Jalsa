@@ -37,7 +37,14 @@ async function getAllMembersInServer(id: string) {
   return await api.get<TResponse<TAllMembersResponse[]>>(`${VERSION_ONE}/${SERVER}/${ALL_MEMBERS}/${id}`);
 }
 async function createServer(body: TCreateServerBody) {
-  return await api.post<TResponse<TCreateServerResponse>>(`${VERSION_ONE}/${SERVER}/${CREATE_SERVER}`, body);
+  const formData = new FormData();
+  formData.append('name', body.name);
+  if (body.description) formData.append('description', body.description);
+  formData.append('isPublic', body.isPublic.toString());
+  if (body.serverImage) {
+    formData.append('serverImage', body.serverImage);
+  }
+  return await api.post<TResponse<TCreateServerResponse>>(`${VERSION_ONE}/${SERVER}/${CREATE_SERVER}`, formData);
 }
 async function editServer({id, body}: {id: string; body: TEditServerBody}) {
   return await api.patch<TResponse<TEditServerResponse>>(`${VERSION_ONE}/${SERVER}/${EDIT_SERVER}/${id}`, body);
