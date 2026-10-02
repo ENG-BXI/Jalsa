@@ -24,7 +24,7 @@ const editServerSchema = z.object({
       message: 'Please select a server image.'
     })
     .optional(),
-  isPublic: z.boolean()
+  isPublic: z.coerce.boolean<boolean>()
 });
 
 export type EditServerFormValues = z.infer<typeof editServerSchema>;
@@ -61,7 +61,12 @@ const EditServerForm = ({serverId, onClose}: {serverId: string; onClose: (data: 
     editServer(
       {
         id: serverId,
-        body: data
+        body: {
+          name: data.name,
+          description: data.description,
+          isPublic: data.isPublic,
+          serverImage: data.image
+        }
       },
       {
         onSuccess: () => {

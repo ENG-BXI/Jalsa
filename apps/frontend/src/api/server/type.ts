@@ -68,6 +68,7 @@ export type TEditServerBody = {
   name?: string;
   description?: string;
   isPublic?: boolean;
+  serverImage?: File;
 };
 export type TEditServerResponse = {
   id: string;
