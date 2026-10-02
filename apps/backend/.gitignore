@@ -38,3 +38,4 @@ yarn-error.log*
 *.pem
 node_modules/
 dist/
+uploads/

@@ -57,12 +57,12 @@ export class ServerService {
     const count = await this.serverRepository.getNumberOfMembersInServer(serverId);
     return count;
   }
-  async createServer(userId: string, body: CreateServerDto) {
+  async createServer(userId: string, body: CreateServerDto, serverImage?: string) {
     const isServerExist = await this.serverRepository.getServerByName(body.name, userId);
     if (isServerExist) {
       throw new Error('A server with this name already exists');
     }
-    const createServer = await this.serverRepository.createServer(userId, body);
+    const createServer = await this.serverRepository.createServer(userId, body, serverImage);
     await this.serverRepository.addUserToServer(userId, createServer.id, 'OWNER');
     // Add General Channel as Default Channel in New Server
     await this.channelRepository.createChannel({name: 'general', serverId: createServer.id, type: 'TEXT'});

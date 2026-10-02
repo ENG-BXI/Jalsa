@@ -5,7 +5,7 @@ import {CreateServerDto} from '../dto/create-server.dto.js';
 import {EditServerDto} from '../dto/edit-server.dto.js';
 import {ChangeRoleDto} from '../dto/change-role.dto.js';
 import {KickUserFromServerDto} from '../dto/kick-user-from-server.dto.js';
-
+import fs from 'node:fs/promises';
 export class ServerController {
   private serverService: ServerService;
   constructor(serverService: ServerService) {
@@ -88,7 +88,7 @@ export class ServerController {
       const user = req.user;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.getNumberOfMembersInServer(req.params.serverId as string);
-      return res.status(HttpStatus.OK).json({ message: 'Get Number of Member In Server Successful', data });
+      return res.status(HttpStatus.OK).json({message: 'Get Number of Member In Server Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Get Number of Member In Server ', error);
@@ -101,13 +101,17 @@ export class ServerController {
     try {
       const user = req.user;
       const body = req.body as CreateServerDto;
+      const serverImage = req.file?.path.replaceAll('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.serverService.createServer(user.id, body);
+      const data = await this.serverService.createServer(user.id, body, serverImage);
       return res.status(HttpStatus.OK).json({message: 'Create Server Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Create Server ', error);
       console.log('====================================');
+      if (req.file) {
+        await fs.unlink(req.file.path).catch(() => {});
+      }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: 'Unknown error'});
     }
