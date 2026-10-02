@@ -72,11 +72,11 @@ export class ServerRepository {
 
     return await this.db.runtime().query(builtQuery);
   }
-  async createServer(userId: string, body: CreateServerDto) {
-    //TODO: Implement Avatar Server
+  async createServer(userId: string, body: CreateServerDto, serverImage?: string) {
     const newServer = await this.db.orm.public.Server.select('id', 'name', 'description', 'isPublic').create({
       ...body,
-      owner_id: userId
+      owner_id: userId,
+      avatar_url: serverImage
     });
     return newServer;
   }
@@ -87,7 +87,10 @@ export class ServerRepository {
     return addedUserToServer;
   }
   async getNumberOfMembersInServer(serverId: string) {
-    const count = await this.db.orm.public.Server.where({id: serverId}).include('userSevers',c => c.select('id').count()).select('id').first();
+    const count = await this.db.orm.public.Server.where({id: serverId})
+      .include('userSevers', c => c.select('id').count())
+      .select('id')
+      .first();
     return count;
   }
   async isServerHasInviteCodeAvailable(serverId: string, isMultiple: boolean = false) {

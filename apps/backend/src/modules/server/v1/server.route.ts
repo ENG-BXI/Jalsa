@@ -6,6 +6,7 @@ import {CreateServerDtoSchema} from '../dto/create-server.dto.js';
 import {EditServerDtoSchema} from '../dto/edit-server.dto.js';
 import {ChangeRoleDtoSchema} from '../dto/change-role.dto.js';
 import {KickUserFromServerDtoSchema} from '../dto/kick-user-from-server.dto.js';
+import {uploadMulterMiddleware} from '../../../middlewares/multer.middleware.js';
 
 export class ServerRoute {
   private serverController: ServerController;
@@ -17,7 +18,7 @@ export class ServerRoute {
     this.router.get('/number-of-members/:serverId', authMiddleWare, (req, res) => this.serverController.getNumberOfMembersInServer(req, res));
     this.router.get('/all-members/:serverId', authMiddleWare, (req, res) => this.serverController.getAllMemberInMyServer(req, res));
     this.router.get('/public-server', authMiddleWare, (req, res) => this.serverController.getAllPublicServer(req, res));
-    this.router.post('/create-server', authMiddleWare, ValidationMiddleware(CreateServerDtoSchema), (req, res) => this.serverController.createServer(req, res));
+    this.router.post('/create-server', authMiddleWare, uploadMulterMiddleware('servers').single('serverImage'), ValidationMiddleware(CreateServerDtoSchema), (req, res) => this.serverController.createServer(req, res));
     this.router.post('/add-user-to-server/:serverId', authMiddleWare, (req, res) => this.serverController.addUserToServer(req, res));
     this.router.post('/add-user-to-private-server/:serverId/:inviteCode', authMiddleWare, (req, res) => this.serverController.addUserToPrivateServerByInvite(req, res));
     this.router.post('/generate-invite-code/:serverId', authMiddleWare, (req, res) => this.serverController.generateInviteCode(req, res));
