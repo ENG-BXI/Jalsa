@@ -22,7 +22,7 @@ export class ServerRoute {
     this.router.post('/add-user-to-server/:serverId', authMiddleWare, (req, res) => this.serverController.addUserToServer(req, res));
     this.router.post('/add-user-to-private-server/:serverId/:inviteCode', authMiddleWare, (req, res) => this.serverController.addUserToPrivateServerByInvite(req, res));
     this.router.post('/generate-invite-code/:serverId', authMiddleWare, (req, res) => this.serverController.generateInviteCode(req, res));
-    this.router.patch('/edit-server/:serverId', authMiddleWare, ValidationMiddleware(EditServerDtoSchema), (req, res) => this.serverController.editServer(req, res));
+    this.router.patch('/edit-server/:serverId', authMiddleWare, uploadMulterMiddleware('servers').single('serverImage'), ValidationMiddleware(EditServerDtoSchema), (req, res) => this.serverController.editServer(req, res));
     this.router.patch('/change-role/:serverId', authMiddleWare, ValidationMiddleware(ChangeRoleDtoSchema), (req, res) => this.serverController.changeRoleInServer(req, res));
     this.router.delete('/delete-server/:serverId', authMiddleWare, (req, res) => this.serverController.deleteServer(req, res));
     this.router.patch('/leave-user-from-server/:serverId', authMiddleWare, (req, res) => this.serverController.leaveUserFromServer(req, res));

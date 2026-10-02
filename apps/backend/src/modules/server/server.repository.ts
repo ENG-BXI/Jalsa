@@ -118,8 +118,8 @@ export class ServerRepository {
     const invite = await this.db.orm.public.ServerInvite.where({code: inviteCode}).update({usedAt: Temporal.Now, expiresAt: Temporal.Now});
     return invite;
   }
-  async editServer(serverId: string, editServerDto: EditServerDto) {
-    const editedServer = await this.db.orm.public.Server.where({id: serverId}).select('id', 'name', 'description', 'isPublic').update(editServerDto);
+  async editServer(serverId: string, editServerDto: EditServerDto, serverImage?: string) {
+    const editedServer = await this.db.orm.public.Server.where({id: serverId}).select('id', 'name', 'description', 'isPublic').update({...editServerDto,avatar_url: serverImage});
     return editedServer;
   }
   async deleteServer(serverId: string) {

@@ -170,8 +170,9 @@ export class ServerController {
       const user = req.user;
       const serverId = req.params.serverId as string;
       const body = req.body as EditServerDto;
+      const serverImage = req.file?.path.replaceAll('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.serverService.editServer(user.id, serverId, body);
+      const data = await this.serverService.editServer(user.id, serverId, body,serverImage);
       return res.status(HttpStatus.OK).json({message: 'Edit Server Successful', data});
     } catch (error) {
       console.log('====================================');
