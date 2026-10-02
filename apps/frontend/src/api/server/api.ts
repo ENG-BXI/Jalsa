@@ -4,7 +4,7 @@ import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
 import type {TAddUserToPrivateServerResponse, TAddUserToServerResponse, TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TGenerateInviteCodeBody, TGenerateInviteCodeResponse, TGetNumberOfMembersInServerResponse, TKickUserFromServerBody, TKickUserFromServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersParams, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
-import {transformMyServersFromDto} from './transform';
+import {transformMyServersFromDto, transformServerByIdFromDto} from './transform';
 import type {TSideBardServer} from '@/components/sidebar/type';
 import {toast} from 'sonner';
 
@@ -28,7 +28,15 @@ async function getPublicServers(params: TPublicServersParams) {
   return await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
 }
 async function getServerById(id: string) {
-  return await api.get<TResponse<TServerByIdResponse>>(`${VERSION_ONE}/${SERVER}/${id}`);
+  const response = await api.get<TResponse<TServerByIdResponse>>(`${VERSION_ONE}/${SERVER}/${id}`);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      data: transformServerByIdFromDto(response.data.data)
+    }
+
+  };
 }
 async function getServerByName(name: string) {
   return await api.get<TResponse<TServerByNameResponse>>(`${VERSION_ONE}/${SERVER}/${NAME}/${name}`);

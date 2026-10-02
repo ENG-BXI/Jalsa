@@ -1,5 +1,5 @@
 import type {TSideBardServer} from '@/components/sidebar/type';
-import type {TMyServersResponse} from './type';
+import type {TMyServersResponse, TServerByIdResponse} from './type';
 import {BACKEND_URL} from '@/lib/env';
 
 export function transformMyServersFromDto(data: TMyServersResponse[]): TSideBardServer[] {
@@ -11,4 +11,11 @@ export function transformMyServersFromDto(data: TMyServersResponse[]): TSideBard
       type: 'server'
     };
   });
+}
+
+export function transformServerByIdFromDto(data: TServerByIdResponse): TServerByIdResponse {
+  return {
+    ...data,
+    avatar_url: data.avatar_url ? `${BACKEND_URL}/${data.avatar_url}` : undefined
+  };
 }
