@@ -1,5 +1,5 @@
 import {useDeleteDMMessage, useEditDMMessage, useGetAllDMMessage, useSendDMMessage} from '@/api/direct-message/api';
-import { useUserByUserName } from '@/api/user/api';
+import {useUserByUserName} from '@/api/user/api';
 import ChannelTextInput from '@/components/server/channel/channel-text-input';
 import AllMessage from '@/feature/server/components/message';
 import type {TMessageWithUser} from '@/feature/server/components/message/message-types';
@@ -23,20 +23,22 @@ const ReceiverMember = () => {
   const {mutate: deleteMessage, isPending: isDeleteDMMessagePending} = useDeleteDMMessage();
   const {data: receiverUser, isLoading: isReceiverUserLoading, isFetched: isReceiverUserFetched} = useUserByUserName(params.receiverMemberUserName || '', {enabled: !!params.receiverMemberUserName, select: res => res.data.data});
 
-  function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>) {
+  function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!Dm.id) return;
-    if (!message) return;
+    if (!message && !file) return;
     sendMessage(
       {
         receiverId: Dm.id,
         message: {
-          text: message
+          text: message,
+          image: file
         }
       },
       {
         onSuccess: () => {
           setMessage('');
+          setFile(null);
         }
       }
     );

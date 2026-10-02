@@ -17,8 +17,7 @@ export type TAllChannelMessageResponse = {
 
 export type TSendMessageBody = {
   text: string;
-  // TODO: implement Send Image
-  // image:
+  image?: File | null;
 };
 
 export type TSendMessageResponse = {

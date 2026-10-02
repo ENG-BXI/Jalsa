@@ -22,7 +22,14 @@ export async function getAllChannelMessage(channelId: string) {
 }
 
 export async function sendMessage({channelId, message}: {channelId: string; message: TSendMessageBody}) {
-  return await api.post<TResponse<TSendMessageResponse>>(`${VERSION_ONE}/${CHANNEL_MESSAGE}/${channelId}`, message);
+  const formData = new FormData();
+  if (message.text) {
+    formData.append('text', message.text);
+  }
+  if (message.image) {
+    formData.append('image', message.image);
+  }
+  return await api.post<TResponse<TSendMessageResponse>>(`${VERSION_ONE}/${CHANNEL_MESSAGE}/${channelId}`, formData);
 }
 export async function editMessage({channelId, messageId, message}: {channelId: string; messageId: string; message: TSendMessageBody}) {
   return await api.patch<TResponse<TSendMessageResponse>>(`${VERSION_ONE}/${CHANNEL_MESSAGE}/${channelId}/${messageId}`, message);

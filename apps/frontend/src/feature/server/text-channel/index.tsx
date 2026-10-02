@@ -21,7 +21,7 @@ const TextChannelPage = () => {
   const {mutate: sendMessage, isPending} = useSendMessage();
   const {mutate: editMessage, isPending: isEditLoading} = useEditMessage();
   const {mutate: deleteMessage, isPending: isDeleteMessagePending} = useDeleteMessage();
-  function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>) {
+  function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!channel.id) return;
     if (!message) return;
@@ -29,12 +29,14 @@ const TextChannelPage = () => {
       {
         channelId: channel.id,
         message: {
-          text: message
+          text: message,
+          image: file
         }
       },
       {
         onSuccess: () => {
           setMessage('');
+          setFile(null);
         }
       }
     );

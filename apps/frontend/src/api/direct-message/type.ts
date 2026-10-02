@@ -21,8 +21,7 @@ export type TGetAllDMMember = {
 
 export type TSendDMMessageBody = {
   text: string;
-  // TODO: Add this later
-  // image
+  image: File | null;
 };
 
 export type TSendDMMessageResponse = {
