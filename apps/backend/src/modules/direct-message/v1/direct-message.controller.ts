@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 import {DirectMessageService} from '../direct-message.service.js';
 import {HttpStatus} from '../../../lib/http-status.js';
 import {MessageDto} from '../dto/message-dto.dto.js';
+import {deleteImage} from '../../../lib/delete-image.js';
 
 export class DirectMessageController {
   private directMessageService: DirectMessageService;
@@ -42,13 +43,17 @@ export class DirectMessageController {
       const user = req.user;
       const receiverId = req.params.receiverId as string;
       const message = req.body as MessageDto;
+      const image = req.file?.path.replace('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.directMessageService.sendMessage(user.id, receiverId, message);
+      const data = await this.directMessageService.sendMessage(user.id, receiverId, message, image);
       return res.status(HttpStatus.OK).json({message: 'Send Message Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Send Message ', error);
       console.log('====================================');
+      if (req.file?.path) {
+        deleteImage(req.file.path);
+      }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Send Message Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Send Message Failed', error: 'Unknown error'});
     }
@@ -58,13 +63,17 @@ export class DirectMessageController {
       const user = req.user;
       const messageId = req.params.messageId as string;
       const message = req.body as MessageDto;
+      const image = req.file?.path.replace('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.directMessageService.editMessage(user.id, messageId, message);
+      const data = await this.directMessageService.editMessage(user.id, messageId, message, image);
       return res.status(HttpStatus.OK).json({message: 'Edit Message Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Edit Message ', error);
       console.log('====================================');
+      if (req.file?.path) {
+        deleteImage(req.file.path);
+      }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Message Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Message Failed', error: 'Unknown error'});
     }

@@ -30,12 +30,12 @@ export class ChannelMessageRepository {
     const message = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).first();
     return message;
   }
-  async sendMessage(userId: string, channelId: string, message: MessageDto) {
-    const sendedMessage = await this.db.orm.public.ChannelMassage.create({from: userId, channelId, text: message.text, imageUrl: message.imageUrl});
+  async sendMessage(userId: string, channelId: string, message: MessageDto, image?: string) {
+    const sendedMessage = await this.db.orm.public.ChannelMassage.create({from: userId, channelId, text: message.text, imageUrl: image});
     return sendedMessage;
   }
-  async editMessage(userId: string, channelId: string, messageId: string, message: MessageDto) {
-    const editedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).update({text: message.text, imageUrl: message.imageUrl, updatedAt: Temporal.Now.instant()});
+  async editMessage(userId: string, channelId: string, messageId: string, message: MessageDto,image?: string) {
+    const editedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).update({text: message.text, imageUrl: image, updatedAt: Temporal.Now.instant()});
     return editedMessage;
   }
   async deleteMessage(userId: string, channelId: string, messageId: string) {
