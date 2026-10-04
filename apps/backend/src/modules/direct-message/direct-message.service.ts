@@ -21,7 +21,7 @@ export class DirectMessageService {
     const allMessage = await this.directMessageRepository.getAllMessages(userId, existReceiverUser.id);
     return allMessage;
   }
-  async sendMessage(userId: string, receiverId: string, message: MessageDto,image?: string) {
+  async sendMessage(userId: string, receiverId: string, message: MessageDto, image?: string) {
     const existReceiverUser = await this.userRepository.getUserById(receiverId);
     const isSenderAndReceiverIsHasRelation = await this.directMessageRepository.isSenderAndReceiverIsHasRelation(userId, receiverId);
     if (!isSenderAndReceiverIsHasRelation) {
@@ -30,15 +30,15 @@ export class DirectMessageService {
     if (!existReceiverUser) {
       throw new Error('Receiver user not found');
     }
-    const sendMessage = await this.directMessageRepository.sendMessage(userId, receiverId, message,image);
+    const sendMessage = await this.directMessageRepository.sendMessage(userId, receiverId, message, image);
     return sendMessage;
   }
-  async editMessage(userId: string, messageId: string, message: MessageDto, image?: string) {
+  async editMessage(userId: string, messageId: string, message: MessageDto) {
     const existMessage = await this.directMessageRepository.getMessageById(userId, messageId);
     if (!existMessage) {
       throw new Error('Message not found');
     }
-    const editedMessage = await this.directMessageRepository.editMessage(userId, messageId, message,image);
+    const editedMessage = await this.directMessageRepository.editMessage(userId, messageId, message);
     return editedMessage;
   }
   async deleteMessage(userId: string, messageId: string) {

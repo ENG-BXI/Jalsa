@@ -1,4 +1,5 @@
 import {db} from '../../../prisma/db.js';
+import { appWriteService } from '../../appwite/appwite.services.js';
 import {ChannelRepository} from '../../channel/channel.repository.js';
 import {ChannelMessageRepository} from '../channel-message.repository.js';
 import {ChannelMessageService} from '../channel-message.service.js';
@@ -11,7 +12,7 @@ const channelRepository = new ChannelRepository(db);
 
 const channelMessageService = new ChannelMessageService(channelMessageRepository, channelRepository);
 
-const channelMessageController = new ChannelMessageController(channelMessageService);
+const channelMessageController = new ChannelMessageController(channelMessageService, appWriteService);
 
 const channelMessageRoute = new ChannelMessageRoute(channelMessageController).getRoutes();
 
