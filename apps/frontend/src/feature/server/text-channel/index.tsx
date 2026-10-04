@@ -24,7 +24,7 @@ const TextChannelPage = () => {
   function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!channel.id) return;
-    if (!message) return;
+    if (!message&& !file) return;
     sendMessage(
       {
         channelId: channel.id,
