@@ -24,7 +24,14 @@ async function getAllDMMember() {
   return await api.get<TResponse<TGetAllDMMember[]>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${DM_MEMBERS}`);
 }
 async function sendDMMessage({receiverId, message}: {receiverId: string; message: TSendDMMessageBody}) {
-  return await api.post<TResponse<TSendDMMessageResponse>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${receiverId}`, message);
+  const formData = new FormData();
+  if (message.text) {
+    formData.append('text', message.text);
+  }
+  if (message.image) {
+    formData.append('image', message.image);
+  }
+  return await api.post<TResponse<TSendDMMessageResponse>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${receiverId}`, formData);
 }
 async function editDMMessage({messageId, message}: {messageId: string; message: TEditDMMessageBody}) {
   return await api.patch<TResponse<TEditDMMessageResponse>>(`${VERSION_ONE}/${DIRECT_MESSAGE}/${messageId}`, message);

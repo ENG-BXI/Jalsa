@@ -43,17 +43,19 @@ const InviteFriendDialog = () => {
         </Button>
       </div>
 
-      <div className='flex items-center justify-between rounded-xl border border-zinc-800/60 bg-zinc-900/30 p-4 transition-colors'>
-        <div className='flex flex-col gap-1.5'>
-          <label htmlFor='multiple-invite-switch' className='text-sm font-semibold text-zinc-200 cursor-pointer'>
-            Multiple Uses Link
-          </label>
-          <span className='text-xs text-zinc-500 leading-relaxed max-w-62.5'>Allow multiple people to use this invitation link to join the server.</span>
+      {channelSideBar.type == 'server' && (
+        <div className='flex items-center justify-between rounded-xl border border-zinc-800/60 bg-zinc-900/30 p-4 transition-colors'>
+          <div className='flex flex-col gap-1.5'>
+            <label htmlFor='multiple-invite-switch' className='text-sm font-semibold text-zinc-200 cursor-pointer'>
+              Multiple Uses Link
+            </label>
+            <span className='text-xs text-zinc-500 leading-relaxed max-w-62.5'>Allow multiple people to use this invitation link to join the server.</span>
+          </div>
+          <Switch id='multiple-invite-switch' checked={isMultiple} onCheckedChange={setIsMultiple} className='data-[state=checked]:bg-zinc-100' />
         </div>
-        <Switch id='multiple-invite-switch' checked={isMultiple} onCheckedChange={setIsMultiple} className='data-[state=checked]:bg-zinc-100' />
-      </div>
+      )}
 
-      <form id='generate-invite-link-form' onSubmit={handleGenerateInviteLink}></form>
+      <form className='sr-only' id='generate-invite-link-form' onSubmit={handleGenerateInviteLink}></form>
 
       <p className='text-xs text-zinc-500 font-medium'>Share this link with your friends to invite them to the server.</p>
     </div>

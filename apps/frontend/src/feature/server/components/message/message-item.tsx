@@ -145,14 +145,13 @@ const MessageItem = ({message, grouped = false}: MessageItemProps) => {
           </form>
         ) : (
           <>
+            {message.imageUrl && <img src={message.imageUrl} alt='Message attachment' className='mb-1 max-h-96 max-w-md rounded-lg object-contain' />}
             {message.text && (
               <div className='flex items-center gap-2'>
                 <p className='whitespace-pre-wrap wrap-break-word text-sm leading-6 text-foreground'>{message.text}</p>
                 {message.createdAt !== message.updatedAt && <p className='text-[10px] text-muted-foreground'>(edited)</p>}
               </div>
             )}
-
-            {message.imageUrl && <img src={message.imageUrl} alt='Message attachment' className='mt-1 max-h-96 max-w-md rounded-lg object-contain' />}
           </>
         )}
       </div>
