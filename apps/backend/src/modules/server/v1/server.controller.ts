@@ -6,6 +6,7 @@ import {EditServerDto} from '../dto/edit-server.dto.js';
 import {ChangeRoleDto} from '../dto/change-role.dto.js';
 import {KickUserFromServerDto} from '../dto/kick-user-from-server.dto.js';
 import fs from 'node:fs/promises';
+import {deleteImage} from '../../../lib/delete-image.js';
 export class ServerController {
   private serverService: ServerService;
   constructor(serverService: ServerService) {
@@ -110,7 +111,7 @@ export class ServerController {
       console.log('ERROR IN Create Server ', error);
       console.log('====================================');
       if (req.file) {
-        await fs.unlink(req.file.path).catch(() => {});
+        await deleteImage(req.file.path);
       }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: 'Unknown error'});
@@ -172,12 +173,15 @@ export class ServerController {
       const body = req.body as EditServerDto;
       const serverImage = req.file?.path.replaceAll('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.serverService.editServer(user.id, serverId, body,serverImage);
+      const data = await this.serverService.editServer(user.id, serverId, body, serverImage);
       return res.status(HttpStatus.OK).json({message: 'Edit Server Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Edit Server ', error);
       console.log('====================================');
+      if (req.file) {
+        await deleteImage(req.file.path);
+      }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Server Failed', error: 'Unknown error'});
     }

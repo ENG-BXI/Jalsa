@@ -6,12 +6,14 @@ export function ErrorMiddleware(error: unknown, _req: Request, res: Response, _n
     switch (error.code) {
       case 'LIMIT_FILE_SIZE':
         return res.status(400).json({
-          message: 'The uploaded image is too large.'
+          message: 'Failed to upload file.',
+          error: 'The uploaded image is too large.'
         });
 
       case 'LIMIT_UNEXPECTED_FILE':
         return res.status(400).json({
-          message: 'Unexpected file field. Expected "serverImage".'
+          message: 'Failed to upload file.',
+          error: 'Unexpected file field. Expected "serverImage".'
         });
 
       default:
@@ -24,7 +26,8 @@ export function ErrorMiddleware(error: unknown, _req: Request, res: Response, _n
 
   if (error instanceof Error) {
     return res.status(400).json({
-      message: error.message
+      message: 'Failed to upload file.',
+      error: error.message
     });
   }
 
