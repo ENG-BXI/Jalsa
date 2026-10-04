@@ -2,7 +2,6 @@ import {Request, Response} from 'express';
 import {DirectMessageService} from '../direct-message.service.js';
 import {HttpStatus} from '../../../lib/http-status.js';
 import {MessageDto} from '../dto/message-dto.dto.js';
-import {deleteImage} from '../../../lib/delete-image.js';
 import {AppWriteService} from '../../appwite/appwite.services.js';
 import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
 

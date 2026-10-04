@@ -4,8 +4,6 @@ import {ChannelRepository} from '../channel/channel.repository.js';
 import {CreateServerDto} from './dto/create-server.dto.js';
 import {EditServerDto} from './dto/edit-server.dto.js';
 import {ServerRepository} from './server.repository.js';
-import {deleteImage} from '../../lib/delete-image.js';
-
 export class ServerService {
   private serverRepository: ServerRepository;
   private channelRepository: ChannelRepository;
@@ -125,9 +123,6 @@ export class ServerService {
     const isUserAdmin = await this.serverRepository.isUserIsAdminOrAdminOfServer(userId, serverId);
     if (!isUserAdmin) throw new Error('Only the server (admin| owner) can edit this server');
     const editedServer = await this.serverRepository.editServer(serverId, body, serverImage);
-    if (serverImage != server.avatar_url) {
-      await deleteImage(server.avatar_url || undefined);
-    }
     return editedServer;
   }
   async deleteServer(userId: string, serverId: string) {

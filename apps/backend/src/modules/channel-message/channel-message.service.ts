@@ -1,4 +1,3 @@
-import {deleteImage} from '../../lib/delete-image.js';
 import {ChannelRepository} from '../channel/channel.repository.js';
 import {ChannelMessageRepository} from './channel-message.repository.js';
 import {MessageDto} from './dto/message-dto.dto.js';

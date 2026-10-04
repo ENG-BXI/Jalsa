@@ -5,8 +5,6 @@ import {CreateServerDto} from '../dto/create-server.dto.js';
 import {EditServerDto} from '../dto/edit-server.dto.js';
 import {ChangeRoleDto} from '../dto/change-role.dto.js';
 import {KickUserFromServerDto} from '../dto/kick-user-from-server.dto.js';
-import fs from 'node:fs/promises';
-import {deleteImage} from '../../../lib/delete-image.js';
 import {AppWriteService} from '../../appwite/appwite.services.js';
 import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
 export class ServerController {
