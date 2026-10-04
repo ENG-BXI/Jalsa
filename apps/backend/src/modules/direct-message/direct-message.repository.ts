@@ -52,12 +52,12 @@ export class DirectMessageRepository {
     const sendMassage = await this.db.orm.public.DirectMassage.select('id', 'text').create({text: message.text, imageUrl: image, from: userId, to: receiverId});
     return sendMassage;
   }
-  async editMessage(userId: string, messageId: string, message: MessageDto, image?: string) {
-    const editedMessage = await this.db.orm.public.DirectMassage.select('id', 'text').where({id: messageId, from: userId}).update({text: message.text, imageUrl: image, updatedAt: Temporal.Now.instant()});
+  async editMessage(userId: string, messageId: string, message: MessageDto) {
+    const editedMessage = await this.db.orm.public.DirectMassage.select('id', 'text').where({id: messageId, from: userId}).update({text: message.text, updatedAt: Temporal.Now.instant()});
     return editedMessage;
   }
   async deleteMessage(userId: string, messageId: string) {
-    const deletedMessage = await this.db.orm.public.DirectMassage.select('id', 'text').where({id: messageId, from: userId}).update({softDelete: true});
+    const deletedMessage = await this.db.orm.public.DirectMassage.select('id', 'text', 'imageUrl').where({id: messageId, from: userId}).update({softDelete: true});
     return deletedMessage;
   }
 }

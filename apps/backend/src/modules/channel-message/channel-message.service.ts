@@ -30,7 +30,7 @@ export class ChannelMessageService {
     const sendedMessage = await this.channelMessageRepository.sendMessage(userId, channelId, message, image);
     return sendedMessage;
   }
-  async editMessage(userId: string, channelId: string, messageId: string, message: MessageDto, image?: string) {
+  async editMessage(userId: string, channelId: string, messageId: string, message: MessageDto) {
     const existChannel = await this.channelRepository.getChannelById(channelId);
     if (!existChannel) {
       throw new Error('Channel not found');
@@ -39,10 +39,7 @@ export class ChannelMessageService {
     if (!existMessage) throw new Error('Message not found');
     const isUserInServer = await this.channelRepository.isUserInServer(userId, existChannel.serverId);
     if (!isUserInServer) throw new Error('User is not a member of this server');
-    const editedMessage = await this.channelMessageRepository.editMessage(userId, channelId, messageId, message, image);
-    if (image !== existMessage.imageUrl && existMessage.imageUrl) {
-      await deleteImage(existMessage.imageUrl);
-    }
+    const editedMessage = await this.channelMessageRepository.editMessage(userId, channelId, messageId, message);
     return editedMessage;
   }
   async deleteMessage(userId: string, channelId: string, messageId: string) {

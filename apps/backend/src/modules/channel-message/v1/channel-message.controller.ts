@@ -2,12 +2,15 @@ import {Request, Response} from 'express';
 import {ChannelMessageService} from '../channel-message.service.js';
 import {HttpStatus} from '../../../lib/http-status.js';
 import {MessageDto} from '../dto/message-dto.dto.js';
-import {deleteImage} from '../../../lib/delete-image.js';
+import {AppWriteService} from '../../appwite/appwite.services.js';
+import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
 
 export class ChannelMessageController {
   private channelMessageService: ChannelMessageService;
-  constructor(channelMessageService: ChannelMessageService) {
+  private appWriteService: AppWriteService;
+  constructor(channelMessageService: ChannelMessageService, appWriteService: AppWriteService) {
     this.channelMessageService = channelMessageService;
+    this.appWriteService = appWriteService;
   }
   async getAllMessage(req: Request, res: Response) {
     try {
@@ -25,20 +28,24 @@ export class ChannelMessageController {
     }
   }
   async sendMessage(req: Request, res: Response) {
+    let imageId;
     try {
       const user = req.user;
       const channelId = req.params.channelId as string;
       const message = req.body as MessageDto;
-      const image = req.file?.path.replace('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.channelMessageService.sendMessage(user.id, channelId, message, image);
+      const path = req.file?.path;
+      const originalName = req.file?.originalname;
+      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, path, originalName);
+      imageId = image?.$id;
+      const data = await this.channelMessageService.sendMessage(user.id, channelId, message, imageId);
       return res.status(HttpStatus.OK).json({message: 'Send Message Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Send Message ', error);
       console.log('====================================');
-      if (req.file) {
-        await deleteImage(req.file.path);
+      if (req.file && imageId) {
+        await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, imageId);
       }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Send Message Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Send Message Failed', error: 'Unknown error'});
@@ -50,17 +57,13 @@ export class ChannelMessageController {
       const channelId = req.params.channelId as string;
       const messageId = req.params.messageId as string;
       const message = req.body as MessageDto;
-      const image = req.file?.path.replace('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.channelMessageService.editMessage(user.id, channelId, messageId, message, image);
+      const data = await this.channelMessageService.editMessage(user.id, channelId, messageId, message);
       return res.status(HttpStatus.OK).json({message: 'Edit Message Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Edit Message ', error);
       console.log('====================================');
-      if (req.file) {
-        await deleteImage(req.file.path);
-      }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Message Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Message Failed', error: 'Unknown error'});
     }
@@ -72,6 +75,9 @@ export class ChannelMessageController {
       const messageId = req.params.messageId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.channelMessageService.deleteMessage(user.id, channelId, messageId);
+      if (data?.imageUrl) {
+        await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.imageUrl);
+      }
       return res.status(HttpStatus.OK).json({message: 'Delete Message Successful', data});
     } catch (error) {
       console.log('====================================');

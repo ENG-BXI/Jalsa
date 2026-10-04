@@ -19,11 +19,13 @@
     "@prisma/orm-postgres": "8.0.0-rc.10",
     "@types/cors": "^2.8.19",
     "@types/multer": "^2.3.0",
+    "appwrite": "^28.1.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
+    "node-appwrite": "^29.0.0",
     "temporal-polyfill": "^1.0.4",
     "zod": "^4.5.4"
   },

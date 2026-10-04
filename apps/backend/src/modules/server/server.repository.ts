@@ -119,11 +119,13 @@ export class ServerRepository {
     return invite;
   }
   async editServer(serverId: string, editServerDto: EditServerDto, serverImage?: string) {
-    const editedServer = await this.db.orm.public.Server.where({id: serverId}).select('id', 'name', 'description', 'isPublic').update({...editServerDto,avatar_url: serverImage});
+    const editedServer = await this.db.orm.public.Server.where({id: serverId})
+      .select('id', 'name', 'description', 'isPublic', 'avatar_url')
+      .update({...editServerDto, avatar_url: serverImage});
     return editedServer;
   }
   async deleteServer(serverId: string) {
-    const deletedServer = await this.db.orm.public.Server.where({id: serverId}).select('id', 'name', 'description', 'isPublic').delete();
+    const deletedServer = await this.db.orm.public.Server.where({id: serverId}).select('id', 'name', 'description', 'isPublic', 'avatar_url').delete();
     return deletedServer;
   }
   async isUserInServer(serverId: string, userId: string) {

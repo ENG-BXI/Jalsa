@@ -7,10 +7,14 @@ import {ChangeRoleDto} from '../dto/change-role.dto.js';
 import {KickUserFromServerDto} from '../dto/kick-user-from-server.dto.js';
 import fs from 'node:fs/promises';
 import {deleteImage} from '../../../lib/delete-image.js';
+import {AppWriteService} from '../../appwite/appwite.services.js';
+import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
 export class ServerController {
   private serverService: ServerService;
-  constructor(serverService: ServerService) {
+  private appWriteService: AppWriteService;
+  constructor(serverService: ServerService, appWriteService: AppWriteService) {
     this.serverService = serverService;
+    this.appWriteService = appWriteService;
   }
   async getServerById(req: Request, res: Response) {
     try {
@@ -99,19 +103,23 @@ export class ServerController {
     }
   }
   async createServer(req: Request, res: Response) {
+    let imageId;
     try {
       const user = req.user;
       const body = req.body as CreateServerDto;
-      const serverImage = req.file?.path.replaceAll('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.serverService.createServer(user.id, body, serverImage);
+      const path = req.file?.path;
+      const originalName = req.file?.originalname;
+      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, path, originalName);
+      imageId = image?.$id;
+      const data = await this.serverService.createServer(user.id, body, imageId);
       return res.status(HttpStatus.OK).json({message: 'Create Server Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Create Server ', error);
       console.log('====================================');
-      if (req.file) {
-        await deleteImage(req.file.path);
+      if (req.file && imageId) {
+        await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, imageId);
       }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Create Server Failed', error: 'Unknown error'});
@@ -167,20 +175,27 @@ export class ServerController {
   }
 
   async editServer(req: Request, res: Response) {
+    let newImageId;
     try {
       const user = req.user;
       const serverId = req.params.serverId as string;
       const body = req.body as EditServerDto;
-      const serverImage = req.file?.path.replaceAll('\\', '/');
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.serverService.editServer(user.id, serverId, body, serverImage);
+      const path = req.file?.path;
+      const originalName = req.file?.originalname;
+      const newImage = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, path, originalName);
+      newImageId = newImage?.$id;
+      const data = await this.serverService.editServer(user.id, serverId, body, newImageId);
+      if (data?.avatar_url && newImageId) {
+        await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.avatar_url);
+      }
       return res.status(HttpStatus.OK).json({message: 'Edit Server Successful', data});
     } catch (error) {
       console.log('====================================');
       console.log('ERROR IN Edit Server ', error);
       console.log('====================================');
-      if (req.file) {
-        await deleteImage(req.file.path);
+      if (req.file && newImageId) {
+        await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, newImageId);
       }
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Server Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Edit Server Failed', error: 'Unknown error'});
@@ -192,6 +207,9 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.deleteServer(user.id, serverId);
+      if (data?.avatar_url) {
+        await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.avatar_url);
+      }
       return res.status(HttpStatus.OK).json({message: 'Delete Server Successful', data});
     } catch (error) {
       console.log('====================================');
