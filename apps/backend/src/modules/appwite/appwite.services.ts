@@ -9,10 +9,10 @@ export class AppWriteService {
     this.client = new sdk.Client().setEndpoint(env.APPWRITE_API_ENDPOINT).setProject(env.APPWRITE_PROJECT_ID).setKey(env.APPWRITE_API_KEY);
     this.storage = new sdk.Storage(this.client);
   }
-  async createFile(bucketId: string, path?: string, originalName?: string) {
-    if (!path || !originalName) return;
-    const file = InputFile.fromPath(path, originalName);
-    return this.storage.createFile(bucketId, sdk.ID.unique(), file);
+  async createFile(bucketId: string, buffer?: string | ArrayBuffer | Uint8Array<ArrayBufferLike>, originalName?: string) {
+    if (!buffer || !originalName) return;
+    const file = InputFile.fromBuffer(buffer, originalName);
+    return await this.storage.createFile(bucketId, sdk.ID.unique(), file);
   }
   async getFileId(bucketId: string, path?: string, originalName?: string) {
     return this.storage.getFile(bucketId, path || originalName || '');

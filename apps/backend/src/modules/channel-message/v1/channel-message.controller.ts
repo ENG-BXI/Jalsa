@@ -34,9 +34,9 @@ export class ChannelMessageController {
       const channelId = req.params.channelId as string;
       const message = req.body as MessageDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const path = req.file?.path;
+      const buffer = req.file?.buffer;
       const originalName = req.file?.originalname;
-      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, path, originalName);
+      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, buffer, originalName);
       imageId = image?.$id;
       const data = await this.channelMessageService.sendMessage(user.id, channelId, message, imageId);
       return res.status(HttpStatus.OK).json({message: 'Send Message Successful', data});
