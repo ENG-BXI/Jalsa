@@ -106,9 +106,9 @@ export class ServerController {
       const user = req.user;
       const body = req.body as CreateServerDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const path = req.file?.path;
+      const buffer = req.file?.buffer;
       const originalName = req.file?.originalname;
-      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, path, originalName);
+      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, buffer, originalName);
       imageId = image?.$id;
       const data = await this.serverService.createServer(user.id, body, imageId);
       return res.status(HttpStatus.OK).json({message: 'Create Server Successful', data});
@@ -179,10 +179,10 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       const body = req.body as EditServerDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const path = req.file?.path;
+      const buffer = req.file?.buffer;
       const originalName = req.file?.originalname;
-      const newImage = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, path, originalName);
-      newImageId = newImage?.$id;
+      const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, buffer, originalName);
+      newImageId = image?.$id;
       const data = await this.serverService.editServer(user.id, serverId, body, newImageId);
       if (data?.avatar_url && newImageId) {
         await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.avatar_url);
