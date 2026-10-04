@@ -1,4 +1,4 @@
-import {BACKEND_URL} from '@/lib/env';
+import {env} from '@/lib/env';
 import {QueryClient} from '@tanstack/react-query';
 import axios from 'axios';
 import {toast} from 'sonner';
@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 /**
  * BaseUrl
  */
-const baseURL = `${BACKEND_URL}/api`;
+const baseURL = `${env.BACKEND_URL}/api`;
 
 export const api = axios.create({
   baseURL

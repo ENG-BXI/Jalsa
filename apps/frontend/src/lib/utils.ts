@@ -1,6 +1,7 @@
 export {cn} from 'cn';
 import {format} from 'date-fns';
 import {enUS} from 'date-fns/locale';
+import { env } from './env';
 
 export function formatDate(date: string | Date, dateFormat = 'dd/MM/yyyy'): string {
   return format(new Date(date), dateFormat, {
@@ -40,3 +41,7 @@ export const urlToFile = async (url?: string, fallbackName = 'file'): Promise<Fi
     type: blob.type
   });
 };
+
+export function getFileViewUrl(bucketId: string, fileId: string) {
+  return `${env.APPWRITE_API_ENDPOINT}/storage/buckets/${bucketId}/files/${fileId}/view?project=${env.APPWRITE_PROJECT_ID}`;
+}
