@@ -3,10 +3,15 @@ import {ChannelService} from '../channel.service.js';
 import {HttpStatus} from '../../../lib/http-status.js';
 import {CreateChannelDto} from '../dto/create-channel.dto.js';
 import {EditChannelDto} from '../dto/edit-channel.dto.js';
+import {SocketService} from '../../socket/socket.service.js';
 
 export class ChannelController {
-  constructor(private channelService: ChannelService) {
+  constructor(
+    private channelService: ChannelService,
+    private socketService: SocketService
+  ) {
     this.channelService = channelService;
+    this.socketService = socketService;
   }
   async getChannelById(req: Request, res: Response) {
     try {
@@ -26,7 +31,7 @@ export class ChannelController {
       const user = req.user;
       const serverName = req.params.serverName as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
-      const data = await this.channelService.getAllChannelsInServer(serverName,user.id);
+      const data = await this.channelService.getAllChannelsInServer(serverName, user.id);
       return res.status(HttpStatus.OK).json({message: 'Get All Channels Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -42,6 +47,7 @@ export class ChannelController {
       const body = req.body as CreateChannelDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.channelService.createChannel(user.id, body);
+      this.socketService.emitToServer(data.serverId, 'newChannel', data);
       return res.status(HttpStatus.OK).json({message: 'Create Channel Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -59,6 +65,8 @@ export class ChannelController {
       const body = req.body as EditChannelDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.channelService.editChannel(user.id, serverId, channelId, body);
+      this.socketService.emitToServer(serverId, 'editChannel', {channelId, data});
+      this.socketService.emitToChannel(channelId, 'editChannel', {channelId, data});
       return res.status(HttpStatus.OK).json({message: 'Edit Channel Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -75,6 +83,8 @@ export class ChannelController {
       const channelId = req.params.channelId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.channelService.deleteChannel(user.id, serverId, channelId);
+      this.socketService.emitToServer(serverId, 'deleteChannel', { channelId, data });
+      this.socketService.emitToChannel(channelId, 'deleteChannel', { channelId, data });
       return res.status(HttpStatus.OK).json({message: 'Delete Channel Successful', data});
     } catch (error) {
       console.log('====================================');

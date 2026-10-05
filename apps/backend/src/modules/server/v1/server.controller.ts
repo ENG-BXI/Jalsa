@@ -7,12 +7,15 @@ import {ChangeRoleDto} from '../dto/change-role.dto.js';
 import {KickUserFromServerDto} from '../dto/kick-user-from-server.dto.js';
 import {AppWriteService} from '../../appwite/appwite.services.js';
 import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
+import {SocketService} from '../../socket/socket.service.js';
 export class ServerController {
   private serverService: ServerService;
   private appWriteService: AppWriteService;
-  constructor(serverService: ServerService, appWriteService: AppWriteService) {
+  private socketService: SocketService;
+  constructor(serverService: ServerService, appWriteService: AppWriteService, socketService: SocketService) {
     this.serverService = serverService;
     this.appWriteService = appWriteService;
+    this.socketService = socketService;
   }
   async getServerById(req: Request, res: Response) {
     try {
@@ -111,6 +114,7 @@ export class ServerController {
       const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, buffer, originalName);
       imageId = image?.$id;
       const data = await this.serverService.createServer(user.id, body, imageId);
+      if (data.isPublic) this.socketService.emit('newPublicServer', data);
       return res.status(HttpStatus.OK).json({message: 'Create Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -129,6 +133,7 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.addUserToServer(user.id, serverId);
+      this.socketService.emitToUser({userId: user.id, event: 'addUserToServer', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Add User to Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -145,6 +150,7 @@ export class ServerController {
       const inviteCode = req.params.inviteCode as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.addUserToPrivateServerByInvite(user.id, inviteCode, serverId);
+      this.socketService.emitToUser({userId: user.id, event: 'addUserToServer', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Add User to Private Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -187,6 +193,8 @@ export class ServerController {
       if (data?.avatar_url && newImageId) {
         await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.avatar_url);
       }
+      this.socketService.emit('editServer', {serverId, data});
+      this.socketService.emitToServer(serverId, 'editServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Edit Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -208,6 +216,8 @@ export class ServerController {
       if (data?.avatar_url) {
         await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.avatar_url);
       }
+      this.socketService.emit('deleteServer', {serverId, data});
+      this.socketService.emitToServer(serverId, 'deleteServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Delete Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -223,6 +233,7 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.leaveUserFromServer(user.id, serverId);
+      this.socketService.emit('leaveServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Leave From Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -239,6 +250,7 @@ export class ServerController {
       const {memberId} = req.body as KickUserFromServerDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.kickUserFromServer(user.id, memberId, serverId);
+      this.socketService.emit('leaveServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'kicked User From Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -255,6 +267,7 @@ export class ServerController {
       const {memberId, role} = req.body as ChangeRoleDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.changeRoleInServer(serverId, user.id, memberId, role);
+      this.socketService.emitToUser({userId: memberId, event: 'changeRoleInServer', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Change Role Successful', data});
     } catch (error) {
       console.log('====================================');
