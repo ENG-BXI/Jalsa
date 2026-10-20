@@ -1,20 +1,35 @@
 import {Router} from 'express';
-import {userRouteV1} from '../modules/users/v1/index.js';
+import {UserRoute1} from '../modules/users/v1/index.js';
 import {authMiddleWare} from '../middlewares/auth.middleware.js';
 import authRoute from '../modules/auth/index.js';
-import serverRoute from '../modules/server/v1/index.js';
-import channelRoute from '../modules/channel/v1/index.js';
-import directMessageRoute from '../modules/direct-message/v1/index.js';
-import channelMessageRoute from '../modules/channel-message/v1/index.js';
+import {DirectMessageRoute1} from '../modules/direct-message/v1/index.js';
+import {ChannelMessageRoute1} from '../modules/channel-message/v1/index.js';
+import {SocketService} from '../modules/socket/socket.service.js';
+import {ServerRoute1} from '../modules/server/v1/index.js';
+import {AppWriteService} from '../modules/appwite/appwite.services.js';
+import {ChannelRoute1} from '../modules/channel/v1/index.js';
 
-const v1Route = Router();
-// All V1 Route Here For All Modules ....
+export class V1Route {
+  private v1Route = Router();
+  constructor(
+    private socketService: SocketService,
+    private appWriteService: AppWriteService
+  ) {
+    const userRouteV1 = new UserRoute1(socketService).getRoutes();
+    const serverRoute = new ServerRoute1(socketService, appWriteService).getRoutes();
+    const channelRoute = new ChannelRoute1(socketService).getRoutes();
+    const directMessageRoute = new DirectMessageRoute1(socketService, appWriteService).getRoutes();
+    const channelMessageRoute = new ChannelMessageRoute1(socketService, appWriteService).getRoutes();
 
-v1Route.use('/auth', authRoute);
-v1Route.use('/user', authMiddleWare, userRouteV1);
-v1Route.use('/server', serverRoute);
-v1Route.use('/channel', channelRoute);
-v1Route.use('/direct-message', directMessageRoute);
-v1Route.use('/channel-message', channelMessageRoute);
+    this.v1Route.use('/auth', authRoute);
+    this.v1Route.use('/user', authMiddleWare, userRouteV1);
+    this.v1Route.use('/server', serverRoute);
+    this.v1Route.use('/channel', channelRoute);
+    this.v1Route.use('/direct-message', directMessageRoute);
+    this.v1Route.use('/channel-message', channelMessageRoute);
+  }
 
-export default v1Route;
+  getRoutes() {
+    return this.v1Route;
+  }
+}
