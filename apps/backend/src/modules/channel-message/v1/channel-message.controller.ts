@@ -4,13 +4,16 @@ import {HttpStatus} from '../../../lib/http-status.js';
 import {MessageDto} from '../dto/message-dto.dto.js';
 import {AppWriteService} from '../../appwite/appwite.services.js';
 import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
+import {SocketService} from '../../socket/socket.service.js';
 
 export class ChannelMessageController {
   private channelMessageService: ChannelMessageService;
   private appWriteService: AppWriteService;
-  constructor(channelMessageService: ChannelMessageService, appWriteService: AppWriteService) {
+  private socketService: SocketService;
+  constructor(channelMessageService: ChannelMessageService, appWriteService: AppWriteService, socketService: SocketService) {
     this.channelMessageService = channelMessageService;
     this.appWriteService = appWriteService;
+    this.socketService = socketService;
   }
   async getAllMessage(req: Request, res: Response) {
     try {
@@ -39,6 +42,7 @@ export class ChannelMessageController {
       const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, buffer, originalName);
       imageId = image?.$id;
       const data = await this.channelMessageService.sendMessage(user.id, channelId, message, imageId);
+      this.socketService.emitToChannel(channelId, 'newChannelMessage', data);
       return res.status(HttpStatus.OK).json({message: 'Send Message Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -59,6 +63,7 @@ export class ChannelMessageController {
       const message = req.body as MessageDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.channelMessageService.editMessage(user.id, channelId, messageId, message);
+      this.socketService.emitToChannel(channelId, 'editChannelMessage', {messageId, data});
       return res.status(HttpStatus.OK).json({message: 'Edit Message Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -78,6 +83,7 @@ export class ChannelMessageController {
       if (data?.imageUrl) {
         await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data?.imageUrl);
       }
+      this.socketService.emitToChannel(channelId, 'deleteChannelMessage', {messageId, data});
       return res.status(HttpStatus.OK).json({message: 'Delete Message Successful', data});
     } catch (error) {
       console.log('====================================');

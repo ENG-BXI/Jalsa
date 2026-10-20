@@ -4,13 +4,16 @@ import {HttpStatus} from '../../../lib/http-status.js';
 import {MessageDto} from '../dto/message-dto.dto.js';
 import {AppWriteService} from '../../appwite/appwite.services.js';
 import {APPWRITE_BUCKETS_IDS} from '../../../config/appwrite-buckets-ids.js';
+import {SocketService} from '../../socket/socket.service.js';
 
 export class DirectMessageController {
   private directMessageService: DirectMessageService;
   private appWriteService: AppWriteService;
-  constructor(directMessageService: DirectMessageService, appWriteService: AppWriteService) {
+  private socketService: SocketService;
+  constructor(directMessageService: DirectMessageService, appWriteService: AppWriteService, socketService: SocketService) {
     this.directMessageService = directMessageService;
     this.appWriteService = appWriteService;
+    this.socketService = socketService;
   }
   async getAllDMMembers(req: Request, res: Response) {
     try {
@@ -53,6 +56,7 @@ export class DirectMessageController {
       const image = await this.appWriteService.createFile(APPWRITE_BUCKETS_IDS.image, buffer, originalName);
       imageId = image?.$id;
       const data = await this.directMessageService.sendMessage(user.id, receiverId, message, imageId);
+      this.socketService.emitToUser({userId: receiverId, event: 'newMessage', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Send Message Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -72,6 +76,7 @@ export class DirectMessageController {
       const message = req.body as MessageDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.directMessageService.editMessage(user.id, messageId, message);
+      this.socketService.emitToUser({userId: data?.to, event: 'newMessage', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Edit Message Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -90,6 +95,7 @@ export class DirectMessageController {
       if (data?.imageUrl) {
         await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data.imageUrl);
       }
+      this.socketService.emitToUser({userId: data?.to, event: 'newMessage', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Delete Message Successful', data});
     } catch (error) {
       console.log('====================================');

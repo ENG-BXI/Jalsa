@@ -2,12 +2,14 @@ import {Outlet, useLocation, useNavigate} from 'react-router';
 import {LayoutProvider} from './context/layout-provider';
 import SideBar from './components/sidebar';
 import {useEffect} from 'react';
-import { AppDialog } from './components/app-dialog';
+import {AppDialog} from './components/app-dialog';
+import {useSocketSetup} from './provider/socket';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathName = location.pathname;
+  useSocketSetup();
   useEffect(() => {
     if (pathName == '/') navigate('/direct-message');
   }, [navigate, pathName]);

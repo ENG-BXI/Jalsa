@@ -3,8 +3,19 @@ import UserRepository from '../user.repository.js';
 import UserRoute from './user.route.js';
 import UserService from '../user.service.js';
 import {db} from '../../../prisma/db.js';
+import {SocketService} from '../../socket/socket.service.js';
 
-const userRepository = new UserRepository(db);
-const userService = new UserService(userRepository);
-const userController = new UserController(userService);
-export const userRouteV1 = new UserRoute(userController).getRoutes();
+export class UserRoute1 {
+  private userRouteV1: UserRoute;
+  constructor(private socketService: SocketService) {
+    const userRepository = new UserRepository(db);
+    const userService = new UserService(userRepository);
+    const userController = new UserController(userService, socketService);
+    this.userRouteV1 = new UserRoute(userController);
+  }
+
+  getRoutes() {
+    return this.userRouteV1.getRoutes();
+  }
+}
+

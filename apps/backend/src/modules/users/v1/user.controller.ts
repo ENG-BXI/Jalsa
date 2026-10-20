@@ -2,11 +2,14 @@ import {Request, Response} from 'express';
 import UserService from '../user.service.js';
 import {EditUserDto} from '../dto/edit-user.dto.js';
 import {HttpStatus} from '../../../lib/http-status.js';
+import {SocketService} from '../../socket/socket.service.js';
 
 class UserController {
   private userService: UserService;
-  constructor(userService: UserService) {
+  private socketService: SocketService;
+  constructor(userService: UserService, socketService: SocketService) {
     this.userService = userService;
+    this.socketService = socketService;
   }
   async getUserByUserName(req: Request, res: Response) {
     try {
@@ -29,6 +32,7 @@ class UserController {
       const user = req.user;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.userService.editUser(user.id, user, body);
+      this.socketService.emit('editUser', {userId: user.id, data});
       return res.status(HttpStatus.OK).json({message: 'Edit User Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -43,6 +47,7 @@ class UserController {
       const user = req.user;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const deletedUser = await this.userService.deleteUser(user.id);
+      this.socketService.emit('deleteUser', {userId: user.id, deletedUser});
       return res.status(HttpStatus.OK).json({message: 'Delete User Successful', deletedUser});
     } catch (error) {
       console.log('====================================');
