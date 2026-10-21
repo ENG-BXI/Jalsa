@@ -1,6 +1,6 @@
 import type {AxiosResponse} from 'axios';
 import {CHANNEL, CREATE_CHANNEL, DELETE_CHANNEL, EDIT_CHANNEL, SERVER} from '../api-endpoint';
-import {api, queryClient, VERSION_ONE} from '../instance';
+import {api, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
 import type {TCreateChannelBody, TCreateChannelResponse, TDeleteChannelResponse, TEditChannelBody, TEditChannelResponse, TGetAllChannelResponse, TGetChannelByIdResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
@@ -62,10 +62,10 @@ export function useEditChannel(option?: Omit<UseMutationOptions<AxiosResponse<TR
     mutationFn: editChannel,
     onSuccess: (...args) => {
       toast.success('Edit Channel successfully');
-      queryClient.invalidateQueries({
-        queryKey: CHANNEL_KEY,
-        exact: false
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: CHANNEL_KEY,
+      //   exact: false
+      // });
 
       option?.onSuccess?.(...args);
     }
@@ -78,10 +78,10 @@ export function useDeleteChannel(option?: Omit<UseMutationOptions<AxiosResponse<
     mutationFn: deleteChannel,
     onSuccess: (...args) => {
       toast.success('Delete Channel successfully');
-      queryClient.invalidateQueries({
-        queryKey: CHANNEL_KEY,
-        exact: false
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: CHANNEL_KEY,
+      //   exact: false
+      // });
 
       option?.onSuccess?.(...args);
     }

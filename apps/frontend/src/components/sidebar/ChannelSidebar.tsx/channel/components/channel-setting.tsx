@@ -86,9 +86,15 @@ export function ChannelSetting({role, channelId, isOpen}: InviteChannelButtonPro
             {channelId: channelId, serverId: channelSideBar.channelSideBar.serverId},
             {
               onSuccess: () => {
+                console.log('====================================');
+                console.log('deleeeeeetttteeee');
+                console.log('====================================');
                 const serverName = channelSideBar.channelSideBar?.serverName;
                 navigate(`/server/${serverName}`);
                 onClose();
+              },
+              onError: error => {
+                console.error('DELETE FAILED:', error);
               }
             }
           );
