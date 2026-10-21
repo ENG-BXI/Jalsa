@@ -4,12 +4,14 @@ import {ScrollArea} from '@/components/ui/scroll-area';
 import Channel from './channel/channel';
 import {useParams} from 'react-router';
 import {useChannelSideBar} from '@/store/server-store';
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useGetAllChannel} from '@/api/channel/api';
 import type {TChannel} from './type';
 import ChannelSkeleton from './channel/components/channel-skeleton';
 import {useGetAllDMMember} from '@/api/direct-message/api';
 import Members from './dm-member-sidebar';
+import {useChannelEvent} from '@/Realtime/channel/use-channel-event';
+import {useServerJoin} from '@/Realtime/server/use-server-event';
 
 const ChannelSidebar = () => {
   const {serverName} = useParams<{serverName: string}>();
@@ -17,13 +19,29 @@ const ChannelSidebar = () => {
   const {data: channelsData, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
   const {data: dmMembers, isLoading: isDmMemberLoading} = useGetAllDMMember({enabled: !serverName, select: res => res.data.data});
   const server = channelsData?.server;
-  const textChannels: TChannel[] = [];
-  const voiceChannels: TChannel[] = [];
-  channelsData?.channels?.forEach(channel => {
-    if (channel.type == 'TEXT') {
-      textChannels.push(channel);
-    } else voiceChannels.push(channel);
-  });
+
+  const {textChannels, voiceChannels} = useMemo(() => {
+    const textChannels: TChannel[] = [];
+    const voiceChannels: TChannel[] = [];
+
+    if (!serverName || !channelsData?.channels || isError) {
+      return {textChannels, voiceChannels};
+    }
+    if (channelsData?.channels || isFetched || !isError) {
+      channelsData.channels.forEach(channel => {
+        if (channel.type === 'TEXT') {
+          textChannels.push(channel);
+        } else {
+          voiceChannels.push(channel);
+        }
+      });
+    }
+
+    return {textChannels, voiceChannels};
+  }, [serverName, channelsData, channelsData?.channels, isError, isFetched]);
+
+  useServerJoin(server?.id);
+  useChannelEvent(serverName || '');
   useEffect(() => {
     if (isFetched && server && !isError) {
       setChannelSideBar({

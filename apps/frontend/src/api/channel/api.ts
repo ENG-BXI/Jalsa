@@ -46,10 +46,10 @@ export function useCreateChannel(option?: Omit<UseMutationOptions<AxiosResponse<
     mutationFn: createChannel,
     onSuccess: (...args) => {
       toast.success('Create Channel successfully');
-      queryClient.invalidateQueries({
-        queryKey: CHANNEL_KEY,
-        exact: false
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: CHANNEL_KEY,
+      //   exact: false
+      // });
 
       option?.onSuccess?.(...args);
     }
