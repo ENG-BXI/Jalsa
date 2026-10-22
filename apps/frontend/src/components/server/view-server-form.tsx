@@ -6,12 +6,14 @@ import ServerInfo from './server-info';
 import ServerMembers from './server-members';
 import type {TUserRole} from '@/api/type';
 import {useServerEvent} from '@/Realtime/server/use-server-event';
+import {useUserEvent} from '@/Realtime/user/use-user-event';
 
 const ViewServer = ({serverId}: {serverId: string}) => {
   const {data: server, isLoading: isServerLoading} = useServerById(serverId, {
     select: res => res.data.data
   });
   useServerEvent(serverId);
+  useUserEvent({serverId});
   const {data: members, isLoading: isMembersLoading} = useAllMembersInServer(serverId, {
     select: res => res.data.data
   });

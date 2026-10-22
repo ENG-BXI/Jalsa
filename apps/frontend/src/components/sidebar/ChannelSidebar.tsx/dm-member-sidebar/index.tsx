@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {cn} from 'cn';
 import MemberItem from './components/member-item';
 import {useParams} from 'react-router';
+import {useUserEvent} from '@/Realtime/user/use-user-event';
 
 export interface TMember {
   id: string;
@@ -19,7 +20,7 @@ const Members = ({members}: MembersProps) => {
   const [open, setOpen] = useState(true);
   const params = useParams<{receiverMemberUserName: string}>();
   const receiverMemberUserName = params.receiverMemberUserName || '';
-
+  useUserEvent({});
   return (
     <div className='mb-5'>
       <div onClick={() => setOpen(pre => !pre)} className='cursor-pointer px-2 text-text-1 hover:text-inherit select-none flex items-center'>

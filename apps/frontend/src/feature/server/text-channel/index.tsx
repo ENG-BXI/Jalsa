@@ -9,6 +9,7 @@ import AllMessage from '../components/message';
 import {useMessage} from '@/store/use-message.store';
 import {useAppDialog} from '@/store/dialog-store';
 import type {TMessageWithUser} from '../components/message/message-types';
+import { useUserEvent } from '@/Realtime/user/use-user-event';
 
 const TextChannelPage = () => {
   const params = useParams<{channelName: string; serverId: string}>();
@@ -20,7 +21,8 @@ const TextChannelPage = () => {
   const {data: messages} = useChannelMessages(channel.id, {select: res => res.data.data});
   const {mutate: sendMessage, isPending} = useSendMessage();
   const {mutate: editMessage, isPending: isEditLoading} = useEditMessage();
-  const {mutate: deleteMessage, isPending: isDeleteMessagePending} = useDeleteMessage();
+  const { mutate: deleteMessage, isPending: isDeleteMessagePending } = useDeleteMessage();
+  useUserEvent({channelId: channel.id});
   function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!channel.id) return;

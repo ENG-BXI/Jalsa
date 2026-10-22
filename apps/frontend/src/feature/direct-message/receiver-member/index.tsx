@@ -3,6 +3,7 @@ import {useUserByUserName} from '@/api/user/api';
 import ChannelTextInput from '@/components/server/channel/channel-text-input';
 import AllMessage from '@/feature/server/components/message';
 import type {TMessageWithUser} from '@/feature/server/components/message/message-types';
+import {useUserEvent} from '@/Realtime/user/use-user-event';
 import {useAppDialog} from '@/store/dialog-store';
 import {useHeader} from '@/store/header-store';
 import {useDm} from '@/store/use-dm.store';
@@ -22,7 +23,7 @@ const ReceiverMember = () => {
   const {mutate: editMessage, isPaused: isEditLoading} = useEditDMMessage();
   const {mutate: deleteMessage, isPending: isDeleteDMMessagePending} = useDeleteDMMessage();
   const {data: receiverUser, isLoading: isReceiverUserLoading, isFetched: isReceiverUserFetched} = useUserByUserName(params.receiverMemberUserName || '', {enabled: !!params.receiverMemberUserName, select: res => res.data.data});
-
+  useUserEvent({receiverId: receiverUser?.id});
   function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!Dm.id) return;
