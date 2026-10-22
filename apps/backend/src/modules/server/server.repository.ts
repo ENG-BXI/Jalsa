@@ -73,7 +73,7 @@ export class ServerRepository {
     return await this.db.runtime().query(builtQuery);
   }
   async createServer(userId: string, body: CreateServerDto, serverImage?: string) {
-    const newServer = await this.db.orm.public.Server.select('id', 'name', 'description', 'isPublic').create({
+    const newServer = await this.db.orm.public.Server.select('id', 'name', 'description', 'isPublic', 'avatar_url').create({
       ...body,
       owner_id: userId,
       avatar_url: serverImage
@@ -81,8 +81,9 @@ export class ServerRepository {
     return newServer;
   }
   async addUserToServer(userId: string, serverId: string, role: TUserRole = 'MEMBER') {
-    const addedUserToServer = await this.db.orm.public.UserSever.select('createdAt')
-      .include('server', c => c.select('name'))
+    const addedUserToServer = await this.db.orm.public.UserSever.select('role', 'createdAt')
+      .include('server', c => c.select('name', 'isPublic'))
+      .include('user', col => col.select('id', 'name', 'userName', 'jointAt'))
       .create({userId, serverId, role: role});
     return addedUserToServer;
   }
@@ -133,7 +134,13 @@ export class ServerRepository {
     return existUserInServer;
   }
   async leaveUserFromServer(serverId: string, userId: string) {
-    const leaveUser = await this.db.orm.public.UserSever.where({userId, serverId}).delete();
+    const leaveUser = await this.db.orm.public.UserSever.where({userId, serverId})
+      .select('role')
+      .include('server', col => {
+        return col.select('isPublic');
+      })
+      .include('user', col => col.select('id', 'name', 'userName', 'jointAt'))
+      .delete();
     return leaveUser;
   }
   async changeRoleInServer(serverId: string, memberId: string, role: TUserRole) {

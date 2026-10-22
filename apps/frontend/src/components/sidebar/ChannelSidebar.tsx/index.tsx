@@ -2,7 +2,7 @@ import {Separator} from '@/components/ui/separator';
 import ServerNameAndAction from './server-name-and-action';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import Channel from './channel/channel';
-import {useParams} from 'react-router';
+import {useNavigate, useParams} from 'react-router';
 import {useChannelSideBar} from '@/store/server-store';
 import {useEffect, useMemo} from 'react';
 import {useGetAllChannel} from '@/api/channel/api';
@@ -11,7 +11,7 @@ import ChannelSkeleton from './channel/components/channel-skeleton';
 import {useGetAllDMMember} from '@/api/direct-message/api';
 import Members from './dm-member-sidebar';
 import {useChannelEvent} from '@/Realtime/channel/use-channel-event';
-import {useServerJoin} from '@/Realtime/server/use-server-event';
+import {useServerEvent, useServerJoin} from '@/Realtime/server/use-server-event';
 
 const ChannelSidebar = () => {
   const {serverName} = useParams<{serverName: string}>();
@@ -19,7 +19,8 @@ const ChannelSidebar = () => {
   const {data: channelsData, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
   const {data: dmMembers, isLoading: isDmMemberLoading} = useGetAllDMMember({enabled: !serverName, select: res => res.data.data});
   const server = channelsData?.server;
-
+  const params = useParams<{channelName: string; serverName: string}>();
+  const navigate = useNavigate();
   const {textChannels, voiceChannels} = useMemo(() => {
     const textChannels: TChannel[] = [];
     const voiceChannels: TChannel[] = [];
@@ -39,9 +40,37 @@ const ChannelSidebar = () => {
 
     return {textChannels, voiceChannels};
   }, [serverName, channelsData, channelsData?.channels, isError, isFetched]);
-
   useServerJoin(server?.id);
   useChannelEvent(serverName || '');
+  useServerEvent(server?.id, {
+    onEdit: data => {
+      setChannelSideBar({
+        type: 'server',
+        role: server?.userSevers[0].role,
+        channelSideBar: {
+          serverId: data.id,
+          serverName: data.name
+        }
+      });
+      navigate(`server/${data.name}/${params.channelName}`);
+    },
+    onDelete: () => {
+      navigate(`/direct-message`);
+    },
+    onKick: () => {
+      navigate(`/direct-message`);
+    },
+    onChangeRole: data => {
+      setChannelSideBar({
+        type: 'server',
+        role: data.role,
+        channelSideBar: {
+          serverId: data.id,
+          serverName: serverName || ''
+        }
+      });
+    }
+  });
   useEffect(() => {
     if (isFetched && server && !isError) {
       setChannelSideBar({

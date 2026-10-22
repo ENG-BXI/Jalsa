@@ -133,7 +133,8 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.addUserToServer(user.id, serverId);
-      this.socketService.emitToUser({userId: user.id, event: 'addUserToServer', args: [data]});
+      if (data.server?.isPublic) this.socketService.emit('addUserToServer', {serverId, data});
+      else this.socketService.emitToServer(serverId, 'addUserToServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Add User to Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -150,7 +151,7 @@ export class ServerController {
       const inviteCode = req.params.inviteCode as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.addUserToPrivateServerByInvite(user.id, inviteCode, serverId);
-      this.socketService.emitToUser({userId: user.id, event: 'addUserToServer', args: [data]});
+      this.socketService.emitToServer(serverId, 'addUserToServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Add User to Private Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -160,7 +161,6 @@ export class ServerController {
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Add User to Private Server Failed', error: 'Unknown error'});
     }
   }
-
   async generateInviteCode(req: Request, res: Response) {
     try {
       const user = req.user;
@@ -177,7 +177,6 @@ export class ServerController {
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Generate Invite Code Failed', error: 'Unknown error'});
     }
   }
-
   async editServer(req: Request, res: Response) {
     let newImageId;
     try {
@@ -233,7 +232,8 @@ export class ServerController {
       const serverId = req.params.serverId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.leaveUserFromServer(user.id, serverId);
-      this.socketService.emit('leaveServer', {serverId, data});
+      if (data?.server?.isPublic) this.socketService.emit('leaveServer', {serverId, data});
+      else this.socketService.emitToServer(serverId, 'leaveServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Leave From Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -267,7 +267,8 @@ export class ServerController {
       const {memberId, role} = req.body as ChangeRoleDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.changeRoleInServer(serverId, user.id, memberId, role);
-      this.socketService.emitToUser({userId: memberId, event: 'changeRoleInServer', args: [data]});
+      this.socketService.emitToUser({ userId: memberId, event: 'changeRoleInServer', args: [data] });
+      this.socketService.emitToServer(serverId, 'changeRoleInServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Change Role Successful', data});
     } catch (error) {
       console.log('====================================');
