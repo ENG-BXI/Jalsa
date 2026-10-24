@@ -21,7 +21,8 @@ export class SocketService {
 
         const user = verifyToken(token);
         if (!user?.id) return next(new Error('Unauthorized'));
-
+        // Join the user to a room with their user ID
+        socket.join(user.id);
         socket.data.userId = user.id;
         next();
       } catch {
@@ -42,6 +43,9 @@ export class SocketService {
       });
       socket.on('server:leave', (serverId: string) => {
         socket.leave(serverId);
+      });
+      socket.on('isTyping', (data: {isTyping: boolean; toUserId: string; toUserName: string}) => {
+        this.io.to(data.toUserId).emit('isTyping', {isTyping: data.isTyping, toUserId: userId, toUserName: data.toUserName});
       });
     });
   }

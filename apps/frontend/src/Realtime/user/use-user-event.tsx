@@ -11,8 +11,11 @@ import type {TMessageWithUser} from '@/feature/server/components/message/message
 import {CHANNEL_MESSAGE_KEY} from '@/api/channel-message/api';
 import {DIRECT_MEMBER_KEY, DIRECT_MESSAGE_KEY} from '@/api/direct-message/api';
 import type {TGetAllDMMember} from '@/api/direct-message/type';
+import {useUser} from '@/store/user-info-store';
 
-export function useUserEvent({serverId, channelId, receiverId}: {serverId?: string; channelId?: string; receiverId?: string}) {
+export function useUserEvent({serverId, channelId, receiverId, onEditUser}: {serverId?: string; channelId?: string; receiverId?: string; onEditUser?: (data: TEditUserEventResponse) => void}) {
+  const user = useUser(state => state.user);
+
   useEffect(() => {
     socket.on(USER_EVENT.EDIT_USER, (data: TEditUserEventResponse) => {
       if (serverId) {
@@ -99,6 +102,9 @@ export function useUserEvent({serverId, channelId, receiverId}: {serverId?: stri
           }
           return member;
         });
+        if (user?.id !== data.userId) {
+          onEditUser?.(data);
+        }
         return {
           ...oldData,
           data: {

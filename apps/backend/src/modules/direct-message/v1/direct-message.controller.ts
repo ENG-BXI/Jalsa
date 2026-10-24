@@ -76,7 +76,7 @@ export class DirectMessageController {
       const message = req.body as MessageDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.directMessageService.editMessage(user.id, messageId, message);
-      this.socketService.emitToUser({userId: data?.to, event: 'newMessage', args: [data]});
+      this.socketService.emitToUser({userId: data?.to, event: 'editMessage', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Edit Message Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -95,7 +95,7 @@ export class DirectMessageController {
       if (data?.imageUrl) {
         await this.appWriteService.deleteFile(APPWRITE_BUCKETS_IDS.image, data.imageUrl);
       }
-      this.socketService.emitToUser({userId: data?.to, event: 'newMessage', args: [data]});
+      this.socketService.emitToUser({userId: data?.to, event: 'deleteMessage', args: [data]});
       return res.status(HttpStatus.OK).json({message: 'Delete Message Successful', data});
     } catch (error) {
       console.log('====================================');
