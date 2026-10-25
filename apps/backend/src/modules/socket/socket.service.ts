@@ -44,8 +44,17 @@ export class SocketService {
       socket.on('server:leave', (serverId: string) => {
         socket.leave(serverId);
       });
-      socket.on('isTyping', (data: {isTyping: boolean; toUserId: string; toUserName: string}) => {
-        this.io.to(data.toUserId).emit('isTyping', {isTyping: data.isTyping, toUserId: userId, toUserName: data.toUserName});
+      socket.on('channel:join', (channelId: string) => {
+        socket.join(channelId);
+      });
+      socket.on('channel:leave', (channelId: string) => {
+        socket.leave(channelId);
+      });
+      socket.on('channel:isTyping', (data: {isTyping: boolean; fromUserId: string; fromUserName: string; channelId: string}) => {
+        this.io.to(data.channelId).except(userId).emit('channel:isTyping', {isTyping: data.isTyping, fromUserId: userId, fromUserName: data.fromUserName});
+      });
+      socket.on('dm:isTyping', (data: {isTyping: boolean; toUserId: string; toUserName: string}) => {
+        this.io.to(data.toUserId).emit('dm:isTyping', {isTyping: data.isTyping, toUserId: userId, toUserName: data.toUserName});
       });
     });
   }

@@ -127,7 +127,7 @@ const ReceiverMember = () => {
   return (
     <div className='relative px-4 h-full pb-20'>
       <AllMessage messages={messages || []} />
-      <IsTypingComponents name={isTyping.toUserName} isTyping={isTyping.isTyping} />
+      <IsTypingComponents name={[isTyping.toUserName]} isTyping={isTyping.isTyping} />
       <ChannelTextInput onSubmit={handleOnSubmit} onTyping={isTyping => handleIsTypingEvent({isTyping, toUserName: title})} isLoading={isPending} placeholder={`Message #${title}`} />
     </div>
   );

@@ -1,8 +1,8 @@
 import {cn} from 'cn';
 
 interface IsTypingComponentsProps {
-    name: string;
-    isTyping:boolean;
+  name: string[];
+  isTyping: boolean;
 }
 const IsTypingComponents = ({name, isTyping}: IsTypingComponentsProps) => {
   return (
@@ -14,7 +14,7 @@ const IsTypingComponents = ({name, isTyping}: IsTypingComponentsProps) => {
       </div>
 
       <span className='max-w-40 truncate text-xs text-text-1'>
-        <span className='font-medium text-foreground'>{name}</span> is typing...
+        <span className='font-medium text-foreground'>{name.join(', ')}</span> is typing...
       </span>
     </div>
   );
