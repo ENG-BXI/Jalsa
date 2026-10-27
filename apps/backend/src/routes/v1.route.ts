@@ -9,15 +9,16 @@ import {ServerRoute1} from '../modules/server/v1/index.js';
 import {AppWriteService} from '../modules/appwite/appwite.services.js';
 import {ChannelRoute1} from '../modules/channel/v1/index.js';
 import {StreamVideoService} from '../modules/stream-video/stream-video.service.js';
+import {RedisClientType, RedisDefaultModules} from 'redis';
 
 export class V1Route {
   private v1Route = Router();
-  constructor(socketService: SocketService, appWriteService: AppWriteService, streamVideoService: StreamVideoService) {
-    const userRouteV1 = new UserRoute1(socketService).getRoutes();
-    const serverRoute = new ServerRoute1(socketService, appWriteService).getRoutes();
-    const channelRoute = new ChannelRoute1(socketService, streamVideoService).getRoutes();
-    const directMessageRoute = new DirectMessageRoute1(socketService, appWriteService).getRoutes();
-    const channelMessageRoute = new ChannelMessageRoute1(socketService, appWriteService).getRoutes();
+  constructor(socketService: SocketService, appWriteService: AppWriteService, streamVideoService: StreamVideoService, redisClient: RedisClientType<RedisDefaultModules, {}, {}, 3, {}>) {
+    const userRouteV1 = new UserRoute1(socketService, redisClient).getRoutes();
+    const serverRoute = new ServerRoute1(socketService, appWriteService, redisClient).getRoutes();
+    const channelRoute = new ChannelRoute1(socketService, streamVideoService, redisClient).getRoutes();
+    const directMessageRoute = new DirectMessageRoute1(socketService, appWriteService, redisClient).getRoutes();
+    const channelMessageRoute = new ChannelMessageRoute1(socketService, appWriteService, redisClient).getRoutes();
 
     this.v1Route.use('/auth', authRoute);
     this.v1Route.use('/user', authMiddleWare, userRouteV1);

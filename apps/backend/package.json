@@ -8,7 +8,7 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "set NODE_ENV=development&& nodemon",
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "echo 'Add test script here'",
@@ -27,6 +27,7 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
     "node-appwrite": "^29.0.0",
+    "redis": "^6.3.0",
     "socket.io": "^4.8.4",
     "temporal-polyfill": "^1.0.4",
     "zod": "^4.5.4"

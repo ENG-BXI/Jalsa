@@ -1,3 +1,4 @@
+import {RedisClientType, RedisDefaultModules} from 'redis';
 import {db} from '../../../prisma/db.js';
 import {AppWriteService} from '../../appwite/appwite.services.js';
 import {ChannelRepository} from '../../channel/channel.repository.js';
@@ -9,16 +10,11 @@ import {ServerRoute} from './server.route.js';
 
 export class ServerRoute1 {
   private serverRoute: ServerRoute;
-  constructor(
-    private socketService: SocketService,
-    private appWriteService: AppWriteService
-  ) {
-    this.socketService = socketService;
-    this.appWriteService = appWriteService;
+  constructor(socketService: SocketService, appWriteService: AppWriteService, redisClient: RedisClientType<RedisDefaultModules, {}, {}, 3, {}>) {
     const serverRepository = new ServerRepository(db);
     const channelRepository = new ChannelRepository(db);
-    const serverService = new ServerService(serverRepository, channelRepository);
-    const serverController = new ServerController(serverService, this.appWriteService, this.socketService);
+    const serverService = new ServerService(serverRepository, channelRepository, redisClient);
+    const serverController = new ServerController(serverService, appWriteService, socketService);
     this.serverRoute = new ServerRoute(serverController);
   }
   getRoutes() {

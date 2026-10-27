@@ -9,7 +9,11 @@ const envSchema = z.object({
   APPWRITE_PROJECT_ID: z.string().min(1),
   APPWRITE_IMAGE_BUCKET_ID: z.string().min(1),
   STREAM_API_KEY: z.string().min(1),
-  STREAM_API_SECRET: z.string().min(1)
+  STREAM_API_SECRET: z.string().min(1),
+  REDIS_USERNAME: z.string().min(1),
+  REDIS_PASSWORD: z.string().min(1),
+  REDIS_HOST: z.string().min(1),
+  REDIS_PORT: z.coerce.number().int().positive()
 });
 export const env = envSchema.parse({
   PORT: process.env.PORT,
@@ -20,5 +24,9 @@ export const env = envSchema.parse({
   APPWRITE_PROJECT_ID: process.env.APPWRITE_PROJECT_ID,
   APPWRITE_IMAGE_BUCKET_ID: process.env.APPWRITE_IMAGE_BUCKET_ID,
   STREAM_API_KEY: process.env.STREAM_API_KEY,
-  STREAM_API_SECRET: process.env.STREAM_API_SECRET
+  STREAM_API_SECRET: process.env.STREAM_API_SECRET,
+  REDIS_USERNAME: process.env.REDIS_USERNAME,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT
 });
