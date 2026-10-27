@@ -1,6 +1,5 @@
 // use prisma-8
 // Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
-
 model User {
   id              String           @id @default(uuid())
   name            String
@@ -15,17 +14,19 @@ model User {
   jointAt         DateTime         @default(now())
   senderUser      DmMembers[]      @relation(name: "senderUser")
   receiverUser    DmMembers[]      @relation(name: "receiverUser")
+
+  @@index([userName])
 }
 
 model DmMembers {
   id           String @id @default(uuid())
   senderId     String
-  senderUser   User   @relation(fields: [senderId], references: [id], name: "senderUser")
+  senderUser   User   @relation(fields:[senderId], references:[id], name: "senderUser")
   receiverId   String
-  receiverUser User   @relation(fields: [receiverId], references: [id], name: "receiverUser")
+  receiverUser User   @relation(fields:[receiverId], references:[id], name: "receiverUser")
 
   @@unique([senderId, receiverId])
-  @@index([senderId, receiverId])
+  @@index([receiverId])
 }
 
 model Server {
@@ -34,23 +35,26 @@ model Server {
   description String?
   avatar_url  String?
   owner_id    String
-  owner       User        @relation(references: [id], fields: [owner_id], name: "owner", onDelete: Cascade)
+  owner       User        @relation(references:[id], fields:[owner_id], name: "owner", onDelete: Cascade)
   isPublic    Boolean     @default(false)
   userSevers  UserSever[]
   channels    Channel[]
   createdAt   DateTime    @default(now())
+
+  @@index([id])
+  @@index([name])
 }
 
 model ServerInvite {
-  id        String    @id @default(uuid())
-  code      String    @unique
-  serverId  String
-  usedAt    DateTime?
-  expiresAt DateTime?
-  createdAt DateTime  @default(now())
+  id         String    @id @default(uuid())
+  code       String    @unique
+  serverId   String
+  usedAt     DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
   isMultiple Boolean   @default(false)
 
-  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  server     Server    @relation(fields:[serverId], references:[id], onDelete: Cascade)
 
   @@index([serverId])
 }
@@ -64,13 +68,14 @@ enum enServerRole {
 model UserSever {
   id        String       @id @default(uuid())
   serverId  String
-  server    Server       @relation(references: [id], fields: [serverId], onDelete: Cascade)
+  server    Server       @relation(references:[id], fields:[serverId], onDelete: Cascade)
   userId    String
-  user      User         @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user      User         @relation(references:[id], fields:[userId], onDelete: Cascade)
   role      enServerRole @default(MEMBER)
   createdAt DateTime     @default(now())
 
   @@unique([userId, serverId])
+  @@index([serverId])
 }
 
 enum enChannelType {
@@ -83,9 +88,12 @@ model Channel {
   name            String
   type            enChannelType    @default(TEXT)
   serverId        String
-  server          Server           @relation(references: [id], fields: [serverId], onDelete: Cascade)
+  server          Server           @relation(references:[id], fields:[serverId], onDelete: Cascade)
   channelMassages ChannelMassage[]
   createdAt       DateTime         @default(now())
+
+  @@index([id])
+  @@index([serverId])
 }
 
 model DirectMassage {
@@ -94,8 +102,8 @@ model DirectMassage {
   to         String
   text       String?
   imageUrl   String?
-  fromUser   User     @relation(references: [id], fields: [from], name: "sender", onDelete: Cascade)
-  toUser     User     @relation(references: [id], fields: [to], name: "receiver", onDelete: Cascade)
+  fromUser   User     @relation(references:[id], fields:[from], name: "sender", onDelete: Cascade)
+  toUser     User     @relation(references:[id], fields:[to], name: "receiver", onDelete: Cascade)
   softDelete Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
@@ -107,9 +115,11 @@ model ChannelMassage {
   text       String?
   imageUrl   String?
   channelId  String
-  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  fromUser   User?    @relation(references: [id], fields: [from], name: "ChannelMassageSender", onDelete: SetNull)
+  channel    Channel  @relation(fields:[channelId], references:[id], onDelete: Cascade)
+  fromUser   User?    @relation(references:[id], fields:[from], name: "ChannelMassageSender", onDelete: SetNull)
   softDelete Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
+
+  @@index([channelId])
 }

@@ -8,6 +8,8 @@ const envSchema = z.object({
   APPWRITE_API_ENDPOINT: z.string().min(1),
   APPWRITE_PROJECT_ID: z.string().min(1),
   APPWRITE_IMAGE_BUCKET_ID: z.string().min(1),
+  STREAM_API_KEY: z.string().min(1),
+  STREAM_API_SECRET: z.string().min(1)
 });
 export const env = envSchema.parse({
   PORT: process.env.PORT,
@@ -16,5 +18,7 @@ export const env = envSchema.parse({
   APPWRITE_API_KEY: process.env.APPWRITE_API_KEY,
   APPWRITE_API_ENDPOINT: process.env.APPWRITE_API_ENDPOINT,
   APPWRITE_PROJECT_ID: process.env.APPWRITE_PROJECT_ID,
-  APPWRITE_IMAGE_BUCKET_ID: process.env.APPWRITE_IMAGE_BUCKET_ID
+  APPWRITE_IMAGE_BUCKET_ID: process.env.APPWRITE_IMAGE_BUCKET_ID,
+  STREAM_API_KEY: process.env.STREAM_API_KEY,
+  STREAM_API_SECRET: process.env.STREAM_API_SECRET
 });

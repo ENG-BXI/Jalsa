@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@prisma/orm-postgres": "8.0.0-rc.10",
+    "@stream-io/node-sdk": "^0.8.14",
     "@types/cors": "^2.8.19",
     "@types/multer": "^2.3.0",
     "appwrite": "^28.1.0",

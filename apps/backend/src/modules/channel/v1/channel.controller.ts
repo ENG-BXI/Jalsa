@@ -4,14 +4,17 @@ import {HttpStatus} from '../../../lib/http-status.js';
 import {CreateChannelDto} from '../dto/create-channel.dto.js';
 import {EditChannelDto} from '../dto/edit-channel.dto.js';
 import {SocketService} from '../../socket/socket.service.js';
+import {StreamVideoService} from '../../stream-video/stream-video.service.js';
 
 export class ChannelController {
   constructor(
     private channelService: ChannelService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private streamVideoService: StreamVideoService
   ) {
     this.channelService = channelService;
     this.socketService = socketService;
+    this.streamVideoService = streamVideoService;
   }
   async getChannelById(req: Request, res: Response) {
     try {
@@ -24,6 +27,23 @@ export class ChannelController {
       console.log('====================================');
       if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Channel By Id Failed', error: error.message});
       else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Get Channel By Id Failed', error: 'Unknown error'});
+    }
+  }
+  async JoinToStreamChannel(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(HttpStatus.NOT_FOUND).json({ message: 'User Not Found' });
+      const channelId = req.params.channelId as string;
+      const data = await this.channelService.getChannelById(channelId);
+      const streamToken = this.streamVideoService.generateStreamToken(user.id);
+      const responseData = {...data, streamToken};
+      return res.status(HttpStatus.OK).json({message: 'Join to Stream Channel Successful', data: responseData});
+    } catch (error) {
+      console.log('====================================');
+      console.log('ERROR IN Join to Stream Channel ', error);
+      console.log('====================================');
+      if (error instanceof Error) return res.status(HttpStatus.BAD_REQUEST).json({message: 'Join to Stream Channel Failed', error: error.message});
+      else return res.status(HttpStatus.BAD_REQUEST).json({message: 'Join to Stream Channel Failed', error: 'Unknown error'});
     }
   }
   async getAllChannelsInServer(req: Request, res: Response) {
@@ -83,8 +103,8 @@ export class ChannelController {
       const channelId = req.params.channelId as string;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.channelService.deleteChannel(user.id, serverId, channelId);
-      this.socketService.emitToServer(serverId, 'deleteChannel', { channelId, data });
-      this.socketService.emitToChannel(channelId, 'deleteChannel', { channelId, data });
+      this.socketService.emitToServer(serverId, 'deleteChannel', {channelId, data});
+      this.socketService.emitToChannel(channelId, 'deleteChannel', {channelId, data});
       return res.status(HttpStatus.OK).json({message: 'Delete Channel Successful', data});
     } catch (error) {
       console.log('====================================');

@@ -8,16 +8,14 @@ import {SocketService} from '../modules/socket/socket.service.js';
 import {ServerRoute1} from '../modules/server/v1/index.js';
 import {AppWriteService} from '../modules/appwite/appwite.services.js';
 import {ChannelRoute1} from '../modules/channel/v1/index.js';
+import {StreamVideoService} from '../modules/stream-video/stream-video.service.js';
 
 export class V1Route {
   private v1Route = Router();
-  constructor(
-    private socketService: SocketService,
-    private appWriteService: AppWriteService
-  ) {
+  constructor(socketService: SocketService, appWriteService: AppWriteService, streamVideoService: StreamVideoService) {
     const userRouteV1 = new UserRoute1(socketService).getRoutes();
     const serverRoute = new ServerRoute1(socketService, appWriteService).getRoutes();
-    const channelRoute = new ChannelRoute1(socketService).getRoutes();
+    const channelRoute = new ChannelRoute1(socketService, streamVideoService).getRoutes();
     const directMessageRoute = new DirectMessageRoute1(socketService, appWriteService).getRoutes();
     const channelMessageRoute = new ChannelMessageRoute1(socketService, appWriteService).getRoutes();
 
