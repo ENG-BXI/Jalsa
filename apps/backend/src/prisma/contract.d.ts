@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'39a82d415852666a0384f35b9e48eb3931fd48681d8148ef5da632f5179f3c53'>;
+  StorageHashBase<'5e4e0a6b3b0afd4f4321bc346c02595bdc44ded050fdd0c6f20198258b1894ae'>;
 export type ExecutionHash =
   ExecutionHashBase<'f537461ee8bb75277a35622c71d2a125d07a45e2d4fb24d6f1050a6985eb8079'>;
 export type ProfileHash =
@@ -689,6 +689,12 @@ type ContractBase = Omit<
               uniques: readonly [];
               indexes: readonly [
                 {
+                  readonly name: 'channel_id_idx_e8a52337';
+                  readonly prefix: 'channel_id_idx';
+                  readonly columns: readonly ['id'];
+                  readonly unique: false;
+                },
+                {
                   readonly name: 'channel_serverId_idx_cfc44675';
                   readonly prefix: 'channel_serverId_idx';
                   readonly columns: readonly ['serverId'];
@@ -916,21 +922,15 @@ type ContractBase = Omit<
               uniques: readonly [{ readonly columns: readonly ['senderId', 'receiverId'] }];
               indexes: readonly [
                 {
-                  readonly name: 'dmMembers_senderId_receiverId_idx_e948b8bd';
-                  readonly prefix: 'dmMembers_senderId_receiverId_idx';
-                  readonly columns: readonly ['senderId', 'receiverId'];
+                  readonly name: 'dmMembers_receiverId_idx_fe124f44';
+                  readonly prefix: 'dmMembers_receiverId_idx';
+                  readonly columns: readonly ['receiverId'];
                   readonly unique: false;
                 },
                 {
                   readonly name: 'dmMembers_senderId_idx_4689c490';
                   readonly prefix: 'dmMembers_senderId_idx';
                   readonly columns: readonly ['senderId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'dmMembers_receiverId_idx_fe124f44';
-                  readonly prefix: 'dmMembers_receiverId_idx';
-                  readonly columns: readonly ['receiverId'];
                   readonly unique: false;
                 },
               ];
@@ -1007,6 +1007,18 @@ type ContractBase = Omit<
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [{ readonly columns: readonly ['name'] }];
               indexes: readonly [
+                {
+                  readonly name: 'server_id_idx_e8a52337';
+                  readonly prefix: 'server_id_idx';
+                  readonly columns: readonly ['id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'server_name_idx_ce87e6ba';
+                  readonly prefix: 'server_name_idx';
+                  readonly columns: readonly ['name'];
+                  readonly unique: false;
+                },
                 {
                   readonly name: 'server_owner_id_idx_ade9f347';
                   readonly prefix: 'server_owner_id_idx';
@@ -1136,7 +1148,14 @@ type ContractBase = Omit<
                 { readonly columns: readonly ['userName'] },
                 { readonly columns: readonly ['email'] },
               ];
-              indexes: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'user_userName_idx_7be3ef8e';
+                  readonly prefix: 'user_userName_idx';
+                  readonly columns: readonly ['userName'];
+                  readonly unique: false;
+                },
+              ];
               foreignKeys: readonly [];
             };
             readonly userSever: {

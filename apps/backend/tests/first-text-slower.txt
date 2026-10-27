@@ -1,0 +1,15 @@
+SLOWEST ENDPOINTS
+
+server-all-members | count: 18279 | avg: 720.77 ms | p95: 1604.82 ms | max: 1777.72 ms
+channel-messages | count: 17698 | avg: 483.20 ms | p95: 1072.76 ms | max: 1231.08 ms
+channels-by-server | count: 17938 | avg: 482.93 ms | p95: 1070.33 ms | max: 1231.77 ms
+public-servers | count: 18213 | avg: 248.69 ms | p95: 549.31 ms | max: 772.94 ms
+dm-members | count: 17819 | avg: 247.06 ms | p95: 547.75 ms | max: 778.21 ms
+my-servers | count: 18529 | avg: 248.61 ms | p95: 546.98 ms | max: 772.54 ms
+server-number-of-members | count: 18463 | avg: 247.38 ms | p95: 546.32 ms | max: 771.82 ms
+server-by-name | count: 18139 | avg: 247.04 ms | p95: 545.88 ms | max: 778.21 ms
+user-by-username | count: 18609 | avg: 247.39 ms | p95: 545.17 ms | max: 770.40 ms
+server-by-id | count: 18086 | avg: 245.46 ms | p95: 543.79 ms | max: 768.30 ms
+channel-by-id | count: 17879 | avg: 244.28 ms | p95: 543.20 ms | max: 778.28 ms
+login-setup | count: 1 | avg: 31.40 ms | p95: 31.40 ms | max: 31.40 ms
+auth-me | count: 18682 | avg: 7.82 ms | p95: 16.16 ms | max: 73.53 ms

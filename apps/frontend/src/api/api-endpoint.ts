@@ -18,6 +18,7 @@ export const ADD_USER_TO_SERVER = 'add-user-to-server';
 export const ADD_USER_TO_PRIVATE_SERVER = 'add-user-to-private-server';
 export const GENERATE_INVITE_CODE = 'generate-invite-code';
 export const CHANNEL = 'channel';
+export const JOIN_STREAM_CHANNEL = 'join-stream-channel';
 export const CREATE_CHANNEL = 'create-channel';
 export const EDIT_CHANNEL = 'edit-channel';
 export const DELETE_CHANNEL = 'delete-channel';

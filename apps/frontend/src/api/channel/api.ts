@@ -1,8 +1,8 @@
 import type {AxiosResponse} from 'axios';
-import {CHANNEL, CREATE_CHANNEL, DELETE_CHANNEL, EDIT_CHANNEL, SERVER} from '../api-endpoint';
+import {CHANNEL, CREATE_CHANNEL, DELETE_CHANNEL, EDIT_CHANNEL, JOIN_STREAM_CHANNEL, SERVER} from '../api-endpoint';
 import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
-import type {TCreateChannelBody, TCreateChannelResponse, TDeleteChannelResponse, TEditChannelBody, TEditChannelResponse, TGetAllChannelResponse, TGetChannelByIdResponse} from './type';
+import type {TCreateChannelBody, TCreateChannelResponse, TDeleteChannelResponse, TEditChannelBody, TEditChannelResponse, TGetAllChannelResponse, TGetChannelByIdResponse, TJoinStreamChannelResponse} from './type';
 import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
 import {toast} from 'sonner';
 import {transformServerChannelFromDto, type TServerChannelTransformDto} from './transform';
@@ -30,6 +30,9 @@ export async function deleteChannel({serverId, channelId}: {serverId: string; ch
 }
 export async function getChannelById(channelId: string) {
   return await api.get<TResponse<TGetChannelByIdResponse>>(`${VERSION_ONE}/${CHANNEL}/${channelId}`);
+}
+export async function joinStreamChannel(channelId: string) {
+  return await api.get<TResponse<TJoinStreamChannelResponse>>(`${VERSION_ONE}/${CHANNEL}/${JOIN_STREAM_CHANNEL}/${channelId}`);
 }
 // hooks
 export function useGetAllChannel<TData = AxiosResponse<TResponse<TServerChannelTransformDto>>>(serverName?: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TServerChannelTransformDto>>, Error, TData>, 'queryKey' | 'queryFn'>) {
@@ -90,7 +93,17 @@ export function useDeleteChannel(option?: Omit<UseMutationOptions<AxiosResponse<
 export function useGetChannelById<TData = AxiosResponse<TResponse<TGetChannelByIdResponse>>>(channelId: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TGetChannelByIdResponse>>, Error, TData>, 'queryKey' | 'queryFn'>) {
   return useQuery<AxiosResponse<TResponse<TGetChannelByIdResponse>>, Error, TData>({
     ...queryOption,
-    queryKey: CHANNEL_KEY,
-    queryFn: () => getChannelById(channelId)
+    queryKey: [...CHANNEL_KEY, channelId],
+    queryFn: () => getChannelById(channelId),
+    enabled: !!channelId
+  });
+}
+
+export function useJoinStreamChannel<TData = AxiosResponse<TResponse<TJoinStreamChannelResponse>>>(channelId: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TJoinStreamChannelResponse>>, Error, TData>, 'queryKey' | 'queryFn'>) {
+  return useQuery<AxiosResponse<TResponse<TJoinStreamChannelResponse>>, Error, TData>({
+    ...queryOption,
+    queryKey: [...CHANNEL_KEY, channelId],
+    queryFn: () => joinStreamChannel(channelId),
+    enabled: !!channelId
   });
 }

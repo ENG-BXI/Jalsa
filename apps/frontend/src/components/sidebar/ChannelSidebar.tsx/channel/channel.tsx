@@ -37,7 +37,7 @@ const Channel = ({type, channels}: TChannelProps) => {
       setChannel({
         id: currentChannel.id,
         name: currentChannel.title,
-        type
+        type:type
       });
     }
   }, [channelName, channels, type]);

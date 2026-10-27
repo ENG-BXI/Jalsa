@@ -43,3 +43,11 @@ export type TGetChannelByIdResponse = {
   serverId: string;
   createdAt: string;
 };
+export type TJoinStreamChannelResponse = {
+  id: string;
+  name: string;
+  type: TChannelType;
+  serverId: string;
+  createdAt: string;
+  streamToken: string;
+};

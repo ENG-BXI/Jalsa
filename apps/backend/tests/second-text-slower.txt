@@ -1,0 +1,15 @@
+SLOWEST ENDPOINTS (after Apply Indexing)
+
+server-all-members | count: 19850 | avg: 742.74 ms | p95: 1594.55 ms | max: 1697.77 ms
+channel-messages | count: 19262 | avg: 498.25 ms | p95: 1068.07 ms | max: 1163.71 ms
+channels-by-server | count: 19543 | avg: 498.34 ms | p95: 1067.33 ms | max: 1164.35 ms
+dm-members | count: 19401 | avg: 253.75 ms | p95: 537.08 ms | max: 658.82 ms
+public-servers | count: 19788 | avg: 254.20 ms | p95: 537.06 ms | max: 657.00 ms
+server-by-name | count: 19723 | avg: 253.46 ms | p95: 536.57 ms | max: 658.61 ms
+my-servers | count: 20110 | avg: 254.44 ms | p95: 535.94 ms | max: 658.31 ms
+server-number-of-members | count: 20039 | avg: 253.39 ms | p95: 534.88 ms | max: 657.71 ms
+channel-by-id | count: 19469 | avg: 251.75 ms | p95: 534.53 ms | max: 657.71 ms
+server-by-id | count: 19657 | avg: 252.00 ms | p95: 534.06 ms | max: 654.35 ms
+user-by-username | count: 20182 | avg: 252.27 ms | p95: 533.82 ms | max: 657.24 ms
+login-setup | count: 1 | avg: 130.64 ms | p95: 130.64 ms | max: 130.64 ms
+auth-me | 

@@ -1077,6 +1077,14 @@
               "indexes": [
                 {
                   "columns": [
+                    "id"
+                  ],
+                  "name": "channel_id_idx_e8a52337",
+                  "prefix": "channel_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
                     "serverId"
                   ],
                   "name": "channel_serverId_idx_cfc44675",
@@ -1391,15 +1399,6 @@
                   "name": "dmMembers_senderId_idx_4689c490",
                   "prefix": "dmMembers_senderId_idx",
                   "unique": false
-                },
-                {
-                  "columns": [
-                    "senderId",
-                    "receiverId"
-                  ],
-                  "name": "dmMembers_senderId_receiverId_idx_e948b8bd",
-                  "prefix": "dmMembers_senderId_receiverId_idx",
-                  "unique": false
                 }
               ],
               "primaryKey": {
@@ -1482,6 +1481,22 @@
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "id"
+                  ],
+                  "name": "server_id_idx_e8a52337",
+                  "prefix": "server_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "name"
+                  ],
+                  "name": "server_name_idx_ce87e6ba",
+                  "prefix": "server_name_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "owner_id"
@@ -1630,7 +1645,16 @@
                 }
               },
               "foreignKeys": [],
-              "indexes": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "userName"
+                  ],
+                  "name": "user_userName_idx_7be3ef8e",
+                  "prefix": "user_userName_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -1789,7 +1813,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "39a82d415852666a0384f35b9e48eb3931fd48681d8148ef5da632f5179f3c53"
+    "storageHash": "5e4e0a6b3b0afd4f4321bc346c02595bdc44ded050fdd0c6f20198258b1894ae"
   },
   "execution": {
     "executionHash": "f537461ee8bb75277a35622c71d2a125d07a45e2d4fb24d6f1050a6985eb8079",
