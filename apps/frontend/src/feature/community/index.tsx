@@ -4,10 +4,12 @@ import CommunitySearch from './components/community-search';
 import PublicServerGrid from './components/server-grid';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {useDebounce} from '@/hooks/use-debounce';
+import {useServerEvent} from '@/Realtime/server/use-server-event';
 
 const Index = () => {
   const [search, setSearch] = useState('');
   const debounceSearch = useDebounce(search);
+  useServerEvent();
   const {data: servers, isLoading} = usePublicServers(
     {search: debounceSearch},
     {

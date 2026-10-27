@@ -11,6 +11,8 @@ import {createServer} from 'node:http';
 import {AppRouter} from './app.route.js';
 import {V1Route} from './routes/v1.route.js';
 import {appWriteService} from './modules/appwite/appwite.services.js';
+import { ServerRepository } from './modules/server/server.repository.js';
+import { db } from './prisma/db.js';
 
 const app: Express = express();
 app.use(cors());
@@ -23,7 +25,7 @@ const io = new Server(server, {
     origin: '*'
   }
 });
-const socketService = new SocketService(io);
+const socketService = new SocketService(io,new ServerRepository(db));
 const v1Route = new V1Route(socketService, appWriteService).getRoutes();
 const appRouter = new AppRouter(v1Route).getRoutes();
 

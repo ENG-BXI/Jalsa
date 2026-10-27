@@ -3,17 +3,20 @@ import {Input} from '@/components/ui/input';
 import {useAppDialog} from '@/store/dialog-store';
 import {IconLoader2, IconPlus, IconSend2, IconX} from '@tabler/icons-react';
 import {cn} from 'cn';
-import {useState, type Dispatch, type SubmitEvent} from 'react';
+import {useRef, useState, type Dispatch, type SubmitEvent} from 'react';
 import UploadImageForm from './upload-image-form';
 interface ChannelTextInputProps {
   onSubmit: (e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) => void;
+  onTyping?: (isTyping: boolean) => void;
   isLoading: boolean;
   placeholder?: string;
 }
-const ChannelTextInput = ({onSubmit, isLoading, placeholder}: ChannelTextInputProps) => {
+const ChannelTextInput = ({onSubmit, onTyping, isLoading, placeholder}: ChannelTextInputProps) => {
   const [message, setMessage] = useState<string>('');
   const {setDialog, onClose} = useAppDialog();
   const [file, setFile] = useState<File | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   function handleUploadImage() {
     setDialog({
       title: 'Upload Image',
@@ -27,6 +30,17 @@ const ChannelTextInput = ({onSubmit, isLoading, placeholder}: ChannelTextInputPr
       }
     });
   }
+  const handleTyping = () => {
+    onTyping?.(true);
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      onTyping?.(false);
+      typingTimeoutRef.current = null;
+    }, 1000);
+  };
   return (
     <form id='send-message' onSubmit={e => onSubmit(e, message, setMessage, file, setFile)} className='min-h-14 absolute bottom-0 flex flex-col justify-center left-0 right-0 mx-2 my-2 bg-[#222327] rounded-md px-4 focus-visible:border border-border-1'>
       {file && (
@@ -42,7 +56,15 @@ const ChannelTextInput = ({onSubmit, isLoading, placeholder}: ChannelTextInputPr
         <Button onClick={handleUploadImage} type='button' variant='ghost' className='p-0 me-2'>
           <IconPlus className='text-text-1' />
         </Button>
-        <Input value={message} onChange={e => setMessage(e.target.value)} className='border-none! bg-transparent! focus-visible:ring-0 placeholder:text-text-1' placeholder={placeholder} />
+        <Input
+          value={message}
+          onKeyDown={() => {
+            handleTyping();
+          }}
+          onChange={e => setMessage(e.target.value)}
+          className='border-none! bg-transparent! focus-visible:ring-0 placeholder:text-text-1'
+          placeholder={placeholder}
+        />
         <Button type='submit' disabled={isLoading || (!message.trim() && !file)} className={cn('opacity-50', (message.trim() || file) && 'opacity-100')}>
           {isLoading ? <IconLoader2 className='animate-spin' /> : <IconSend2 />}
         </Button>

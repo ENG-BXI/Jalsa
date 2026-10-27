@@ -9,6 +9,10 @@ import AllMessage from '../components/message';
 import {useMessage} from '@/store/use-message.store';
 import {useAppDialog} from '@/store/dialog-store';
 import type {TMessageWithUser} from '../components/message/message-types';
+import {useUserEvent} from '@/Realtime/user/use-user-event';
+import useChannelMessageEvent, {useChannelIsTyping, useJoinToChannel} from '@/Realtime/channel-message/use-channel-message-event';
+import {useUser} from '@/store/user-info-store';
+import IsTypingComponents from '../components/message/is-typing-components';
 
 const TextChannelPage = () => {
   const params = useParams<{channelName: string; serverId: string}>();
@@ -16,15 +20,20 @@ const TextChannelPage = () => {
   const {setHeader} = useHeader();
   const {channel} = useChannel();
   const {setMessage} = useMessage();
+  const user = useUser(state => state.user);
   const {setDialog, onClose} = useAppDialog();
   const {data: messages} = useChannelMessages(channel.id, {select: res => res.data.data});
   const {mutate: sendMessage, isPending} = useSendMessage();
   const {mutate: editMessage, isPending: isEditLoading} = useEditMessage();
   const {mutate: deleteMessage, isPending: isDeleteMessagePending} = useDeleteMessage();
+  useUserEvent({channelId: channel.id});
+  useJoinToChannel({channelId: channel.id});
+  useChannelMessageEvent({channelId: channel.id});
+  const {isTyping, handleIsTyping} = useChannelIsTyping({channelId: channel.id});
   function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!channel.id) return;
-    if (!message&& !file) return;
+    if (!message && !file) return;
     sendMessage(
       {
         channelId: channel.id,
@@ -37,6 +46,7 @@ const TextChannelPage = () => {
         onSuccess: () => {
           setMessage('');
           setFile(null);
+          if (user) handleIsTyping({isTyping: false, fromUserId: user.id, fromUserName: user.name});
         }
       }
     );
@@ -104,14 +114,21 @@ const TextChannelPage = () => {
   useEffect(() => {
     setMessage({onEditMessage: handleEditMessage, onDelete: handleDeleteClick, isDeleteMessageLoading: isDeleteMessagePending, isEditMessageLoading: isEditLoading});
   }, [handleDeleteClick, handleEditMessage, isDeleteMessagePending, isEditLoading, setMessage]);
-
   useEffect(() => {
     setHeader({title: title, type: 'text'});
   }, [setHeader, title]);
   return (
     <div className='relative px-4 h-full pb-20'>
       {messages?.length == 0 ? <EmptyChannelPage title={title} /> : <AllMessage messages={messages || []} />}
-      <ChannelTextInput onSubmit={handleOnSubmit} isLoading={isPending} placeholder={`Message #${title}`} />
+      <IsTypingComponents isTyping={isTyping.isTyping} name={isTyping.users.map(user => user.userName)} />
+      <ChannelTextInput
+        onSubmit={handleOnSubmit}
+        onTyping={isType => {
+          if (user) handleIsTyping({isTyping: isType, fromUserId: user.id, fromUserName: user.name});
+        }}
+        isLoading={isPending}
+        placeholder={`Message #${title}`}
+      />
     </div>
   );
 };

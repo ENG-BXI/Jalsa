@@ -41,12 +41,12 @@ async function deleteDMMessage({messageId}: {messageId: string}) {
 }
 
 // hooks...
-export function useGetAllDMMessage<TData = AxiosResponse<TResponse<TMessageWithUser[]>>>(receiverId: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TMessageWithUser[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
+export function useGetAllDMMessage<TData = AxiosResponse<TResponse<TMessageWithUser[]>>>(receiverName: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TMessageWithUser[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
   return useQuery<AxiosResponse<TResponse<TMessageWithUser[]>>, Error, TData>({
     ...queryOption,
-    queryKey: [...DIRECT_MESSAGE_KEY, receiverId],
-    queryFn: () => getAllDMMessage(receiverId),
-    enabled: !!receiverId
+    queryKey: [...DIRECT_MESSAGE_KEY, receiverName],
+    queryFn: () => getAllDMMessage(receiverName),
+    enabled: !!receiverName
   });
 }
 export function useGetAllDMMember<TData = AxiosResponse<TResponse<TGetAllDMMember[]>>>(queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TGetAllDMMember[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {

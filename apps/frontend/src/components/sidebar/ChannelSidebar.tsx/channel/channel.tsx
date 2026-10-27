@@ -50,7 +50,7 @@ const Channel = ({type, channels}: TChannelProps) => {
       {open && (
         <div className='flex flex-col mt-1'>
           {channels.map(channel => (
-            <Button key={channel.id} onClick={() => onClick(channel.title, type)} variant={'ghost'} size={'lg'} className={cn('group select-none text-text-1 justify-start p-2 text-sm', channelName == channel.title && 'bg-muted text-foreground')}>
+            <Button key={channel.title} onClick={() => onClick(channel.title, type)} variant={'ghost'} size={'lg'} className={cn('group select-none text-text-1 justify-start p-2 text-sm', channelName == channel.title && 'bg-muted text-foreground')}>
               <channelMap.icon className='min-w-5 min-h-5' />
               <ChannelName title={channel.title} isOpen={channel.title == channelName} />
               {channel.title !== 'general' && role !== 'MEMBER' && <ChannelSetting channelId={channel.id} role='OWNER' isOpen={channel.title == channelName} />}{' '}

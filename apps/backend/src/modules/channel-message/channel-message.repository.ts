@@ -31,11 +31,20 @@ export class ChannelMessageRepository {
     return message;
   }
   async sendMessage(userId: string, channelId: string, message: MessageDto, image?: string) {
-    const sendedMessage = await this.db.orm.public.ChannelMassage.create({from: userId, channelId, text: message.text, imageUrl: image});
+    const sendedMessage = await this.db.orm.public.ChannelMassage.include('fromUser', c => {
+      return c.select('id', 'name', 'userName', 'jointAt');
+    })
+      .select('id', 'from', 'text', 'imageUrl', 'createdAt', 'updatedAt', 'softDelete')
+      .create({from: userId, channelId, text: message.text, imageUrl: image});
     return sendedMessage;
   }
   async editMessage(userId: string, channelId: string, messageId: string, message: MessageDto) {
-    const editedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId}).update({text: message.text, updatedAt: Temporal.Now.instant()});
+    const editedMessage = await this.db.orm.public.ChannelMassage.where({from: userId, channelId, id: messageId})
+      .include('fromUser', c => {
+        return c.select('id', 'name', 'userName', 'jointAt');
+      })
+      .select('id', 'from', 'text', 'imageUrl', 'createdAt', 'updatedAt', 'softDelete')
+      .update({text: message.text, updatedAt: Temporal.Now.instant()});
     return editedMessage;
   }
   async deleteMessage(userId: string, channelId: string, messageId: string) {

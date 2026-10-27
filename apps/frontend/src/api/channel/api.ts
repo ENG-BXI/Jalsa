@@ -46,10 +46,10 @@ export function useCreateChannel(option?: Omit<UseMutationOptions<AxiosResponse<
     mutationFn: createChannel,
     onSuccess: (...args) => {
       toast.success('Create Channel successfully');
-      queryClient.invalidateQueries({
-        queryKey: CHANNEL_KEY,
-        exact: false
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: CHANNEL_KEY,
+      //   exact: false
+      // });
 
       option?.onSuccess?.(...args);
     }
@@ -62,10 +62,10 @@ export function useEditChannel(option?: Omit<UseMutationOptions<AxiosResponse<TR
     mutationFn: editChannel,
     onSuccess: (...args) => {
       toast.success('Edit Channel successfully');
-      queryClient.invalidateQueries({
-        queryKey: CHANNEL_KEY,
-        exact: false
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: CHANNEL_KEY,
+      //   exact: false
+      // });
 
       option?.onSuccess?.(...args);
     }

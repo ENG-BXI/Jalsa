@@ -3,7 +3,7 @@ import {LayoutProvider} from './context/layout-provider';
 import SideBar from './components/sidebar';
 import {useEffect} from 'react';
 import {AppDialog} from './components/app-dialog';
-import {useSocketSetup} from './provider/socket';
+import {useSocketSetup} from './Realtime/socket';
 
 function App() {
   const navigate = useNavigate();

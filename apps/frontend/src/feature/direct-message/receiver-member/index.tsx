@@ -2,7 +2,10 @@ import {useDeleteDMMessage, useEditDMMessage, useGetAllDMMessage, useSendDMMessa
 import {useUserByUserName} from '@/api/user/api';
 import ChannelTextInput from '@/components/server/channel/channel-text-input';
 import AllMessage from '@/feature/server/components/message';
+import IsTypingComponents from '@/feature/server/components/message/is-typing-components';
 import type {TMessageWithUser} from '@/feature/server/components/message/message-types';
+import useDmEvent, {useIsDmTypingEvent} from '@/Realtime/direct-message/use-dm-event';
+import {useUserEvent} from '@/Realtime/user/use-user-event';
 import {useAppDialog} from '@/store/dialog-store';
 import {useHeader} from '@/store/header-store';
 import {useDm} from '@/store/use-dm.store';
@@ -22,7 +25,9 @@ const ReceiverMember = () => {
   const {mutate: editMessage, isPaused: isEditLoading} = useEditDMMessage();
   const {mutate: deleteMessage, isPending: isDeleteDMMessagePending} = useDeleteDMMessage();
   const {data: receiverUser, isLoading: isReceiverUserLoading, isFetched: isReceiverUserFetched} = useUserByUserName(params.receiverMemberUserName || '', {enabled: !!params.receiverMemberUserName, select: res => res.data.data});
-
+  useUserEvent({receiverId: receiverUser?.id});
+  useDmEvent({receiverUserName: title});
+  const {isTyping, handleIsTypingEvent} = useIsDmTypingEvent({receiverUserId: Dm.id});
   function handleOnSubmit(e: SubmitEvent<HTMLFormElement>, message: string, setMessage: Dispatch<React.SetStateAction<string>>, file: File | null, setFile: Dispatch<React.SetStateAction<File | null>>) {
     e.preventDefault();
     if (!Dm.id) return;
@@ -39,6 +44,7 @@ const ReceiverMember = () => {
         onSuccess: () => {
           setMessage('');
           setFile(null);
+          handleIsTypingEvent({isTyping: false, toUserName: title});
         }
       }
     );
@@ -121,7 +127,8 @@ const ReceiverMember = () => {
   return (
     <div className='relative px-4 h-full pb-20'>
       <AllMessage messages={messages || []} />
-      <ChannelTextInput onSubmit={handleOnSubmit} isLoading={isPending} placeholder={`Message #${title}`} />
+      <IsTypingComponents name={[isTyping.toUserName]} isTyping={isTyping.isTyping} />
+      <ChannelTextInput onSubmit={handleOnSubmit} onTyping={isTyping => handleIsTypingEvent({isTyping, toUserName: title})} isLoading={isPending} placeholder={`Message #${title}`} />
     </div>
   );
 };

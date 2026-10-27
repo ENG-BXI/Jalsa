@@ -23,7 +23,6 @@ async function getMyServers() {
     }
   };
 }
-
 async function getPublicServers(params: TPublicServersParams) {
   const response = await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
   return {

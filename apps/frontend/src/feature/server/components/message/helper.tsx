@@ -1,4 +1,4 @@
-import type { TMessageWithUser } from "./message-types";
+import type {TMessageWithUser} from './message-types';
 import {format, isToday, isYesterday} from 'date-fns';
 import {enUS} from 'date-fns/locale';
 
@@ -24,7 +24,6 @@ export function formatMessageDate(date: string | Date): string {
 
 export const groupMessages = (messages: TMessageWithUser[]) => {
   const groups: TMessageWithUser[][] = [];
-
   for (const message of messages) {
     const previousGroup = groups.at(-1);
     const previousMessage = previousGroup?.at(-1);

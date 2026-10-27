@@ -32,7 +32,8 @@ class UserController {
       const user = req.user;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.userService.editUser(user.id, user, body);
-      this.socketService.emit('editUser', {userId: user.id, data});
+      const {user: editedUser} = data;
+      this.socketService.emit('editUser', {userId: user.id, data: editedUser});
       return res.status(HttpStatus.OK).json({message: 'Edit User Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -47,7 +48,7 @@ class UserController {
       const user = req.user;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const deletedUser = await this.userService.deleteUser(user.id);
-      this.socketService.emit('deleteUser', {userId: user.id, deletedUser});
+      this.socketService.emit('deleteUser', {userId: user.id, data:deletedUser});
       return res.status(HttpStatus.OK).json({message: 'Delete User Successful', deletedUser});
     } catch (error) {
       console.log('====================================');
