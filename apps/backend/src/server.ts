@@ -31,6 +31,12 @@ const io = new Server(server, {
 const socketService = new SocketService(io, new ServerRepository(db));
 const streamVideoService = new StreamVideoService();
 const redis = await redisClient.connect();
+
+// for (let i = 0; i < 20; i++) {
+//   const start = performance.now();
+//   await redis.ping();
+//   console.log(`PING ${i + 1}: ${(performance.now() - start).toFixed(2)}ms`);
+// }
 const v1Route = new V1Route(socketService, appWriteService, streamVideoService, redis).getRoutes();
 const appRouter = new AppRouter(v1Route).getRoutes();
 

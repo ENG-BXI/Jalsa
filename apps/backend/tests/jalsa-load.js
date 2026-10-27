@@ -120,3 +120,12 @@ export default function (data) {
 
   sleep(0.1);
 }
+
+
+/*
+k6 test
+
+
+k6 run -e BASE_URL=http://localhost:8000 -e K6_EMAIL='Abdo@gmail.com' -e K6_PASSWORD='123456789' -e SERVER_NAME='server1' -e SERVER_ID='44ededd7-a89b-4843-8598-d805f6ff5d85' -e CHANNEL_ID='ed6a2104-718c-46d2-8d15-f882f389b9bc' -e USERNAME='ENG' --out json=stress-results.json tests/jalsa-load.js
+
+*/
