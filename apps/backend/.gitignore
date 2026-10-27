@@ -39,6 +39,3 @@ yarn-error.log*
 node_modules/
 dist/
 uploads/
-
-# k6 results
-stress-results*.json
