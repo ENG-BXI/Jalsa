@@ -1,0 +1,15 @@
+SLOWEST ENDPOINTS (after Apply Redis) the delay in Slower Endpoint was 1594 ms in (server-all-members) !!!
+
+login-setup                    count=1 avg=129.03ms p95=129.03ms max=129.03ms
+auth-me                        count=176588 avg=51.64ms p95=100.25ms max=194.63ms
+user-by-username               count=176588 avg=105.66ms p95=185.38ms max=482.33ms
+my-servers                     count=176588 avg=85.41ms p95=140.60ms max=444.83ms
+server-number-of-members       count=176588 avg=84.41ms p95=137.64ms max=444.83ms
+server-all-members             count=176588 avg=84.12ms p95=148.94ms max=491.88ms
+public-servers                 count=176588 avg=89.92ms p95=170.47ms max=517.12ms
+server-by-name                 count=176588 avg=90.23ms p95=173.94ms max=434.86ms
+server-by-id                   count=176588 avg=85.61ms p95=167.19ms max=259.82ms
+channels-by-server             count=176588 avg=84.48ms p95=162.74ms max=266.52ms
+channel-by-id                  count=176588 avg=83.33ms p95=148.49ms max=259.83ms
+dm-members                     count=176588 avg=84.54ms p95=155.07ms max=314.30ms
+channel-messages               count=176588 avg=92.94ms p95=178.72ms max=319.82ms
