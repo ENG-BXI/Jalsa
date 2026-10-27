@@ -1,3 +1,4 @@
+import {RedisClientType, RedisDefaultModules} from 'redis';
 import {db} from '../../../prisma/db.js';
 import {ServerRepository} from '../../server/server.repository.js';
 import {SocketService} from '../../socket/socket.service.js';
@@ -9,10 +10,10 @@ import {ChannelRoute} from './channel.route.js';
 
 export class ChannelRoute1 {
   private channelRoute;
-  constructor(socketService: SocketService, streamVideoService: StreamVideoService) {
+  constructor(socketService: SocketService, streamVideoService: StreamVideoService, redisClient: RedisClientType<RedisDefaultModules, {}, {}, 3, {}>) {
     const channelRepository = new ChannelRepository(db);
     const serverRepository = new ServerRepository(db);
-    const channelService = new ChannelService(channelRepository, serverRepository);
+    const channelService = new ChannelService(channelRepository, serverRepository, redisClient);
     const channelController = new ChannelController(channelService, socketService, streamVideoService);
     this.channelRoute = new ChannelRoute(channelController);
   }

@@ -14,6 +14,7 @@ import {appWriteService} from './modules/appwite/appwite.services.js';
 import {ServerRepository} from './modules/server/server.repository.js';
 import {db} from './prisma/db.js';
 import {StreamVideoService} from './modules/stream-video/stream-video.service.js';
+import redisClient from './redis/setup.js';
 
 const app: Express = express();
 app.use(cors());
@@ -26,9 +27,11 @@ const io = new Server(server, {
     origin: '*'
   }
 });
+
 const socketService = new SocketService(io, new ServerRepository(db));
 const streamVideoService = new StreamVideoService();
-const v1Route = new V1Route(socketService, appWriteService, streamVideoService).getRoutes();
+const redis = await redisClient.connect();
+const v1Route = new V1Route(socketService, appWriteService, streamVideoService, redis).getRoutes();
 const appRouter = new AppRouter(v1Route).getRoutes();
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
