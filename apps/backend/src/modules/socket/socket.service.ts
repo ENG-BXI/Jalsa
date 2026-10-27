@@ -57,6 +57,14 @@ export class SocketService {
         this.io.to(data.toUserId).emit('dm:isTyping', {isTyping: data.isTyping, toUserId: userId, toUserName: data.toUserName});
       });
     });
+
+    this.io.engine.on('connection_error', err => {
+      console.error('Socket connection error:', {
+        code: err.code,
+        message: err.message,
+        url: err.req.url
+      });
+    });
   }
   emit(event: string, ...args: any[]) {
     this.io.emit(event, ...args);

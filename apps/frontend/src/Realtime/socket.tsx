@@ -8,6 +8,7 @@ const cookie = new Cookies();
 
 export const socket = io(env.BACKEND_URL, {
   autoConnect: false,
+  transports: ['websocket'],
   auth: cb => cb({token: cookie.get('token')})
 });
 
