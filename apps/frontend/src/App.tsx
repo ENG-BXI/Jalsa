@@ -20,7 +20,7 @@ function App() {
   return (
     <main>
       <LayoutProvider>
-        <div className={cn('bg-primary-2 h-screen flex overflow-hidden', hideSideBar && 'px-3')}>
+        <div className={cn('bg-primary-2 h-dvh flex overflow-hidden', hideSideBar && 'px-3')}>
           <SideBar />
           <div className={cn('flex flex-1 mt-2 rounded-tl-lg overflow-hidden border border-border-1', hideSideBar && 'rounded-t-lg')}>
             <div className='flex-1'>
