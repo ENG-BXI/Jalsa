@@ -5,10 +5,17 @@ import PublicServerGrid from './components/server-grid';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {useDebounce} from '@/hooks/use-debounce';
 import {useServerEvent} from '@/Realtime/server/use-server-event';
+import useSideBar from '@/hooks/use-side-bar';
+import {Button} from '@/components/ui/button';
+import {IconSquareRoundedArrowLeft} from '@tabler/icons-react';
+import {useNavigate} from 'react-router';
+import {cn} from 'cn';
 
 const Index = () => {
   const [search, setSearch] = useState('');
+  const {hideSideBar} = useSideBar();
   const debounceSearch = useDebounce(search);
+  const navigate = useNavigate();
   useServerEvent();
   const {data: servers, isLoading} = usePublicServers(
     {search: debounceSearch},
@@ -23,7 +30,20 @@ const Index = () => {
   const myServersIds = myServers?.map(server => server.id);
   return (
     <ScrollArea className='h-full bg-primary-2'>
-      <div className='mx-auto w-full max-w-6xl px-6 py-10'>
+      {hideSideBar && (
+        <div className='p-4'>
+          <Button
+            onClick={() => {
+              navigate(-1);
+            }}
+            variant={'ghost'}
+            size={'icon-lg'}
+          >
+            <IconSquareRoundedArrowLeft className='size-6' />
+          </Button>
+        </div>
+      )}
+      <div className={cn('mx-auto w-full max-w-6xl px-6 py-10', hideSideBar && 'px-4 py-5')}>
         <header className='mb-10 text-center'>
           <h1 className='text-3xl font-bold tracking-tight text-white'>Discover Communities</h1>
 

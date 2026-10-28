@@ -8,7 +8,7 @@ const useSideBar = () => {
   const [hideSideBar, setHideSideBar] = useState(false);
   const [isMessagesPage, setIsMessagesPage] = useState(false);
   useEffect(() => {
-    const hasSideBar = pathName == '/direct-message' || pathName == '/community' || (pathName.startsWith('/server') && pathName.split('/').length <= 3);
+    const hasSideBar = pathName == '/direct-message' || (pathName.startsWith('/server') && pathName.split('/').length <= 3);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasSideBar(hasSideBar);
   }, [pathName]);

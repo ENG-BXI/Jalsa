@@ -16,7 +16,7 @@ export function AppDialog() {
           {dialog?.description && <DialogDescription className={cn(typeof dialog?.description != 'string' && dialog?.description.className)}>{typeof dialog.description == 'string' ? dialog.description : dialog.description.description}</DialogDescription>}
         </DialogHeader>
 
-        <ScrollArea className='max-h-[calc(100vh-260px)]'>
+        <ScrollArea className='max-h-130'>
           <div className={cn('px-1', dialog?.className)}>{dialog?.content}</div>
         </ScrollArea>
 
