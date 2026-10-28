@@ -1,14 +1,10 @@
-import {useEffect} from 'react';
-import {useNavigate, useParams} from 'react-router';
-
 const Index = () => {
-  const params = useParams<{serverName: string}>();
-  const serverName = params.serverName;
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate(`/server/${serverName}/general`);
-  }, [navigate, serverName]);
-  return null;
+  // useEffect(() => {
+  //   if (!isMobile) {
+  //     navigate(`/server/${serverName}/general`, {replace: true});
+  //   }
+  // }, [isMobile, navigate, serverName]);
+  return <div />;
 };
 
 export default Index;

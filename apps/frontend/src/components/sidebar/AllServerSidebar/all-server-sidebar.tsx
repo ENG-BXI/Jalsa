@@ -1,10 +1,15 @@
-import { Separator } from '@/components/ui/separator';
+import {Separator} from '@/components/ui/separator';
 import {ScrollArea} from '../../ui/scroll-area';
 import type {TSideBardServer} from '../type';
 import ServerBox from './server-box';
 import {IconCompass, IconPlus} from '@tabler/icons-react';
+import useSideBar from '@/hooks/use-side-bar';
 
 const AllServersSidebar = ({servers}: {servers: TSideBardServer[]}) => {
+  const {hideSideBar} = useSideBar();
+  if (hideSideBar) {
+    return <div />;
+  }
   return (
     <div className='relative h-full bg-primary-2 w-min'>
       <ScrollArea className='h-full'>
