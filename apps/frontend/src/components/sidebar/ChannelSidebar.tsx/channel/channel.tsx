@@ -2,14 +2,13 @@ import {Button} from '@/components/ui/button';
 import type {TChannel, TChannelType} from '../type';
 import {IconChevronDown} from '@tabler/icons-react';
 import {cn} from 'cn';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useNavigate, useParams} from 'react-router';
 import ChannelName from './components/channel-name';
 import {ChannelSetting} from './components/channel-setting';
 import {useHeader} from '@/store/header-store';
 import {channelMapper} from '../helper';
 import {useChannelSideBar} from '@/store/server-store';
-import {useChannel} from '@/store/use-channel';
 
 interface TChannelProps {
   type: TChannelType;
