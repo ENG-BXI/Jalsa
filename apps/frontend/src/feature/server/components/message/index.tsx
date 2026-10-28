@@ -20,7 +20,7 @@ const AllMessage = ({messages}: TAllMessageProps) => {
     viewport.scrollTop = viewport.scrollHeight;
   }, [messages.length]);
   return (
-    <ScrollArea ref={viewportRef} className='max-h-[calc(100vh-140px)] h-full flex flex-col justify-end '>
+    <ScrollArea ref={viewportRef} className='max-h-[calc(100dvh-140px)] h-full flex flex-col justify-end '>
       <div className='flex min-h-full flex-col justify-end'>
         {groups.map(group => (
           <MessageGroup key={group[0].id} messages={group} />
