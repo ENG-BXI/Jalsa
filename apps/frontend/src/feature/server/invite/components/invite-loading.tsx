@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const InviteLoading = () => {
   return (
-    <div className='relative flex min-h-screen items-center justify-center bg-[#09090b] p-4 font-sans antialiased selection:bg-zinc-800 selection:text-zinc-100'>
+    <div className='relative flex min-h-dvh items-center justify-center bg-[#09090b] p-4 font-sans antialiased selection:bg-zinc-800 selection:text-zinc-100'>
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] bg-zinc-500/5 blur-[120px] pointer-events-none rounded-full' />
       <div className='absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 pointer-events-none' />
 
