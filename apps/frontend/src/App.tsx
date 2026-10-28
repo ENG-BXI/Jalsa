@@ -4,11 +4,15 @@ import SideBar from './components/sidebar';
 import {useEffect} from 'react';
 import {AppDialog} from './components/app-dialog';
 import {useSocketSetup} from './Realtime/socket';
+import {cn} from 'cn';
+import useSideBar from './hooks/use-side-bar';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathName = location.pathname;
+  const {hideSideBar} = useSideBar();
+
   useSocketSetup();
   useEffect(() => {
     if (pathName == '/') navigate('/direct-message');
@@ -16,9 +20,9 @@ function App() {
   return (
     <main>
       <LayoutProvider>
-        <div className='bg-primary-2 h-screen flex overflow-hidden'>
+        <div className={cn('bg-primary-2 h-screen flex overflow-hidden', hideSideBar && 'px-3')}>
           <SideBar />
-          <div className='flex flex-1 mt-2 rounded-tl-lg overflow-hidden border border-border-1'>
+          <div className={cn('flex flex-1 mt-2 rounded-tl-lg overflow-hidden border border-border-1', hideSideBar && 'rounded-t-lg')}>
             <div className='flex-1'>
               <Outlet />
             </div>

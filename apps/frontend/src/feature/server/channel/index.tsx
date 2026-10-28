@@ -13,11 +13,6 @@ const Index = () => {
   const {channel} = useChannel();
   const {data, isLoading} = useGetChannelById(channel.id, {select: data => data.data.data});
   const channelType = data?.type;
-  console.log({
-    selectedChannelId: channel.id,
-    fetchedChannelId: data?.id,
-    channelType: data?.type
-  });
   if (isLoading) return <div>Loading...</div>;
   if (data && !isLoading && channelType) {
     const RenderPage = ChannelRedirect[channelType];

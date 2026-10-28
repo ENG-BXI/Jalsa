@@ -2,14 +2,13 @@ import {Button} from '@/components/ui/button';
 import type {TChannel, TChannelType} from '../type';
 import {IconChevronDown} from '@tabler/icons-react';
 import {cn} from 'cn';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useNavigate, useParams} from 'react-router';
 import ChannelName from './components/channel-name';
 import {ChannelSetting} from './components/channel-setting';
 import {useHeader} from '@/store/header-store';
 import {channelMapper} from '../helper';
 import {useChannelSideBar} from '@/store/server-store';
-import {useChannel} from '@/store/use-channel';
 
 interface TChannelProps {
   type: TChannelType;
@@ -19,7 +18,6 @@ const Channel = ({type, channels}: TChannelProps) => {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const {setHeader} = useHeader();
-  const {setChannel} = useChannel();
   const {serverName, channelName} = useParams<{serverName: string; channelName: string}>();
   const {channelSideBar} = useChannelSideBar();
   function onClick(title: string, type: TChannelType) {
@@ -28,19 +26,6 @@ const Channel = ({type, channels}: TChannelProps) => {
   }
   const channelMap = channelMapper[type];
   const role = channelSideBar.role;
-  // Set Channel Data to store to use in any place
-  useEffect(() => {
-    const currentChannel = channels.find(val => {
-      return val.title == channelName;
-    });
-    if (currentChannel) {
-      setChannel({
-        id: currentChannel.id,
-        name: currentChannel.title,
-        type:type
-      });
-    }
-  }, [channelName, channels, type]);
   return (
     <div className='mb-5'>
       <div onClick={() => setOpen(pre => !pre)} className='cursor-pointer px-2 text-text-1 hover:text-inherit select-none flex items-center'>

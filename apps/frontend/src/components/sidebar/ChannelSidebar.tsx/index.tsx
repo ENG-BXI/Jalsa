@@ -12,19 +12,24 @@ import {useGetAllDMMember} from '@/api/direct-message/api';
 import Members from './dm-member-sidebar';
 import {useChannelEvent} from '@/Realtime/channel/use-channel-event';
 import {useServerEvent, useServerJoin} from '@/Realtime/server/use-server-event';
-
+import useSideBar from '@/hooks/use-side-bar';
+import type {TGetAllDMMember} from '@/api/direct-message/type';
+import {cn} from 'cn';
+import {useChannel} from '@/store/use-channel';
 const ChannelSidebar = () => {
-  const {serverName} = useParams<{serverName: string}>();
+  const {serverName, channelName} = useParams<{serverName: string; channelName: string}>();
   const {setChannelSideBar} = useChannelSideBar();
   const {data: channelsData, isFetched, isError, isLoading} = useGetAllChannel(serverName, {enabled: !!serverName, select: res => res.data.data});
   const {data: dmMembers, isLoading: isDmMemberLoading} = useGetAllDMMember({enabled: !serverName, select: res => res.data.data});
   const server = channelsData?.server;
   const params = useParams<{channelName: string; serverName: string}>();
   const navigate = useNavigate();
+  const {hideSideBar} = useSideBar();
+  const {setChannel} = useChannel();
+  // Loop through the channels and separate them into text and voice channels
   const {textChannels, voiceChannels} = useMemo(() => {
     const textChannels: TChannel[] = [];
     const voiceChannels: TChannel[] = [];
-
     if (!serverName || !channelsData?.channels || isError) {
       return {textChannels, voiceChannels};
     }
@@ -40,6 +45,7 @@ const ChannelSidebar = () => {
 
     return {textChannels, voiceChannels};
   }, [serverName, channelsData, channelsData?.channels, isError, isFetched]);
+  // Real-time event listeners for server events
   useServerJoin(server?.id);
   useChannelEvent(serverName || '');
   useServerEvent(server?.id, {
@@ -71,6 +77,20 @@ const ChannelSidebar = () => {
       });
     }
   });
+  // Set Channel Data to store to use in any place
+  useEffect(() => {
+    const currentChannel = channelsData?.channels.find(val => {
+      return val.title == channelName;
+    });
+    if (currentChannel) {
+      setChannel({
+        id: currentChannel.id,
+        name: currentChannel.title,
+        type: currentChannel.type == 'TEXT' ? 'text' : 'voice'
+      });
+    }
+  }, [channelName, channelsData?.channels]);
+
   useEffect(() => {
     if (isFetched && server && !isError) {
       setChannelSideBar({
@@ -91,8 +111,26 @@ const ChannelSidebar = () => {
     }
   }, [channelsData, isError, isFetched, serverName, setChannelSideBar]);
 
+  if (hideSideBar) {
+    return <div />;
+  }
+
+  return <ChannelSideBarItem serverName={serverName} isLoading={isLoading} textChannels={textChannels} voiceChannels={voiceChannels} dmMembers={dmMembers} isDmMemberLoading={isDmMemberLoading} />;
+};
+
+export default ChannelSidebar;
+interface ChannelSideBarItemProps {
+  serverName?: string;
+  isLoading?: boolean;
+  textChannels: TChannel[];
+  voiceChannels: TChannel[];
+  dmMembers?: TGetAllDMMember[];
+  isDmMemberLoading?: boolean;
+}
+function ChannelSideBarItem({serverName, isLoading, textChannels, voiceChannels, dmMembers, isDmMemberLoading}: ChannelSideBarItemProps) {
+  const {isMobile, isMessagesPage} = useSideBar();
   return (
-    <div className='w-50 h-full flex flex-col bg-primary-2'>
+    <div className={cn('w-50 min-h-full flex flex-col', isMobile && !isMessagesPage && 'w-full')}>
       <ServerNameAndAction />
       <Separator />
       <ScrollArea className='p-3 h-full'>
@@ -107,6 +145,4 @@ const ChannelSidebar = () => {
       </ScrollArea>
     </div>
   );
-};
-
-export default ChannelSidebar;
+}
