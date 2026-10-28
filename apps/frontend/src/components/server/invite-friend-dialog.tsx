@@ -18,8 +18,10 @@ const InviteFriendDialog = () => {
   const isNull = !generateInviteLinkData?.data.data.code && channelSideBar.type !== 'direct-message';
   const generatedInvite = `${location.origin}/invite/${channelSideBar.channelSideBar?.serverName}/${generateInviteLinkData?.data.data.code}`;
   const inviteLink = channelSideBar.type == 'direct-message' ? `${location.href}/${userName}` : isNull ? 'Generate Invite Link' : generatedInvite;
+
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(inviteLink);
+    const encodedInviteLink = encodeURI(inviteLink);
+    await navigator.clipboard.writeText(encodedInviteLink);
 
     setCopied(true);
 
