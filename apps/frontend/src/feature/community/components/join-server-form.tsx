@@ -4,7 +4,7 @@ import type {TPublicServersResponse} from '@/api/server/type';
 import {formatText} from '@/lib/utils';
 
 type JoinServerDialogProps = {
-  server: TPublicServersResponse;
+  server: TPublicServersResponse['data'][number];
 };
 
 const JoinServerDialog = ({server}: JoinServerDialogProps) => {

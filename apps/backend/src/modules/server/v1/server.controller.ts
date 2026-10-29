@@ -78,8 +78,10 @@ export class ServerController {
   }
   async getAllPublicServer(req: Request, res: Response) {
     try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
       const search = req.query.search as string;
-      const data = await this.serverService.getAllPublicServer(search);
+      const data = await this.serverService.getAllPublicServer(page, limit, search);
       return res.status(HttpStatus.OK).json({message: 'Get All Public Server Successful', data});
     } catch (error) {
       console.log('====================================');
@@ -267,7 +269,7 @@ export class ServerController {
       const {memberId, role} = req.body as ChangeRoleDto;
       if (!user) return res.status(HttpStatus.NOT_FOUND).json({message: 'User Not Found'});
       const data = await this.serverService.changeRoleInServer(serverId, user.id, memberId, role);
-      this.socketService.emitToUser({ userId: memberId, event: 'changeRoleInServer', args: [data] });
+      this.socketService.emitToUser({userId: memberId, event: 'changeRoleInServer', args: [data]});
       this.socketService.emitToServer(serverId, 'changeRoleInServer', {serverId, data});
       return res.status(HttpStatus.OK).json({message: 'Change Role Successful', data});
     } catch (error) {

@@ -23,11 +23,6 @@ const useSideBar = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMessagesPage(isMessagesPage);
   }, [pathName]);
-  console.log('====================================');
-  console.log('Has Side Bar', hasSideBar);
-  console.log('hideSideBar', hideSideBar);
-  console.log('isMessagePsge', isMessagesPage);
-  console.log('====================================');
   return {hideSideBar, isMobile, hasSideBar, isMessagesPage};
 };
 

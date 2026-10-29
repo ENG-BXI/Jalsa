@@ -3,7 +3,7 @@ import {ADD_USER_TO_PRIVATE_SERVER, ADD_USER_TO_SERVER, ALL_MEMBERS, CHANGE_ROLE
 import {api, queryClient, VERSION_ONE} from '../instance';
 import type {TResponse} from '../type';
 import type {TAddUserToPrivateServerResponse, TAddUserToServerResponse, TAllMembersResponse, TChangeRoleBody, TChangeRoleResponse, TCreateServerBody, TCreateServerResponse, TDeleteServerResponse, TEditServerBody, TEditServerResponse, TGenerateInviteCodeBody, TGenerateInviteCodeResponse, TGetNumberOfMembersInServerResponse, TKickUserFromServerBody, TKickUserFromServerResponse, TLeaveUserFromServerResponse, TMyServersResponse, TPublicServersParams, TPublicServersResponse, TServerByIdResponse, TServerByNameResponse} from './type';
-import {useMutation, useQuery, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
+import {useInfiniteQuery, useMutation, useQuery, type InfiniteData, type QueryKey, type UseInfiniteQueryOptions, type UseMutationOptions, type UseQueryOptions} from '@tanstack/react-query';
 import {transformMyServersFromDto, transformPublicServersFromDto, transformServerByIdFromDto} from './transform';
 import type {TSideBardServer} from '@/components/sidebar/type';
 import {toast} from 'sonner';
@@ -24,7 +24,7 @@ async function getMyServers() {
   };
 }
 async function getPublicServers(params: TPublicServersParams) {
-  const response = await api.get<TResponse<TPublicServersResponse[]>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
+  const response = await api.get<TResponse<TPublicServersResponse>>(`${VERSION_ONE}/${SERVER}/${PUBLIC_SERVER}`, {params});
   return {
     ...response,
     data: {
@@ -101,11 +101,21 @@ export function useMyServers<TData = AxiosResponse<TResponse<TSideBardServer[]>>
     queryFn: () => getMyServers()
   });
 }
-export function usePublicServers<TData = AxiosResponse<TResponse<TPublicServersResponse[]>>>(params: TPublicServersParams, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TPublicServersResponse[]>>, Error, TData>, 'queryKey' | 'queryFn'>) {
-  return useQuery<AxiosResponse<TResponse<TPublicServersResponse[]>>, Error, TData>({
+export function usePublicServers<TData = InfiniteData<AxiosResponse<TResponse<TPublicServersResponse>>, number>>(params: TPublicServersParams, queryOption?: Omit<UseInfiniteQueryOptions<AxiosResponse<TResponse<TPublicServersResponse>>, Error, TData, QueryKey, number>, 'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'>) {
+  const {page: initialPage = 1, ...filters} = params;
+  return useInfiniteQuery<AxiosResponse<TResponse<TPublicServersResponse>>, Error, TData, QueryKey, number>({
     ...queryOption,
-    queryKey: [...PUBLIC_SERVERS_KEY, params],
-    queryFn: () => getPublicServers(params)
+    queryKey: [...PUBLIC_SERVERS_KEY, filters, initialPage],
+    initialPageParam: initialPage,
+    queryFn: ({pageParam}) =>
+      getPublicServers({
+        ...filters,
+        page: pageParam
+      }),
+    getNextPageParam: lastPage => {
+      const {page, hasNextPage} = lastPage.data.data.pagination;
+      return hasNextPage ? Number(page) + 1 : undefined;
+    }
   });
 }
 export function useServerById<TData = AxiosResponse<TResponse<TServerByIdResponse>>>(id: string, queryOption?: Omit<UseQueryOptions<AxiosResponse<TResponse<TServerByIdResponse>>, Error, TData>, 'queryKey' | 'queryFn'>) {

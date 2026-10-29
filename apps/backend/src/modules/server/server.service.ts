@@ -13,7 +13,8 @@ export class ServerService {
     GET_SERVER_BY_NAME: (serverName: string) => `server:details:${serverName}`,
     GET_ALL_SERVER_FOR_MEMBER: (userId: string) => `server:all-server-for-member:${userId}`,
     GET_ALL_MEMBER_IN_MY_SERVER: (serverId: string) => `server:all-member:${serverId}`,
-    GET_ALL_PUBLIC_SERVER: (search?: string) => `server:all-public-server:${search}`,
+    GET_ALL_PUBLIC_SERVER: (page?: number, limit?: number, search?: string) => `server:all-public-server:${page}-${limit}-${search}`,
+    GET_ALL_PUBLIC_SERVER_PATTERN: () => `server:all-public-server:*`,
     GET_NUMBER_OF_MEMBERS_IN_SERVER: (serverId: string) => `server:number-of-members:${serverId}`
   };
   constructor(
@@ -23,6 +24,13 @@ export class ServerService {
   ) {
     this.serverRepository = serverRepository;
     this.channelRepository = channelRepository;
+  }
+  async deleteByPattern(pattern: string) {
+    const keys: string[] = [];
+    for await (const key of this.redisClient.scanIterator({MATCH: pattern, COUNT: 100})) {
+      keys.push(...(Array.isArray(key) ? key : [key]));
+    }
+    if (keys.length) await this.redisClient.del(keys);
   }
   async getServerById(serverId: string, userId: string) {
     const key = this.redisKeys.GET_SERVER_BY_ID(serverId);
@@ -85,13 +93,13 @@ export class ServerService {
     await this.redisClient.set(key, JSON.stringify(AllMember), {EX: 3600});
     return AllMember;
   }
-  async getAllPublicServer(search?: string) {
-    const key = this.redisKeys.GET_ALL_PUBLIC_SERVER(search);
+  async getAllPublicServer(page: number, limit: number, search?: string) {
+    const key = this.redisKeys.GET_ALL_PUBLIC_SERVER(page, limit, search);
     const cachedAllServer = await this.redisClient.get(key);
     if (cachedAllServer) {
       return JSON.parse(cachedAllServer);
     }
-    const allServer = await this.serverRepository.getAllPublicServer(search);
+    const allServer = await this.serverRepository.getAllPublicServer(page, limit, search);
     await this.redisClient.set(key, JSON.stringify(allServer), {EX: 3600});
     return allServer;
   }
@@ -118,7 +126,7 @@ export class ServerService {
     // invalidate cache for the new server
     await this.redisClient.del(this.redisKeys.GET_ALL_SERVER_FOR_MEMBER(userId));
     if (createServer.isPublic) {
-      await this.redisClient.del(this.redisKeys.GET_ALL_PUBLIC_SERVER());
+      await this.deleteByPattern(this.redisKeys.GET_ALL_PUBLIC_SERVER_PATTERN());
     }
     return createServer;
   }
@@ -134,7 +142,7 @@ export class ServerService {
     await this.redisClient.del(this.redisKeys.GET_ALL_MEMBER_IN_MY_SERVER(serverId));
     await this.redisClient.del(this.redisKeys.GET_ALL_SERVER_FOR_MEMBER(userId));
     if (isServerExist.isPublic) {
-      await this.redisClient.del(this.redisKeys.GET_ALL_PUBLIC_SERVER());
+      await this.deleteByPattern(this.redisKeys.GET_ALL_PUBLIC_SERVER_PATTERN());
     }
     return addedUserToServer;
   }
@@ -200,7 +208,7 @@ export class ServerService {
     await this.redisClient.del(this.redisKeys.GET_SERVER_BY_ID(serverId));
     await this.redisClient.del(this.redisKeys.GET_SERVER_BY_NAME(server.name));
     if (server.isPublic) {
-      await this.redisClient.del(this.redisKeys.GET_ALL_PUBLIC_SERVER());
+      await this.deleteByPattern(this.redisKeys.GET_ALL_PUBLIC_SERVER_PATTERN());
     }
     return deletedServer;
   }
@@ -214,7 +222,7 @@ export class ServerService {
     await this.redisClient.del(this.redisKeys.GET_ALL_SERVER_FOR_MEMBER(userId));
     await this.redisClient.del(this.redisKeys.GET_NUMBER_OF_MEMBERS_IN_SERVER(serverId));
     if (leaverServer?.server?.isPublic) {
-      await this.redisClient.del(this.redisKeys.GET_ALL_PUBLIC_SERVER());
+      await this.deleteByPattern(this.redisKeys.GET_ALL_PUBLIC_SERVER_PATTERN());
     }
 
     return leaverServer;
@@ -235,7 +243,7 @@ export class ServerService {
     await this.redisClient.del(this.redisKeys.GET_ALL_SERVER_FOR_MEMBER(userId));
     await this.redisClient.del(this.redisKeys.GET_NUMBER_OF_MEMBERS_IN_SERVER(serverId));
     if (leaverServer?.server?.isPublic) {
-      await this.redisClient.del(this.redisKeys.GET_ALL_PUBLIC_SERVER());
+      await this.deleteByPattern(this.redisKeys.GET_ALL_PUBLIC_SERVER_PATTERN());
     }
     return leaverServer;
   }

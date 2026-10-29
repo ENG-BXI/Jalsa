@@ -9,14 +9,27 @@ export type TMyServersResponse = {
   };
 };
 export type TPublicServersParams = {
+  page?: number;
+  limit?: number;
   search?: string;
 };
 export type TPublicServersResponse = {
+  data: TPublicServersData[];
+  pagination: TPagination;
+};
+export type TPublicServersData = {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   avatar_url?: string;
   memberCount: number;
+};
+export type TPagination = {
+  total: number;
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 };
 
 export type TServerByIdResponse = {
@@ -56,7 +69,7 @@ export type TCreateServerBody = {
   name: string;
   description?: string;
   isPublic: boolean;
-  serverImage?:File
+  serverImage?: File;
 };
 export type TCreateServerResponse = {
   id: string;

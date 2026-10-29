@@ -36,7 +36,7 @@ export class ServerRepository {
       })
       .all();
   }
-  async getAllPublicServer(search?: string) {
+  async getAllPublicServer(page: number, limit: number, search?: string) {
     let query = this.db.sql.public.userSever
       .innerJoin(this.db.sql.public.server, (f, fns) => fns.eq(f.userSever.serverId, f.server.id))
       .select((f, fns) => ({
@@ -64,13 +64,56 @@ export class ServerRepository {
         )
       );
     }
-
     const builtQuery = query
       .groupBy(f => f.server.id)
       .orderBy('memberCount', {direction: 'desc'})
+      .orderBy(f => f.server.id, {direction: 'asc'})
+      .offset((page - 1) * limit)
+      .limit(limit)
       .build();
 
-    return await this.db.runtime().query(builtQuery);
+
+    
+    console.log({page, limit, offset: (page - 1) * limit, sql: builtQuery});
+
+    let countQuery = this.db.sql.public.server
+      .select((f, fns) => ({
+        total: fns.count(f.id)
+      }))
+      .where((f, fns) => fns.eq(f.server.isPublic, true));
+
+    if (search?.trim()) {
+      const value = `%${search.trim()}%`;
+
+      countQuery = countQuery.where((f, fns) =>
+        fns.or(
+          fns.ilike(f.server.name, value),
+          fns.ilike(
+            fns.raw`COALESCE(${f.server.description}, '')`.returns({
+              codecId: 'pg/text@1',
+              nullable: false
+            }),
+            value
+          )
+        )
+      );
+    }
+    const [data, countResult] = await Promise.all([await this.db.runtime().query(builtQuery), await this.db.runtime().query(countQuery.build())]);
+    const count = countResult.at(0)?.total || 0;
+    const hasNextPage = page * limit < count;
+    const hasPreviousPage = page > 1;
+    const returnData = {
+      data,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        hasNextPage,
+        hasPreviousPage
+      }
+    };
+
+    return returnData;
   }
   async createServer(userId: string, body: CreateServerDto, serverImage?: string) {
     const newServer = await this.db.orm.public.Server.select('id', 'name', 'description', 'isPublic', 'avatar_url').create({

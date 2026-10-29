@@ -10,11 +10,11 @@ import {useEffect} from 'react';
 import {useNavigate} from 'react-router';
 
 type PublicServerCardProps = {
-  server: TPublicServersResponse;
+  server: TPublicServersResponse['data'][number];
   isJoin: boolean;
 };
 
-const PublicServerCard = ({server, isJoin}: PublicServerCardProps) => {
+const PublicServerCard = ({ server, isJoin }: PublicServerCardProps) => {
   const {dialog, setDialog, onClose} = useAppDialog();
   const navigate = useNavigate();
   const {mutate: joinToServer, isPending} = useAddUserToServer();
@@ -30,8 +30,8 @@ const PublicServerCard = ({server, isJoin}: PublicServerCardProps) => {
           joinToServer(
             {id: server.id},
             {
-              onSuccess: ({ data }) => {
-                const serverName = data.data.server.name
+              onSuccess: ({data}) => {
+                const serverName = data.data.server.name;
                 onClose();
                 navigate(`/server/${serverName}`);
               }
