@@ -17,13 +17,25 @@ const Index = () => {
   const debounceSearch = useDebounce(search);
   const navigate = useNavigate();
   useServerEvent();
-  const {data: servers, isLoading} = usePublicServers(
+  const {
+    data: serversResponse,
+    isLoading,
+    fetchNextPage,
+    isFetched,
+    isFetchingNextPage
+  } = usePublicServers(
     {search: debounceSearch},
     {
-      select: res => res.data.data,
-      placeholderData: res => res
+      select: res => {
+        return {
+          servers: res.pages.flatMap(data => data.data.data.data),
+          pagination: res.pages.at(-1)?.data.data.pagination
+        };
+      }
     }
   );
+  const servers = serversResponse?.servers;
+  const pagination = serversResponse?.pagination;
   const {data: myServers, isLoading: isMyServersLoading} = useMyServers({
     select: res => res.data.data
   });
@@ -46,9 +58,7 @@ const Index = () => {
       <div className={cn('mx-auto w-full max-w-6xl px-6 py-10', hideSideBar && 'px-4 py-5')}>
         <header className='mb-10 text-center'>
           <h1 className='text-3xl font-bold tracking-tight text-white'>Discover Communities</h1>
-
           <p className='mx-auto mt-2 max-w-lg text-sm leading-6 text-text-1'>Find a community and connect with people who share your interests.</p>
-
           <div className='mt-6'>
             <CommunitySearch value={search} onChange={setSearch} />
           </div>
@@ -57,11 +67,9 @@ const Index = () => {
         <section>
           <div className='mb-4'>
             <h2 className='text-lg font-semibold text-white'>Popular Communities</h2>
-
             <p className='mt-1 text-sm text-text-1'>Explore public communities and join the conversation.</p>
           </div>
-
-          <PublicServerGrid servers={servers} myServersIds={myServersIds} isLoading={isLoading || isMyServersLoading} />
+          <PublicServerGrid servers={servers || []} pagination={pagination} isFetched={isFetched} fetchNextPage={fetchNextPage} isFetchingNextPage={isFetchingNextPage} myServersIds={myServersIds} isLoading={isLoading || isMyServersLoading} />
         </section>
       </div>
     </ScrollArea>

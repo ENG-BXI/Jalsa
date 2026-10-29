@@ -12,6 +12,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "echo 'Add test script here'",
+    "seed": "tsx src/prisma/seed.ts",
     "lint": "echo 'Add lint script here'",
     "contract:emit": "prisma contract emit"
   },
@@ -27,6 +28,7 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
     "node-appwrite": "^29.0.0",
+    "pg": "^8.23.1",
     "redis": "^6.3.0",
     "socket.io": "^4.8.4",
     "temporal-polyfill": "^1.0.4",
@@ -37,6 +39,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.5.0",
+    "@types/pg": "^8.23.1",
     "nodemon": "^3.1.14",
     "prisma": "8.0.0-rc.14",
     "tsx": "^4.23.13",

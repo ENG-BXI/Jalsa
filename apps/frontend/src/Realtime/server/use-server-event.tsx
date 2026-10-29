@@ -16,20 +16,33 @@ export function useServerEvent(
     onEdit?: (data: TSideBardServer) => void;
     onDelete?: (data: TSideBardServer) => void;
     onKick?: (data: {id: string}) => void;
-    onChangeRole?: (data: {id: string,role:TUserRole}) => void;
+    onChangeRole?: (data: {id: string; role: TUserRole}) => void;
   }
 ) {
   const currentUser = useUser(state => state.user);
   useEffect(() => {
     socket.on(SERVER_EVENT.CREATE_SERVER, (data: TCreateServerEventResponse) => {
       if (data.isPublic)
-        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse[]>>): AxiosResponse<TResponse<TPublicServersResponse[]>> => {
-          if (!oldData.data.data)
+        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse>>): AxiosResponse<TResponse<TPublicServersResponse>> => {
+          if (!oldData.data.data.data)
             return {
               ...oldData,
               data: {
-                ...oldData.data,
+                data: {
+                  data: oldData.data.data.data,
+                  pagination: oldData.data.data.pagination
+                },
+                message: oldData.data.message
+              }
+            };
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              data: {
+                ...oldData.data.data,
                 data: [
+                  ...oldData.data.data.data,
                   {
                     id: data.id,
                     name: data.name,
@@ -39,21 +52,6 @@ export function useServerEvent(
                   }
                 ]
               }
-            };
-          return {
-            ...oldData,
-            data: {
-              ...oldData.data,
-              data: [
-                ...oldData.data.data,
-                {
-                  id: data.id,
-                  name: data.name,
-                  description: data.description,
-                  memberCount: 1,
-                  avatar_url: data.avatar_url
-                }
-              ]
             }
           };
         });
@@ -61,8 +59,8 @@ export function useServerEvent(
 
     socket.on(SERVER_EVENT.EDIT_SERVER, (data: TEditServerEventResponse) => {
       if (data.data.isPublic)
-        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse[]>>): AxiosResponse<TResponse<TPublicServersResponse[]>> => {
-          const updatedServers: TPublicServersResponse[] = oldData.data.data?.map(server => {
+        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse>>): AxiosResponse<TResponse<TPublicServersResponse>> => {
+          const updatedServers: TPublicServersResponse['data'] = oldData.data.data?.data.map(server => {
             if (server.id === data.data.id) {
               return {
                 id: data.data.id,
@@ -77,7 +75,10 @@ export function useServerEvent(
             ...oldData,
             data: {
               ...oldData.data,
-              data: updatedServers
+              data: {
+                data: updatedServers,
+                pagination: oldData.data.data.pagination
+              }
             }
           };
         });
@@ -125,13 +126,16 @@ export function useServerEvent(
 
     socket.on(SERVER_EVENT.DELETE_SERVER, (data: TDeleteServerEventResponse) => {
       if (data.data.isPublic)
-        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse[]>>): AxiosResponse<TResponse<TPublicServersResponse[]>> => {
-          const updatedServers: TPublicServersResponse[] = oldData.data.data?.filter(server => server.id !== data.data.id);
+        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse>>): AxiosResponse<TResponse<TPublicServersResponse>> => {
+          const updatedServers: TPublicServersResponse['data'] = oldData.data.data?.data.filter(server => server.id !== data.data.id);
           return {
             ...oldData,
             data: {
               ...oldData.data,
-              data: updatedServers
+              data: {
+                data: updatedServers,
+                pagination: oldData.data.data.pagination
+              }
             }
           };
         });
@@ -151,8 +155,8 @@ export function useServerEvent(
 
     socket.on(SERVER_EVENT.ADD_USER_TO_SERVER, (data: TAddUserToServerEventResponse) => {
       if (data.data.server?.isPublic)
-        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse[]>>): AxiosResponse<TResponse<TPublicServersResponse[]>> => {
-          const updatedServers: TPublicServersResponse[] = oldData.data.data?.map(server => {
+        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse>>): AxiosResponse<TResponse<TPublicServersResponse>> => {
+          const updatedServers: TPublicServersResponse['data'] = oldData.data.data?.data.map(server => {
             if (server.id === data.serverId) {
               return {
                 ...server,
@@ -164,7 +168,10 @@ export function useServerEvent(
             ...oldData,
             data: {
               ...oldData.data,
-              data: updatedServers
+              data: {
+                data: updatedServers,
+                pagination: oldData.data.data.pagination
+              }
             }
           };
         });
@@ -193,8 +200,8 @@ export function useServerEvent(
 
     socket.on(SERVER_EVENT.LEAVE_FROM_SERVER, (data: TLeaveFromServerEventResponse) => {
       if (data.data.server?.isPublic)
-        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse[]>>): AxiosResponse<TResponse<TPublicServersResponse[]>> => {
-          const updatedServers: TPublicServersResponse[] = oldData.data.data?.map(server => {
+        queryClient.setQueriesData({queryKey: PUBLIC_SERVERS_KEY}, (oldData: AxiosResponse<TResponse<TPublicServersResponse>>): AxiosResponse<TResponse<TPublicServersResponse>> => {
+          const updatedServers: TPublicServersResponse['data'] = oldData.data.data?.data.map(server => {
             if (server.id === data.serverId) {
               return {
                 id: server.id,
@@ -209,7 +216,10 @@ export function useServerEvent(
             ...oldData,
             data: {
               ...oldData.data,
-              data: updatedServers
+              data: {
+                data: updatedServers,
+                pagination: oldData.data.data.pagination
+              }
             }
           };
         });
@@ -244,10 +254,11 @@ export function useServerEvent(
     socket.on(SERVER_EVENT.CHANGE_ROLE_IN_SERVER, (data: TChangeRoleInServerEventResponse) => {
       if (data.data.userId === currentUser?.id) {
         options?.onChangeRole?.({
-          id: data.serverId, role: data.data.role,
+          id: data.serverId,
+          role: data.data.role
         });
       }
-      queryClient.setQueryData( [...SERVER_MEMBERS_KEY, serverId], (oldData: AxiosResponse<TResponse<TAllMembersResponse[]>>): AxiosResponse<TResponse<TAllMembersResponse[]>> => {
+      queryClient.setQueryData([...SERVER_MEMBERS_KEY, serverId], (oldData: AxiosResponse<TResponse<TAllMembersResponse[]>>): AxiosResponse<TResponse<TAllMembersResponse[]>> => {
         const updatedMembers: TAllMembersResponse[] = oldData.data?.data?.map(member => {
           if (member.user?.id === data.data.userId) return {...member, role: data.data.role};
           return member;
